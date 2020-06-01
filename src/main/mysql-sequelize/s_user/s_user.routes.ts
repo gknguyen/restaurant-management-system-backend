@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import errorHandler from '../../../commons/error-handler';
-import { Payload, Results } from '../../../commons/interfaces';
-import { STATUS_CODE } from '../../../configs/config';
+import errorHandler from '../../../commons/error.handler/errorHandler';
+import { Payload, Results } from '../../../commons/constants/interfaces';
+import { STATUS_CODE } from '../../../commons/constants/keyValues';
 import userTypeModel, { UserType } from '../m_user_type/m_user_type.model';
 import userTypeService from '../m_user_type/m_user_type.service';
 import { User } from './s_user.model';
@@ -15,7 +15,7 @@ const userRouter = Router();
 userRouter.get('/getList', getList_API());
 userRouter.get('/getOne', getOne_API());
 userRouter.post('/createOne', createOne_API());
-userRouter.put('/updateOne', updateOne_API());
+userRouter.put('/editOne', editOne_API());
 
 /* ================================================================================== */
 /*
@@ -61,18 +61,14 @@ export const getList = async () => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'user : /getList : ' + err.toString();
     return results;
   }
 };
 
 function getList_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const results = await getList();
 
       res.status(results.code).send(results);
@@ -98,7 +94,7 @@ export const getOne = async (requestQuery: any) => {
 
     if (!userId) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'userId is missing';
       return results;
     }
 
@@ -115,9 +111,7 @@ export const getOne = async (requestQuery: any) => {
         'activeStatus',
       ],
       where: { id: userId },
-      include: [
-        { model: userTypeModel, as: 'userType', attributes: ['id', 'typeName'] },
-      ],
+      include: [{ model: userTypeModel, as: 'userType', attributes: ['id', 'typeName'] }],
     })) as User;
 
     if (user) {
@@ -132,18 +126,14 @@ export const getOne = async (requestQuery: any) => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'user : /getOne : ' + err.toString();
     return results;
   }
 };
 
 function getOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestQuery: any = req.query;
       const results = await getOne(requestQuery);
 
@@ -170,30 +160,60 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserName: string | null = loginUser ? loginUser.username : null;
+    const createUserId: string | null = loginUser ? loginUser.id : null;
 
+    const userTypeName: string | null = requestBody.userTypeName;
     const username: string | null = requestBody.username;
     const password: string | null = requestBody.password;
-    const userTypeName: string | null = requestBody.userTypeName;
     const fullName: string | null = requestBody.fullName;
     const age: number | null = requestBody.age;
     const phoneNumber: string | null = requestBody.phoneNumber;
     const email: string | null = requestBody.email;
     const avatar: string | null = requestBody.avatar;
 
-    if (
-      !username ||
-      !password ||
-      !userTypeName ||
-      !fullName ||
-      !age ||
-      !phoneNumber ||
-      !email ||
-      !avatar ||
-      !createUserName
-    ) {
+    if (!username) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'username is missing';
+      return results;
+    }
+    if (!password) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'password is missing';
+      return results;
+    }
+    if (!userTypeName) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'userTypeName is missing';
+      return results;
+    }
+    if (!fullName) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'fullName is missing';
+      return results;
+    }
+    if (!age) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'age is missing';
+      return results;
+    }
+    if (!phoneNumber) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'phoneNumber is missing';
+      return results;
+    }
+    if (!email) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'email is missing';
+      return results;
+    }
+    // if (!avatar) {
+    //   results.code = STATUS_CODE.NOT_FOUND;
+    //   results.message = 'avatar is missing';
+    //   return results;
+    // }
+    if (!createUserId) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'createUserId is missing';
       return results;
     }
 
@@ -201,47 +221,43 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       where: { typeName: userTypeName },
     })) as UserType;
 
-    if (userType) {
-      let encodedPass = Crypto.AES.encrypt(password, 'Secret Passphrase');
-
-      const user = (await userService.postOne(
-        {
-          userTypeId: userType.id,
-          username: username,
-          password: encodedPass,
-          fullName: fullName,
-          age: age,
-          phoneNumber: phoneNumber,
-          email: email,
-          avatar: avatar,
-          createUserName: createUserName,
-        },
-        null,
-      )) as User;
-
-      results.code = STATUS_CODE.SUCCESS;
-      results.message = 'create user successfully';
-      results.values = user;
-      return results;
-    } else {
+    if (!userType) {
       results.code = STATUS_CODE.INVALID;
       results.message = 'invalid userTypeName';
       return results;
     }
+
+    const encodedPass = Crypto.AES.encrypt(password, 'Secret Passphrase');
+
+    const user = (await userService.postOne(
+      {
+        userTypeId: userType.id,
+        username: username,
+        password: encodedPass,
+        fullName: fullName,
+        age: age,
+        phoneNumber: phoneNumber,
+        email: email,
+        avatar: avatar,
+        createUserId: createUserId,
+      },
+      null,
+    )) as User;
+
+    results.code = STATUS_CODE.SUCCESS;
+    results.message = 'create user successfully';
+    results.values = user;
+    return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'user : /createOne : ' + err.toString();
     return results;
   }
 };
 
 function createOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestHeaders: any = req.headers;
       const requestBody: any = req.body;
       const results = await createOne(requestHeaders, requestBody);
@@ -258,11 +274,7 @@ function createOne_API() {
 /*
 update 1 user
 */
-export const updateOne = async (
-  requestHeaders: any,
-  requestQuery: any,
-  requestBody: any,
-) => {
+export const editOne = async (requestHeaders: any, requestQuery: any, requestBody: any) => {
   const results = {
     code: 0,
     message: '',
@@ -273,7 +285,7 @@ export const updateOne = async (
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const updateUserName: string | null = loginUser ? loginUser.username : null;
+    const editUserId: string | null = loginUser ? loginUser.id : null;
 
     const userId: string | null = requestQuery.userId;
 
@@ -288,15 +300,20 @@ export const updateOne = async (
     const loginDatetime: Date | null = requestBody.loginDatetime;
     const authToken: string | null = requestBody.authToken;
 
-    if (!userId || !updateUserName) {
+    if (!userId) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'userId is missing';
+      return results;
+    }
+    if (!editUserId) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'editUserId is missing';
       return results;
     }
 
     const informations: any = {
       id: userId,
-      updateUserName: updateUserName,
+      editUserId: editUserId,
     };
     if (username) {
       informations['username'] = username;
@@ -338,22 +355,18 @@ export const updateOne = async (
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'user : /editOne : ' + err.toString();
     return results;
   }
 };
 
-function updateOne_API() {
+function editOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestHeaders: any = req.headers;
       const requestQuery: any = req.query;
       const requestBody: any = req.body;
-      const results = await updateOne(requestHeaders, requestQuery, requestBody);
+      const results = await editOne(requestHeaders, requestQuery, requestBody);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.SUCCESS) {

@@ -1,14 +1,14 @@
-import { DataTypes, Model, BuildOptions, UUIDV4 } from "sequelize";
-import sequelize from "../../../configs/sequelize";
-import { UserTypeName } from "../../../commons/enum-list";
+import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
+import { UserTypeName } from '../../../commons/constants/enum-list';
+import sequelize from '../../../configs/sequelize';
 
 export interface UserType extends Model {
   readonly id: string;
   typeName: UserTypeName;
-  createUserName: string;
+  createUserId: string;
   createDateTime: Date;
-  updateUserName: string;
-  updateDateTime: Date;
+  editUserid: string;
+  editDateTime: Date;
 }
 
 let enums: any = UserTypeName;
@@ -24,7 +24,7 @@ type ModelStatic = typeof Model & {
 };
 
 const userTypeModel = sequelize.define(
-  "m_user_type",
+  'm_user_type',
   {
     id: {
       type: DataTypes.UUID,
@@ -37,17 +37,17 @@ const userTypeModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    createUserName: {
+    createUserId: {
       type: DataTypes.STRING,
     },
-    updateUserName: {
+    editUserid: {
       type: DataTypes.STRING,
     },
   },
   {
-    createdAt: "createDateTime",
-    updatedAt: "updateDateTime",
-  }
+    createdAt: 'createDateTime',
+    updatedAt: 'editDateTime',
+  },
 ) as ModelStatic;
 
 export default userTypeModel;

@@ -1,11 +1,11 @@
-import bcrypt from "bcryptjs";
-import jsonwebtoken from "jsonwebtoken";
-import RestfulService from "../../../commons/restful";
-import RestService from "../../../commons/restful-service";
-import userModel, { User } from "./s_user.model";
-import { Payload } from "../../../commons/interfaces";
+import bcrypt from 'bcryptjs';
+import jsonwebtoken from 'jsonwebtoken';
+import RestfulService from '../../../commons/restful';
+import RestService from '../../../commons/restful-service';
+import userModel, { User } from './s_user.model';
+import { Payload } from '../../../commons/constants/interfaces';
 
-const Crypto = require("cryptojs").Crypto;
+const Crypto = require('cryptojs').Crypto;
 
 const saltRounds: number = 10;
 

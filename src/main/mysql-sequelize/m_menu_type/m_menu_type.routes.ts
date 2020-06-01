@@ -1,9 +1,9 @@
 import express, { Router } from 'express';
-import errorHandler from '../../../commons/error-handler';
-import { Results, Payload } from '../../../commons/interfaces';
+import errorHandler from '../../../commons/error.handler/errorHandler';
+import { Results, Payload } from '../../../commons/constants/interfaces';
 import { MenuType } from './m_menu_type.model';
 import menuTypeService from './m_menu_type.service';
-import { STATUS_CODE } from '../../../configs/config';
+import { STATUS_CODE } from '../../../commons/constants/keyValues';
 import jsonwebtoken from 'jsonwebtoken';
 
 const menuTypeRouter = Router();
@@ -42,18 +42,14 @@ export const getList = async () => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'menuType : /getList : ' + err.toString();
     return results;
   }
 };
 
 function getList_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const results = await getList();
 
       res.status(results.code).send(results);
@@ -80,7 +76,7 @@ export const getOne = async (requestQuery: any) => {
 
     if (!typeName) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'typeName is missing';
       return results;
     }
 
@@ -101,18 +97,14 @@ export const getOne = async (requestQuery: any) => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'menuType : /getOne : ' + err.toString();
     return results;
   }
 };
 
 function getOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestQuery: any = req.query;
       const results = await getOne(requestQuery);
 
@@ -139,20 +131,25 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserName: string | null = loginUser ? loginUser.username : null;
+    const createUserId: string | null = loginUser ? loginUser.id : null;
 
     const typeName: string | null = requestBody.typeName;
 
-    if (!typeName || !createUserName) {
+    if (!typeName) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'typeName is missing';
+      return results;
+    }
+    if (!createUserId) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'createUserId is missing';
       return results;
     }
 
     const menuType = (await menuTypeService.postOne(
       {
         typeName: typeName,
-        createUserName: createUserName,
+        createUserId: createUserId,
       },
       null,
     )) as MenuType;
@@ -163,18 +160,14 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'menuType : /createOne : ' + err.toString();
     return results;
   }
 };
 
 function createOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestHeaders: any = req.headers;
       const requestBody: any = req.body;
       const results = await createOne(requestHeaders, requestBody);

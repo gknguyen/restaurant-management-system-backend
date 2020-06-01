@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import errorHandler from '../../../commons/error-handler';
-import { Payload, Results } from '../../../commons/interfaces';
-import { STATUS_CODE } from '../../../configs/config';
+import errorHandler from '../../../commons/error.handler/errorHandler';
+import { Payload, Results } from '../../../commons/constants/interfaces';
+import { STATUS_CODE } from '../../../commons/constants/keyValues';
 import { UserType } from './m_user_type.model';
 import userTypeService from './m_user_type.service';
 
@@ -39,18 +39,14 @@ export const getList = async () => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'userType : /getList : ' + err.toString();
     return results;
   }
 };
 
 function getList_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const results = await getList();
 
       res.status(results.code).send(results);
@@ -80,9 +76,14 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
 
     const typeName: string | null = requestBody.typeName;
 
-    if (!typeName || !createUserName) {
+    if (!typeName) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'some compulsory input data is missing';
+      results.message = 'typeName is missing';
+      return results;
+    }
+    if (!createUserName) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'createUserName is missing';
       return results;
     }
 
@@ -100,18 +101,14 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'userType : /createOne : ' + err.toString();
     return results;
   }
 };
 
 function createOne_API() {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestHeaders: any = req.headers;
       const requestBody: any = req.body;
       const results = await createOne(requestHeaders, requestBody);

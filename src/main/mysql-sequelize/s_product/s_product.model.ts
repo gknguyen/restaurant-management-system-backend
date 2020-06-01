@@ -1,8 +1,8 @@
-import { DataTypes, Model, BuildOptions, UUIDV4 } from "sequelize";
+import { BuildOptions, DataTypes, Model, UUIDV4 } from "sequelize";
 import sequelize from "../../../configs/sequelize";
-
-import productTypeModel from "../m_product_type/m_product_type.model";
 import menuTypeModel from "../m_menu_type/m_menu_type.model";
+import productTypeModel from "../m_product_type/m_product_type.model";
+
 
 export interface Product extends Model {
   readonly id: string;
@@ -15,10 +15,10 @@ export interface Product extends Model {
   description: Text;
   activeStatus: boolean;
   image: string;
-  createUserName: string;
+  createUserId: string;
   createDateTime: Date;
-  updateUserName: string;
-  updateDateTime: Date;
+  editUserId: string;
+  editDateTime: Date;
   productType?: any;
   menuType?: any;
 }
@@ -74,16 +74,16 @@ const productModel = sequelize.define(
     image: {
       type: DataTypes.STRING,
     },
-    createUserName: {
+    createUserId: {
       type: DataTypes.STRING,
     },
-    updateUserName: {
+    editUserId: {
       type: DataTypes.STRING,
     },
   },
   {
     createdAt: "createDateTime",
-    updatedAt: "updateDateTime",
+    updatedAt: "editDateTime",
   }
 ) as ModelStatic;
 

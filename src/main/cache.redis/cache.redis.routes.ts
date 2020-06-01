@@ -1,8 +1,8 @@
-import express from "express";
-import errorHandler from "../../commons/error-handler";
-import { Results } from "../../commons/interfaces";
-import { STATUS_CODE } from "../../configs/config";
-import { client, redisConnected } from "../../configs/redis";
+import express from 'express';
+import errorHandler from '../../commons/error.handler/errorHandler';
+import { Results } from '../../commons/constants/interfaces';
+import { STATUS_CODE } from '../../commons/constants/keyValues';
+import { client, redisConnected } from '../../configs/redis';
 
 /* ================================================================================== */
 /*
@@ -10,14 +10,10 @@ get data from redis cache
 */
 export function cache(redisKey: string) {
   return errorHandler(
-    async (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction
-    ) => {
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const results = {
         code: 0,
-        message: "",
+        message: '',
         values: [],
       } as Results;
 
@@ -31,9 +27,9 @@ export function cache(redisKey: string) {
             }
             if (data) {
               const dataJSON = JSON.parse(data);
-              
+
               results.code = STATUS_CODE.SUCCESS;
-              results.message = "get data from redis successfully";
+              results.message = 'get data from redis successfully';
               results.values = dataJSON;
               res.status(STATUS_CODE.SUCCESS).send(results);
             } else {
@@ -52,6 +48,6 @@ export function cache(redisKey: string) {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }

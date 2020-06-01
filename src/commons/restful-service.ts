@@ -1,5 +1,5 @@
-import { Model, BuildOptions, Op } from "sequelize";
-import RestfulService from "./restful";
+import { Model, BuildOptions, Op } from 'sequelize';
+import RestfulService from './restful';
 
 type AnyModel = typeof Model & {
   new (values?: object, options?: BuildOptions): any;

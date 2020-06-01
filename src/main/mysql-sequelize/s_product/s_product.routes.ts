@@ -1,24 +1,26 @@
-import express, { Router } from "express";
-import jsonwebtoken from "jsonwebtoken";
-import { Op } from "sequelize";
-import errorHandler from "../../../commons/error-handler";
-import { Payload, Results } from "../../../commons/interfaces";
-import { STATUS_CODE } from "../../../configs/config";
-import { client, redisConnected } from "../../../configs/redis";
-import { cache } from "../../cache.redis/cache.redis.routes";
-import menuTypeModel from "../m_menu_type/m_menu_type.model";
-import productTypeModel from "../m_product_type/m_product_type.model";
-import { Product } from "./s_product.model";
-import productService from "./s_product.service";
+import express, { Router } from 'express';
+import jsonwebtoken from 'jsonwebtoken';
+import { Op } from 'sequelize';
+import errorHandler from '../../../commons/error.handler/errorHandler';
+import { Payload, Results } from '../../../commons/constants/interfaces';
+import { STATUS_CODE } from '../../../commons/constants/keyValues';
+import { client, redisConnected } from '../../../configs/redis';
+import { cache } from '../../cache.redis/cache.redis.routes';
+import menuTypeModel, { MenuType } from '../m_menu_type/m_menu_type.model';
+import productTypeModel, { ProductType } from '../m_product_type/m_product_type.model';
+import { Product } from './s_product.model';
+import productService from './s_product.service';
+import productTypeService from '../m_product_type/m_product_type.service';
+import menuTypeService from '../m_menu_type/m_menu_type.service';
 
 const productRouter = Router();
 
-productRouter.get("/getList", cache("productList"), getList_API());
-productRouter.get("/getOne", getOne_API());
-productRouter.get("/searchList", searchList_API());
-productRouter.post("/createOne", createOne_API());
-productRouter.put("/updateOne", updateOne_API());
-productRouter.delete("/deleteList", deleteList_API());
+productRouter.get('/getList', cache('productList'), getList_API());
+productRouter.get('/getOne', getOne_API());
+productRouter.get('/searchList', searchList_API());
+productRouter.post('/createOne', createOne_API());
+productRouter.put('/editOne', editOne_API());
+productRouter.delete('/deleteList', deleteList_API());
 
 /* ================================================================================== */
 /*
@@ -27,47 +29,47 @@ get product list
 export const getList = async () => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: [],
   } as Results;
 
   try {
     const productList = (await productService.getAll({
-      attributes: ["id", "name", "price", "unit", "amount", "activeStatus"],
+      attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
       include: [
         {
           model: productTypeModel,
-          as: "productType",
-          attributes: ["typeName"],
+          as: 'productType',
+          attributes: ['typeName'],
         },
         {
           model: menuTypeModel,
-          as: "menuType",
-          attributes: ["typeName"],
+          as: 'menuType',
+          attributes: ['typeName'],
         },
       ],
     })) as Product[];
 
     if (productList && productList.length > 0) {
       if (redisConnected) {
-        const redisKey = "productList";
+        const redisKey = 'productList';
         const productListString = JSON.stringify(productList);
         client.setex(redisKey, 3600, productListString);
       }
 
       results.code = STATUS_CODE.SUCCESS;
-      results.message = "get productList successfully";
+      results.message = 'get productList successfully';
       results.values = productList;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "productList not found";
+      results.message = 'productList not found';
       results.values = productList;
       return results;
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /getList : ' + err.toString();
     return results;
   }
 };
@@ -81,7 +83,7 @@ function getList_API() {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 
@@ -92,7 +94,7 @@ get 1 product by id
 export const getOne = async (requestQuery: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
@@ -101,49 +103,40 @@ export const getOne = async (requestQuery: any) => {
 
     if (!productId) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "some compulsory input data is missing";
+      results.message = 'productId is missing';
       return results;
     }
 
     const product = (await productService.getOne({
-      attributes: [
-        "id",
-        "name",
-        "price",
-        "unit",
-        "amount",
-        "activeStatus",
-        "image",
-        "description",
-      ],
+      attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus', 'image', 'description'],
       where: { id: productId },
       include: [
         {
           model: productTypeModel,
-          as: "productType",
-          attributes: ["id", "typeName"],
+          as: 'productType',
+          attributes: ['id', 'typeName'],
         },
         {
           model: menuTypeModel,
-          as: "menuType",
-          attributes: ["id", "typeName"],
+          as: 'menuType',
+          attributes: ['id', 'typeName'],
         },
       ],
     })) as Product;
 
     if (product) {
       results.code = STATUS_CODE.SUCCESS;
-      results.message = "get product successfully";
+      results.message = 'get product successfully';
       results.values = product;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "product not found";
+      results.message = 'product not found';
       return results;
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /getOne : ' + err.toString();
     return results;
   }
 };
@@ -153,12 +146,13 @@ function getOne_API() {
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestQuery: any = req.query;
       const results = await getOne(requestQuery);
+      console.log(results);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 
@@ -169,7 +163,7 @@ search product list
 export const searchList = async (requestQuery: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
@@ -187,25 +181,25 @@ export const searchList = async (requestQuery: any) => {
     };
 
     const productList = (await productService.getAll({
-      attributes: ["id", "name", "price", "unit", "amount", "activeStatus"],
+      attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
       where: productSearchcondition,
       include: [
         {
           model: productTypeModel,
-          as: "productType",
-          attributes: ["typeName"],
+          as: 'productType',
+          attributes: ['typeName'],
         },
         {
           model: menuTypeModel,
-          as: "menuType",
-          attributes: ["typeName"],
+          as: 'menuType',
+          attributes: ['typeName'],
         },
       ],
     })) as Product[];
 
     if (productList && productList.length > 0) {
       results.code = STATUS_CODE.SUCCESS;
-      results.message = "search productList successfully";
+      results.message = 'search productList successfully';
       results.values = productList;
       return results;
     } else {
@@ -214,25 +208,25 @@ export const searchList = async (requestQuery: any) => {
       };
 
       const productList = (await productService.getAll({
-        attributes: ["id", "name", "price", "unit", "amount", "activeStatus"],
+        attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
         include: [
           {
             model: productTypeModel,
-            as: "productType",
-            attributes: ["typeName"],
+            as: 'productType',
+            attributes: ['typeName'],
             where: productTypeSearchCondition,
           },
           {
             model: menuTypeModel,
-            as: "menuType",
-            attributes: ["typeName"],
+            as: 'menuType',
+            attributes: ['typeName'],
           },
         ],
       })) as Product[];
 
       if (productList && productList.length > 0) {
         results.code = STATUS_CODE.SUCCESS;
-        results.message = "search productList successfully";
+        results.message = 'search productList successfully';
         results.values = productList;
         return results;
       } else {
@@ -241,17 +235,17 @@ export const searchList = async (requestQuery: any) => {
         };
 
         const productList = (await productService.getAll({
-          attributes: ["id", "name", "price", "unit", "amount", "activeStatus"],
+          attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
           include: [
             {
               model: productTypeModel,
-              as: "productType",
-              attributes: ["typeName"],
+              as: 'productType',
+              attributes: ['typeName'],
             },
             {
               model: menuTypeModel,
-              as: "menuType",
-              attributes: ["typeName"],
+              as: 'menuType',
+              attributes: ['typeName'],
               where: menuTypeSearchCondition,
             },
           ],
@@ -259,34 +253,34 @@ export const searchList = async (requestQuery: any) => {
 
         if (productList && productList.length > 0) {
           results.code = STATUS_CODE.SUCCESS;
-          results.message = "search productList successfully";
+          results.message = 'search productList successfully';
           results.values = productList;
           return results;
         } else {
           const productList = (await productService.getAll({
-            attributes: ["id", "name", "price", "unit", "amount", "activeStatus"],
+            attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
             include: [
               {
                 model: productTypeModel,
-                as: "productType",
-                attributes: ["typeName"],
+                as: 'productType',
+                attributes: ['typeName'],
               },
               {
                 model: menuTypeModel,
-                as: "menuType",
-                attributes: ["typeName"],
+                as: 'menuType',
+                attributes: ['typeName'],
               },
             ],
           })) as Product[];
 
           if (productList && productList.length > 0) {
             results.code = STATUS_CODE.SUCCESS;
-            results.message = "search productList successfully";
+            results.message = 'search productList successfully';
             results.values = productList;
             return results;
           } else {
             results.code = STATUS_CODE.NOT_FOUND;
-            results.message = "search productList failed";
+            results.message = 'search productList failed';
             results.values = productList;
             return results;
           }
@@ -295,7 +289,7 @@ export const searchList = async (requestQuery: any) => {
     }
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /searchList : ' + err.toString();
     return results;
   }
 };
@@ -310,7 +304,7 @@ function searchList_API() {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 
@@ -321,18 +315,20 @@ create 1 product
 export const createOne = async (requestHeaders: any, requestBody: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
   try {
+    /* get request input headers */
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserName: string | null = loginUser ? loginUser.username : null;
+    const createUserId: string | null = loginUser ? loginUser.id : null;
 
-    const productTypeId: string | null = requestBody.productTypeId;
-    const menuTypeId: string | null = requestBody.menuTypeId;
+    /* get request input body */
+    const productTypeName: string | null = requestBody.productTypeName;
+    const menuTypeName: string | null = requestBody.menuTypeName;
     const name: string | null = requestBody.name;
     const price: string | null = requestBody.price;
     const unit: string | null = requestBody.unit;
@@ -340,48 +336,98 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     const description: Text | null = requestBody.description;
     const image: string | null = requestBody.image;
 
-    if (
-      !productTypeId ||
-      !menuTypeId ||
-      !name ||
-      !price ||
-      !unit ||
-      !amount ||
-      !image ||
-      !createUserName
-    ) {
+    /* check if mandatory inputs exist or not */
+    if (!productTypeName) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "some compulsory input data is missing";
+      results.message = 'productTypeName is missing';
+      return results;
+    }
+    if (!menuTypeName) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'menuTypeName is missing';
+      return results;
+    }
+    if (!name) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'name is missing';
+      return results;
+    }
+    if (!price) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'price is missing';
+      return results;
+    }
+    if (!unit) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'unit is missing';
+      return results;
+    }
+    if (!amount) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'amount is missing';
+      return results;
+    }
+    if (!image) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'image is missing';
+      return results;
+    }
+    if (!createUserId) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'createUserId is missing';
       return results;
     }
 
+    /* get product type id */
+    const productType = (await productTypeService.getOne({
+      where: { typeName: productTypeName },
+    })) as ProductType;
+
+    if (!productType) {
+      results.code = STATUS_CODE.INVALID;
+      results.message = 'invalid productTypeName';
+      return results;
+    }
+
+    /* get menu type id */
+    const menuType = (await menuTypeService.getOne({
+      where: { typeName: menuTypeName },
+    })) as MenuType;
+
+    if (!menuType) {
+      results.code = STATUS_CODE.INVALID;
+      results.message = 'invalid menuTypeName';
+      return results;
+    }
+
+    /* create product */
     const product = (await productService.postOne(
       {
-        productTypeId: productTypeId,
-        menuTypeId: menuTypeId,
+        productTypeId: productType.id,
+        menuTypeId: menuType.id,
         name: name,
         price: price,
         unit: unit,
         description: description,
         amount: amount,
         image: image,
-        createUserName: createUserName,
+        createUserId: createUserId,
       },
-      null
+      null,
     )) as Product;
 
     if (redisConnected) {
-      const redisKey = "productList";
+      const redisKey = 'productList';
       client.del(redisKey);
     }
 
     results.code = STATUS_CODE.SUCCESS;
-    results.message = "create product successfully";
+    results.message = 'create product successfully';
     results.values = product;
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /createOne : ' + err.toString();
     return results;
   }
 };
@@ -397,7 +443,7 @@ function createOne_API() {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 
@@ -405,14 +451,10 @@ function createOne_API() {
 /*
 update 1 product
 */
-export const updateOne = async (
-  requestHeaders: any,
-  requestQuery: any,
-  requestBody: any
-) => {
+export const editOne = async (requestHeaders: any, requestQuery: any, requestBody: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
@@ -420,7 +462,7 @@ export const updateOne = async (
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const updateUserName: string | null = loginUser ? loginUser.username : null;
+    const editUserId: string | null = loginUser ? loginUser.id : null;
 
     const productId: string | null = requestQuery.productId;
 
@@ -433,15 +475,20 @@ export const updateOne = async (
     const description: Text | null = requestBody.description;
     const image: string | null = requestBody.image;
 
-    if (!productId || !updateUserName) {
+    if (!productId) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "some compulsory input data is missing";
+      results.message = 'productId is missing';
+      return results;
+    }
+    if (!editUserId) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'editUserId is missing';
       return results;
     }
 
     const informations: any = {
       id: productId,
-      updateUserName: updateUserName,
+      editUserId: editUserId,
     };
     if (productTypeId) {
       informations.productTypeId = productTypeId;
@@ -476,29 +523,29 @@ export const updateOne = async (
     const successFlag = (await productService.putOne(informations, null)) as boolean;
 
     results.code = STATUS_CODE.SUCCESS;
-    results.message = "update product successfully";
-    results.values = successFlag === false ? "updated" : "inserted";
+    results.message = 'update product successfully';
+    results.values = successFlag === false ? 'updated' : 'inserted';
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /editOne : ' + err.toString();
     return results;
   }
 };
 
-function updateOne_API() {
+function editOne_API() {
   return errorHandler(
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestHeaders: any = req.headers;
       const requestQuery: any = req.query;
       const requestBody: any = req.body;
-      const results = await updateOne(requestHeaders, requestQuery, requestBody);
+      const results = await editOne(requestHeaders, requestQuery, requestBody);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 
@@ -509,7 +556,7 @@ delete product list
 export const deleteList = async (requestQuery: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
@@ -518,7 +565,7 @@ export const deleteList = async (requestQuery: any) => {
 
     if (!productIdList || (productIdList && productIdList.length === 0)) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "some compulsory input data is missing";
+      results.message = 'productIdList is missing';
       return results;
     }
 
@@ -536,12 +583,12 @@ export const deleteList = async (requestQuery: any) => {
     }
 
     results.code = STATUS_CODE.SUCCESS;
-    results.message = "delete product list successfully";
+    results.message = 'delete product list successfully';
     results.values = totalSuccessNum;
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = 'product : /deleteList : ' + err.toString();
     return results;
   }
 };
@@ -556,7 +603,7 @@ function deleteList_API() {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 

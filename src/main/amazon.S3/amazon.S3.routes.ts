@@ -1,12 +1,12 @@
-import aws from "aws-sdk";
-import express, { Router } from "express";
-import { Results } from "../../commons/interfaces";
-import errorHandler from "../../commons/error-handler";
-import { STATUS_CODE, AWS } from "../../configs/config";
+import aws from 'aws-sdk';
+import express, { Router } from 'express';
+import { Results } from '../../commons/constants/interfaces';
+import errorHandler from '../../commons/error.handler/errorHandler';
+import { STATUS_CODE, AWS } from '../../commons/constants/keyValues';
 
 const awsS3Router = Router();
 
-awsS3Router.get("/getSignedUrl", getSignedUrl_API());
+awsS3Router.get('/getSignedUrl', getSignedUrl_API());
 
 aws.config.update({
   accessKeyId: AWS.AUTH_KEY.ACCESS_KEY_ID,
@@ -20,7 +20,7 @@ get signed URL
 export const getSignedUrl = async (requestQuery: any) => {
   const results = {
     code: 0,
-    message: "",
+    message: '',
     values: {},
   } as Results;
 
@@ -31,31 +31,36 @@ export const getSignedUrl = async (requestQuery: any) => {
 
     const s3 = new aws.S3();
 
-    if (!fileName || !fileType) {
+    if (!fileName) {
       results.code = STATUS_CODE.NOT_FOUND;
-      results.message = "some compulsory input data is missing";
+      results.message = 'fileName is missing';
+      return results;
+    }
+    if (!fileType) {
+      results.code = STATUS_CODE.NOT_FOUND;
+      results.message = 'fileType is missing';
       return results;
     }
 
     if (folderName) {
-      folderName = "/" + folderName;
+      folderName = '/' + folderName;
     }
 
-    const data = s3.getSignedUrl("putObject", {
+    const data = s3.getSignedUrl('putObject', {
       Bucket: AWS.S3.BUCKET + folderName,
       Key: fileName,
       Expires: 60,
       ContentType: fileType,
-      ACL: "public-read",
+      ACL: 'public-read',
     });
 
     results.code = STATUS_CODE.SUCCESS;
-    results.message = "signed URL found";
+    results.message = 'signed URL found';
     results.values = data;
     return results;
   } catch (err) {
     results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = err.toString();
+    results.message = '/getSignedUrl : ' + err.toString();
     return results;
   }
 };
@@ -70,7 +75,7 @@ function getSignedUrl_API() {
       if (results.code !== STATUS_CODE.SUCCESS) {
         throw results.message;
       }
-    }
+    },
   );
 }
 

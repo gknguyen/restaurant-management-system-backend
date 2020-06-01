@@ -1,6 +1,5 @@
-import { DataTypes, Model, BuildOptions, UUIDV4 } from "sequelize";
+import { BuildOptions, DataTypes, Model, UUIDV4 } from "sequelize";
 import sequelize from "../../../configs/sequelize";
-
 import userTypeModel from "../m_user_type/m_user_type.model";
 
 export interface User extends Model {
@@ -16,10 +15,10 @@ export interface User extends Model {
   loginDateTime: Date;
   authToken: string;
   activeStatus: boolean;
-  createUserName: string;
+  createUserId: string;
   createDateTime: Date;
-  updateUserName: string;
-  updateDateTime: Date;
+  editUserId: string;
+  editDateTime: Date;
   userType?: any;
 }
 
@@ -79,16 +78,16 @@ const userModel = sequelize.define(
       allowNull: false,
       defaultValue: true,
     },
-    createUserName: {
+    createUserId: {
       type: DataTypes.STRING,
     },
-    updateUserName: {
+    editUserId: {
       type: DataTypes.STRING,
     },
   },
   {
     createdAt: "createDateTime",
-    updatedAt: "updateDateTime",
+    updatedAt: "editDateTime",
   }
 ) as ModelStatic;
 

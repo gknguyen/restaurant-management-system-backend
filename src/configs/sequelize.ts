@@ -1,28 +1,30 @@
-import debug from "debug";
-import { Sequelize } from "sequelize";
+import debug from 'debug';
+import { Sequelize } from 'sequelize';
 
-const logger = debug("restaurant_management_system:server");
-const uri =
-  process.env.db_uri ||
-  // "mysql://root:@localhost:3306/restaurant_management_system";
-  // "mysql://ec2-user:@13.229.104.21:3306/restaurant_management_system";
-  "mysql://admin:12345678@mysql-databases.cb9ydlohbhb0.ap-southeast-1.rds.amazonaws.com:3306/restaurant_management_system";
+const logger = debug('restaurant_management_system:server');
 
-const sequelize = new Sequelize(uri, {
+const sequelize = new Sequelize({
+  database: 'restaurant_management_system',
+  username: 'gknguyen',
+  password: '123jkndsjkn3242k5453bkj2',
+  host: 'mysql-databases.cb9ydlohbhb0.ap-southeast-1.rds.amazonaws.com',
+  port: 3306,
+  dialect: 'mysql',
   logging: false,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
+    ssl: 'Amazon RDS',
   },
 });
 
 sequelize
   .authenticate()
   .then(() => {
-    logger("=> Connected to MySQL " + uri);
+    logger('=> Connected to MySQL');
   })
   .catch((err: Error) => {
-    return console.error("Unable to connect to the database:", err);
+    return console.error('Unable to connect to the database:', err);
   });
 
 export default sequelize;

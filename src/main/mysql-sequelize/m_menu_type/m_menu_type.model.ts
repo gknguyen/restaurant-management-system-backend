@@ -4,10 +4,10 @@ import sequelize from "../../../configs/sequelize";
 export interface MenuType extends Model {
   readonly id: string;
   typeName: string;
-  createUserName: string;
+  createUserId: string;
   createDateTime: Date;
-  updateUserName: string;
-  updateDateTime: Date;
+  editUserId: string;
+  editDateTime: Date;
 }
 
 type ModelStatic = typeof Model & {
@@ -27,16 +27,16 @@ const menuTypeModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    createUserName: {
+    createUserId: {
       type: DataTypes.STRING,
     },
-    updateUserName: {
+    editUserId: {
       type: DataTypes.STRING,
     },
   },
   {
     createdAt: "createDateTime",
-    updatedAt: "updateDateTime",
+    updatedAt: "editDateTime",
   }
 ) as ModelStatic;
 

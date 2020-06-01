@@ -1,14 +1,14 @@
-import { DataTypes, Model, BuildOptions, UUIDV4 } from "sequelize";
-import sequelize from "../../../configs/sequelize";
-import { ProductTypeName } from "../../../commons/enum-list";
+import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
+import sequelize from '../../../configs/sequelize';
+import { ProductTypeName } from '../../../commons/constants/enum-list';
 
 export interface ProductType extends Model {
   readonly id: string;
   typeName: ProductTypeName;
-  createUserName: string;
+  createUserId: string;
   createDateTime: Date;
-  updateUserName: string;
-  updateDateTime: Date;
+  editUserId: string;
+  editDateTime: Date;
 }
 
 let enums: any = ProductTypeName;
@@ -24,7 +24,7 @@ type ModelStatic = typeof Model & {
 };
 
 const productTypeModel = sequelize.define(
-  "m_product_type",
+  'm_product_type',
   {
     id: {
       type: DataTypes.UUID,
@@ -37,17 +37,17 @@ const productTypeModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    createUserName: {
+    createUserId: {
       type: DataTypes.STRING,
     },
-    updateUserName: {
+    editUserId: {
       type: DataTypes.STRING,
     },
   },
   {
-    createdAt: "createDateTime",
-    updatedAt: "updateDateTime",
-  }
+    createdAt: 'createDateTime',
+    updatedAt: 'editDateTime',
+  },
 ) as ModelStatic;
 
 export default productTypeModel;
