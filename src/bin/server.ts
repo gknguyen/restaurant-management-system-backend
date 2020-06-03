@@ -40,15 +40,13 @@ function onError(error: { syscall: string; code: any }) {
 
 function onListening() {
   const addr = server.address();
-  const bind = addr
-    ? typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port
-    : '';
+  const bind = addr ? (typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port) : '';
   debug('Listening on ' + bind);
 }
 
-/* connect to DB */
+/* 
+connect to DB 
+*/
 sequelize
   .sync({ alter: false, force: false })
   .then(() => {
@@ -58,7 +56,9 @@ sequelize
     return console.error('failed to sync', err);
   });
 
-/* start server */
+/* 
+start server 
+*/
 app.set('port', port);
 server.listen(port, () => {
   console.log('server listening on port', port);

@@ -13,11 +13,11 @@ import router from './routes';
 import authRouter from '../main/authentication/authentication.routes';
 import awsS3Router from '../main/amazon.S3/amazon.S3.routes';
 import { getFilesizeInBytes } from '../commons/utils/getFileSize';
+import os from 'os';
 
 let num = 0;
 
 const app: express.Application = express();
-app.use(bodyParser.json());
 
 loadConfigs();
 loadRoutes();
@@ -40,18 +40,41 @@ function loadViews() {
 
 function loadConfigs() {
   /* check file size */
-  let fileSize = getFilesizeInBytes(join(__dirname, '/access' + num + '.log'));
+  let fileSize = getFilesizeInBytes(join(__dirname, '/accessLog/access' + num + '.log'));
   while (fileSize > 10) {
     num++;
-    fileSize = getFilesizeInBytes(join(__dirname, '/access' + num + '.log'));
+    fileSize = getFilesizeInBytes(join(__dirname, '/accessLog/access' + num + '.log'));
   }
 
-  const accessLogStream = fs.createWriteStream(path.join(__dirname, '/access' + num + '.log'), {
-    flags: 'a',
-  });
+  const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, '/accessLog/access' + num + '.log'),
+    {
+      flags: 'a',
+    },
+  );
+
   app.use(
     logger(
-      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :req[body]',
+      '================================================================================================================' +
+      os.EOL +
+      'remote-addr: ' + ':remote-addr' +
+      os.EOL +
+      'remote-user: ' + ':remote-user' +
+      os.EOL +
+      'date: ' + '[:date[clf]]' +
+      os.EOL +
+      'method: ' + '":method :url HTTP/:http-version"' +
+      os.EOL +
+      'status: ' + ':status :res[content-length]' +
+      os.EOL +
+      'referrer: ' + '":referrer"' +
+      os.EOL +
+      'user-agent: ' + '":user-agent"' +
+      os.EOL +
+      'req[query]: ' + ':req[query]' +
+      os.EOL +
+      'req[body]: ' + ':req[body]' +
+      os.EOL,
       {
         stream: accessLogStream,
       },
@@ -60,7 +83,8 @@ function loadConfigs() {
 
   app.use(compression());
   app.use(json());
-  app.use(urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(helmet());
 
