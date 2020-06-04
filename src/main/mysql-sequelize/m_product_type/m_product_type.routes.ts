@@ -3,15 +3,14 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler';
-import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import { ProductType } from './m_product_type.model';
 import productTypeService from './m_product_type.service';
 
 const productTypeRouter = Router();
 
-productTypeRouter.get('/getList', verifyToken(), getList_API());
-productTypeRouter.get('/getOne', verifyToken(), getOne_API());
-productTypeRouter.post('/createOne', verifyToken(), createOne_API());
+productTypeRouter.get('/getList', getList_API());
+productTypeRouter.get('/getOne', getOne_API());
+productTypeRouter.post('/createOne', createOne_API());
 
 /* ================================================================================== */
 /*

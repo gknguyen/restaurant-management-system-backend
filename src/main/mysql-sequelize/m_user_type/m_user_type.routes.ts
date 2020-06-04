@@ -3,14 +3,13 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler';
-import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import { UserType } from './m_user_type.model';
 import userTypeService from './m_user_type.service';
 
 const userTypeRouter = Router();
 
-userTypeRouter.get('/getList', verifyToken(), getList_API());
-userTypeRouter.post('/createOne', verifyToken(), createOne_API());
+userTypeRouter.get('/getList', getList_API());
+userTypeRouter.post('/createOne', createOne_API());
 
 /* ================================================================================== */
 /*

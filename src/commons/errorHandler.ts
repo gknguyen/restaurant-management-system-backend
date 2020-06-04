@@ -28,36 +28,36 @@ const errorHandler = (fn: any) => (
       console.log('jaMoment: ', jaMoment.format('YYYY-MM-DD, h:mm:ss a'));
 
       /* check file size */
-      let fileSize = getFilesizeInBytes(join(__dirname, '/errorLog' + num + '.txt'));
+      let fileSize = getFilesizeInBytes(join(__dirname, '/errorHandler/errorLog' + num + '.txt'));
       while (fileSize > 10) {
         num++;
-        fileSize = getFilesizeInBytes(join(__dirname, '/errorLog' + num + '.txt'));
+        fileSize = getFilesizeInBytes(join(__dirname, '/errorHandler/errorLog' + num + '.txt'));
       }
 
       /* add error to file errorLog.txt */
       fs.appendFile(
-        join(__dirname, '/errorLog' + num + '.txt'),
+        join(__dirname, '/errorHandler/errorLog' + num + '.txt'),
 
         '========================================================' +
-        os.EOL +
-        'date: ' +
-        JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a')) +
-        os.EOL +
-        'API: ' +
-        JSON.stringify(req.baseUrl + req.path) +
-        os.EOL +
-        'error: ' +
-        JSON.stringify(error) +
-        os.EOL +
-        'username: ' +
-        JSON.stringify(userInfo?.username) +
-        os.EOL +
-        'query: ' +
-        JSON.stringify(req.query) +
-        os.EOL +
-        'body: ' +
-        JSON.stringify(req.body) +
-        os.EOL,
+          os.EOL +
+          'date: ' +
+          JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a')) +
+          os.EOL +
+          'API: ' +
+          JSON.stringify(req.baseUrl + req.path) +
+          os.EOL +
+          'error: ' +
+          JSON.stringify(error) +
+          os.EOL +
+          'username: ' +
+          JSON.stringify(userInfo?.username) +
+          os.EOL +
+          'query: ' +
+          JSON.stringify(req.query) +
+          os.EOL +
+          'body: ' +
+          JSON.stringify(req.body) +
+          os.EOL,
 
         (err) => {
           if (err) {

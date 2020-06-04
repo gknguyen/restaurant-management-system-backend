@@ -13,7 +13,8 @@ import { getFilesizeInBytes } from '../commons/utils/getFileSize';
 import keys from '../configs/keys';
 import awsS3Router from '../main/amazon.S3/amazon.S3.routes';
 import authRouter from '../main/authentication/authentication.routes';
-import router from './routes';
+import { verifyToken } from '../main/verifyToken/verifyToken.routes';
+import apiRouter from './routes';
 
 let num = 0;
 
@@ -30,7 +31,7 @@ export default app;
 functions
 */
 function loadRoutes() {
-  app.use('/api', router);
+  app.use('/api', verifyToken(), apiRouter);
   app.use('/auth', authRouter);
   app.use('/awsS3', awsS3Router);
 }
@@ -59,7 +60,7 @@ function loadConfigs() {
 
   app.use(
     logger(
-      '================================================================================================================' +
+      '============================================================================================' +
         os.EOL +
         'remote-addr: ' +
         ':remote-addr' +

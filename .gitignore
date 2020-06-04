@@ -105,4 +105,4 @@ dist
 .tern-port
 lib/
 package.json.bak
-src/commons/error.handler/errorLog*.txt
+errorLog*.txt

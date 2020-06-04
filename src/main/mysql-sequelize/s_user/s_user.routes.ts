@@ -3,7 +3,6 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler';
-import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import userTypeModel, { UserType } from '../m_user_type/m_user_type.model';
 import userTypeService from '../m_user_type/m_user_type.service';
 import { User } from './s_user.model';
@@ -13,10 +12,10 @@ const Crypto = require('cryptojs').Crypto;
 
 const userRouter = Router();
 
-userRouter.get('/getList', verifyToken(), getList_API());
-userRouter.get('/getOne', verifyToken(), getOne_API());
-userRouter.post('/createOne', verifyToken(), createOne_API());
-userRouter.put('/editOne', verifyToken(), editOne_API());
+userRouter.get('/getList', getList_API());
+userRouter.get('/getOne', getOne_API());
+userRouter.post('/createOne', createOne_API());
+userRouter.put('/editOne', editOne_API());
 
 /* ================================================================================== */
 /*

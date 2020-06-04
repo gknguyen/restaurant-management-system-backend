@@ -1,6 +1,6 @@
-import passport from "passport";
+import passport from 'passport';
 const GoogleStrategy = require('passport-google-oauth20');
-import keys from "./keys";
+import keys from './keys';
 
 /* 
 set cookie base on this user 
@@ -11,7 +11,7 @@ passport.serializeUser((user: any, done: any) => {
     accessToken: user.accesstoken,
     name: user.name,
     pic_url: user.pic_url,
-    email: user.email
+    email: user.email,
   };
 
   done(null, sessionUser);
@@ -32,27 +32,21 @@ passport.use(
       clientID: keys.googleOauth.clientID,
       clientSecret: keys.googleOauth.clientSecret,
       callbackURL: keys.googleOauth.callback,
-      passReqToCallback: true
+      passReqToCallback: true,
     },
-    (
-      request: any,
-      accessToken: any,
-      refreshToken: any,
-      profile: any,
-      done: any
-    ) => {
+    (request: any, accessToken: any, refreshToken: any, profile: any, done: any) => {
       /*save data in session */
       let user = {
         accesstoken: accessToken,
         googleID: profile.id,
         name: profile.displayName,
         pic_url: profile._json.picture,
-        email: profile._json.email
+        email: profile._json.email,
       };
 
       done(null, user);
-    }
-  )
+    },
+  ),
 );
 
 export default passport;

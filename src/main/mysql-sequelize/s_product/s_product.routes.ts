@@ -6,7 +6,6 @@ import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler';
 import { client, redisConnected } from '../../../configs/redis';
 import { cache } from '../../cache.redis/cache.redis.routes';
-import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import menuTypeModel, { MenuType } from '../m_menu_type/m_menu_type.model';
 import menuTypeService from '../m_menu_type/m_menu_type.service';
 import productTypeModel, { ProductType } from '../m_product_type/m_product_type.model';
@@ -16,12 +15,12 @@ import productService from './s_product.service';
 
 const productRouter = Router();
 
-productRouter.get('/getList', verifyToken(), cache('productList'), getList_API());
-productRouter.get('/getOne', verifyToken(), getOne_API());
-productRouter.get('/searchList', verifyToken(), searchList_API());
-productRouter.post('/createOne', verifyToken(), createOne_API());
-productRouter.put('/editOne', verifyToken(), editOne_API());
-productRouter.delete('/deleteList', verifyToken(), deleteList_API());
+productRouter.get('/getList', cache('productList'), getList_API());
+productRouter.get('/getOne', getOne_API());
+productRouter.get('/searchList', searchList_API());
+productRouter.post('/createOne', createOne_API());
+productRouter.put('/editOne', editOne_API());
+productRouter.delete('/deleteList', deleteList_API());
 
 /* ================================================================================== */
 /*
