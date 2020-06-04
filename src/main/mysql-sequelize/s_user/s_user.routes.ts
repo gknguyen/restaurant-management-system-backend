@@ -1,8 +1,9 @@
 import express, { Router } from 'express';
+import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
-import errorHandler from '../../../commons/error.handler/errorHandler';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import { STATUS_CODE } from '../../../commons/constants/keyValues';
+import errorHandler from '../../../commons/errorHandler';
+import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import userTypeModel, { UserType } from '../m_user_type/m_user_type.model';
 import userTypeService from '../m_user_type/m_user_type.service';
 import { User } from './s_user.model';
@@ -12,10 +13,10 @@ const Crypto = require('cryptojs').Crypto;
 
 const userRouter = Router();
 
-userRouter.get('/getList', getList_API());
-userRouter.get('/getOne', getOne_API());
-userRouter.post('/createOne', createOne_API());
-userRouter.put('/editOne', editOne_API());
+userRouter.get('/getList', verifyToken(), getList_API());
+userRouter.get('/getOne', verifyToken(), getOne_API());
+userRouter.post('/createOne', verifyToken(), createOne_API());
+userRouter.put('/editOne', verifyToken(), editOne_API());
 
 /* ================================================================================== */
 /*
@@ -25,7 +26,7 @@ export const getList = async () => {
   const results = {
     code: 0,
     message: '',
-    values: [],
+    values: null,
   } as Results;
 
   try {
@@ -49,19 +50,19 @@ export const getList = async () => {
     })) as User[];
 
     if (userList && userList.length > 0) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get userList successfully';
       results.values = userList;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'userList not found';
-      results.values = userList;
+      results.values = [];
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'user : /getList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -72,7 +73,7 @@ function getList_API() {
       const results = await getList();
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -86,7 +87,7 @@ export const getOne = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: [],
+    values: null,
   } as Results;
 
   try {
@@ -111,22 +112,29 @@ export const getOne = async (requestQuery: any) => {
         'activeStatus',
       ],
       where: { id: userId },
-      include: [{ model: userTypeModel, as: 'userType', attributes: ['id', 'typeName'] }],
+      include: [
+        {
+          model: userTypeModel,
+          as: 'userType',
+          attributes: ['id', 'typeName'],
+        },
+      ],
     })) as User;
 
     if (user) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get user successfully';
       results.values = user;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'user not found';
+      results.values = {};
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'user : /getOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -138,7 +146,7 @@ function getOne_API() {
       const results = await getOne(requestQuery);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -153,14 +161,14 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserId: string | null = loginUser ? loginUser.id : null;
+    const loginUser: Payload = decodedToken.payload;
+    const createUserId: string = loginUser.id;
 
     const userTypeName: string | null = requestBody.userTypeName;
     const username: string | null = requestBody.username;
@@ -211,18 +219,13 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     //   results.message = 'avatar is missing';
     //   return results;
     // }
-    if (!createUserId) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'createUserId is missing';
-      return results;
-    }
 
     const userType = (await userTypeService.getOne({
       where: { typeName: userTypeName },
     })) as UserType;
 
     if (!userType) {
-      results.code = STATUS_CODE.INVALID;
+      results.code = STATUS_CODE.PRECONDITION_FAILED;
       results.message = 'invalid userTypeName';
       return results;
     }
@@ -244,13 +247,13 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       null,
     )) as User;
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'create user successfully';
     results.values = user;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'user : /createOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -263,7 +266,7 @@ function createOne_API() {
       const results = await createOne(requestHeaders, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -278,14 +281,14 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const editUserId: string | null = loginUser ? loginUser.id : null;
+    const loginUser: Payload = decodedToken.payload;
+    const editUserId: string = loginUser.id;
 
     const userId: string | null = requestQuery.userId;
 
@@ -303,11 +306,6 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
     if (!userId) {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'userId is missing';
-      return results;
-    }
-    if (!editUserId) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'editUserId is missing';
       return results;
     }
 
@@ -349,13 +347,13 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
 
     const successFlag = (await userService.putOne(informations, null)) as boolean;
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'update user successfully';
     results.values = successFlag === false ? 'updated' : 'inserted';
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'user : /editOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -369,7 +367,7 @@ function editOne_API() {
       const results = await editOne(requestHeaders, requestQuery, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

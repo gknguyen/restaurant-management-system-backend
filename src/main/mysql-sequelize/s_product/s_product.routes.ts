@@ -1,26 +1,27 @@
 import express, { Router } from 'express';
+import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Op } from 'sequelize';
-import errorHandler from '../../../commons/error.handler/errorHandler';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import { STATUS_CODE } from '../../../commons/constants/keyValues';
+import errorHandler from '../../../commons/errorHandler';
 import { client, redisConnected } from '../../../configs/redis';
 import { cache } from '../../cache.redis/cache.redis.routes';
+import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import menuTypeModel, { MenuType } from '../m_menu_type/m_menu_type.model';
+import menuTypeService from '../m_menu_type/m_menu_type.service';
 import productTypeModel, { ProductType } from '../m_product_type/m_product_type.model';
+import productTypeService from '../m_product_type/m_product_type.service';
 import { Product } from './s_product.model';
 import productService from './s_product.service';
-import productTypeService from '../m_product_type/m_product_type.service';
-import menuTypeService from '../m_menu_type/m_menu_type.service';
 
 const productRouter = Router();
 
-productRouter.get('/getList', cache('productList'), getList_API());
-productRouter.get('/getOne', getOne_API());
-productRouter.get('/searchList', searchList_API());
-productRouter.post('/createOne', createOne_API());
-productRouter.put('/editOne', editOne_API());
-productRouter.delete('/deleteList', deleteList_API());
+productRouter.get('/getList', verifyToken(), cache('productList'), getList_API());
+productRouter.get('/getOne', verifyToken(), getOne_API());
+productRouter.get('/searchList', verifyToken(), searchList_API());
+productRouter.post('/createOne', verifyToken(), createOne_API());
+productRouter.put('/editOne', verifyToken(), editOne_API());
+productRouter.delete('/deleteList', verifyToken(), deleteList_API());
 
 /* ================================================================================== */
 /*
@@ -30,7 +31,7 @@ export const getList = async () => {
   const results = {
     code: 0,
     message: '',
-    values: [],
+    values: null,
   } as Results;
 
   try {
@@ -57,19 +58,19 @@ export const getList = async () => {
         client.setex(redisKey, 3600, productListString);
       }
 
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get productList successfully';
       results.values = productList;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'productList not found';
-      results.values = productList;
+      results.values = [];
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /getList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -80,7 +81,7 @@ function getList_API() {
       const results = await getList();
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -95,7 +96,7 @@ export const getOne = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -125,18 +126,19 @@ export const getOne = async (requestQuery: any) => {
     })) as Product;
 
     if (product) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get product successfully';
       results.values = product;
       return results;
     } else {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'product not found';
+      results.values = {};
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /getOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -146,10 +148,9 @@ function getOne_API() {
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const requestQuery: any = req.query;
       const results = await getOne(requestQuery);
-      console.log(results);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -164,7 +165,7 @@ export const searchList = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -198,7 +199,7 @@ export const searchList = async (requestQuery: any) => {
     })) as Product[];
 
     if (productList && productList.length > 0) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'search productList successfully';
       results.values = productList;
       return results;
@@ -225,7 +226,7 @@ export const searchList = async (requestQuery: any) => {
       })) as Product[];
 
       if (productList && productList.length > 0) {
-        results.code = STATUS_CODE.SUCCESS;
+        results.code = STATUS_CODE.OK;
         results.message = 'search productList successfully';
         results.values = productList;
         return results;
@@ -252,7 +253,7 @@ export const searchList = async (requestQuery: any) => {
         })) as Product[];
 
         if (productList && productList.length > 0) {
-          results.code = STATUS_CODE.SUCCESS;
+          results.code = STATUS_CODE.OK;
           results.message = 'search productList successfully';
           results.values = productList;
           return results;
@@ -274,22 +275,22 @@ export const searchList = async (requestQuery: any) => {
           })) as Product[];
 
           if (productList && productList.length > 0) {
-            results.code = STATUS_CODE.SUCCESS;
+            results.code = STATUS_CODE.OK;
             results.message = 'search productList successfully';
             results.values = productList;
             return results;
           } else {
             results.code = STATUS_CODE.NOT_FOUND;
             results.message = 'search productList failed';
-            results.values = productList;
+            results.values = [];
             return results;
           }
         }
       }
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /searchList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -301,7 +302,7 @@ function searchList_API() {
       const results = await searchList(requestQuery);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -316,15 +317,15 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
     /* get request input headers */
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserId: string | null = loginUser ? loginUser.id : null;
+    const loginUser: Payload = decodedToken.payload;
+    const createUserId: string = loginUser.id;
 
     /* get request input body */
     const productTypeName: string | null = requestBody.productTypeName;
@@ -372,11 +373,6 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       results.message = 'image is missing';
       return results;
     }
-    if (!createUserId) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'createUserId is missing';
-      return results;
-    }
 
     /* get product type id */
     const productType = (await productTypeService.getOne({
@@ -384,7 +380,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     })) as ProductType;
 
     if (!productType) {
-      results.code = STATUS_CODE.INVALID;
+      results.code = STATUS_CODE.PRECONDITION_FAILED;
       results.message = 'invalid productTypeName';
       return results;
     }
@@ -395,7 +391,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     })) as MenuType;
 
     if (!menuType) {
-      results.code = STATUS_CODE.INVALID;
+      results.code = STATUS_CODE.PRECONDITION_FAILED;
       results.message = 'invalid menuTypeName';
       return results;
     }
@@ -421,13 +417,13 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       client.del(redisKey);
     }
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'create product successfully';
     results.values = product;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /createOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -440,7 +436,7 @@ function createOne_API() {
       const results = await createOne(requestHeaders, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -455,17 +451,20 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
+    /* get request input headers */
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const editUserId: string | null = loginUser ? loginUser.id : null;
+    const loginUser: Payload = decodedToken.payload;
+    const editUserId: string = loginUser.id;
 
+    /* get request input query */
     const productId: string | null = requestQuery.productId;
 
+    /* get request input body */
     const productTypeId: string | null = requestBody.productTypeId;
     const menuTypeId: string | null = requestBody.menuTypeId;
     const name: string | null = requestBody.name;
@@ -475,14 +474,10 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
     const description: Text | null = requestBody.description;
     const image: string | null = requestBody.image;
 
+    /* check if mandatory inputs exist or not */
     if (!productId) {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'productId is missing';
-      return results;
-    }
-    if (!editUserId) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'editUserId is missing';
       return results;
     }
 
@@ -522,13 +517,13 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
 
     const successFlag = (await productService.putOne(informations, null)) as boolean;
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'update product successfully';
     results.values = successFlag === false ? 'updated' : 'inserted';
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /editOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -542,7 +537,7 @@ function editOne_API() {
       const results = await editOne(requestHeaders, requestQuery, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -557,7 +552,7 @@ export const deleteList = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -582,13 +577,13 @@ export const deleteList = async (requestQuery: any) => {
       }
     }
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'delete product list successfully';
     results.values = totalSuccessNum;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'product : /deleteList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -600,7 +595,7 @@ function deleteList_API() {
       const results = await deleteList(requestQuery);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

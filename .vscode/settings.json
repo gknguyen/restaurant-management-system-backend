@@ -7,10 +7,6 @@
   },
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "cSpell.ignorePaths": [
     "**/package-lock.json",
     "**/node_modules/**",
@@ -20,5 +16,7 @@
     "**.json"
   ],
   "files.autoSave": "onFocusChange",
-  "cSpell.words": ["oracledb"]
+  "cSpell.words": [
+    "oracledb"
+  ]
 }

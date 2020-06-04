@@ -1,10 +1,10 @@
 import express, { Router } from 'express';
-import errorHandler from '../../commons/error.handler/errorHandler';
+import STATUS_CODE from 'http-status';
 import { Results } from '../../commons/constants/interfaces';
+import errorHandler from '../../commons/errorHandler';
+import userTypeModel from '../mysql-sequelize/m_user_type/m_user_type.model';
 import { User } from '../mysql-sequelize/s_user/s_user.model';
 import userService from '../mysql-sequelize/s_user/s_user.service';
-import userTypeModel from '../mysql-sequelize/m_user_type/m_user_type.model';
-import { STATUS_CODE } from '../../commons/constants/keyValues';
 import authenticationService from './authentication.service';
 
 const authRouter = Router();
@@ -19,7 +19,7 @@ export const login = async (requestBody: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -70,12 +70,12 @@ export const login = async (requestBody: any) => {
         user['loginDateTime'] = new Date();
         await user.save();
 
-        results.code = STATUS_CODE.SUCCESS;
+        results.code = STATUS_CODE.OK;
         results.message = 'login successfully';
         results.values = token;
         return results;
       } else {
-        results.code = STATUS_CODE.INVALID;
+        results.code = STATUS_CODE.PRECONDITION_FAILED;
         results.message = 'password incorrect';
         return results;
       }
@@ -85,8 +85,8 @@ export const login = async (requestBody: any) => {
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = '/login : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -99,7 +99,7 @@ function login_API() {
 
       console.log(results);
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

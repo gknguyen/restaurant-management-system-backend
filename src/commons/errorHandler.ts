@@ -4,8 +4,8 @@ import jsonwebtoken from 'jsonwebtoken';
 import moment from 'moment-timezone';
 import os from 'os';
 import { join } from 'path';
-import { Payload } from '../constants/interfaces';
-import { getFilesizeInBytes } from '../utils/getFileSize';
+import { Payload } from './constants/interfaces';
+import { getFilesizeInBytes } from './utils/getFileSize';
 
 let num = 0;
 
@@ -39,25 +39,25 @@ const errorHandler = (fn: any) => (
         join(__dirname, '/errorLog' + num + '.txt'),
 
         '========================================================' +
-          os.EOL +
-          'date: ' +
-          JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a')) +
-          os.EOL +
-          'API: ' +
-          JSON.stringify(req.baseUrl + req.path) +
-          os.EOL +
-          'error: ' +
-          JSON.stringify(error) +
-          os.EOL +
-          'username: ' +
-          JSON.stringify(userInfo?.username) +
-          os.EOL +
-          'query: ' +
-          JSON.stringify(req.query) +
-          os.EOL +
-          'body: ' +
-          JSON.stringify(req.body) +
-          os.EOL,
+        os.EOL +
+        'date: ' +
+        JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a')) +
+        os.EOL +
+        'API: ' +
+        JSON.stringify(req.baseUrl + req.path) +
+        os.EOL +
+        'error: ' +
+        JSON.stringify(error) +
+        os.EOL +
+        'username: ' +
+        JSON.stringify(userInfo?.username) +
+        os.EOL +
+        'query: ' +
+        JSON.stringify(req.query) +
+        os.EOL +
+        'body: ' +
+        JSON.stringify(req.body) +
+        os.EOL,
 
         (err) => {
           if (err) {

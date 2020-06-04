@@ -1,8 +1,9 @@
 import aws from 'aws-sdk';
 import express, { Router } from 'express';
+import STATUS_CODE from 'http-status';
 import { Results } from '../../commons/constants/interfaces';
-import errorHandler from '../../commons/error.handler/errorHandler';
-import { STATUS_CODE, AWS } from '../../commons/constants/keyValues';
+import { AWS } from '../../commons/constants/keyValues';
+import errorHandler from '../../commons/errorHandler';
 
 const awsS3Router = Router();
 
@@ -21,7 +22,7 @@ export const getSignedUrl = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -54,13 +55,13 @@ export const getSignedUrl = async (requestQuery: any) => {
       ACL: 'public-read',
     });
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'signed URL found';
     results.values = data;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = '/getSignedUrl : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -72,7 +73,7 @@ function getSignedUrl_API() {
       const results = await getSignedUrl(requestQuery);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

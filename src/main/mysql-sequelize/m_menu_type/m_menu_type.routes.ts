@@ -1,16 +1,17 @@
 import express, { Router } from 'express';
-import errorHandler from '../../../commons/error.handler/errorHandler';
-import { Results, Payload } from '../../../commons/constants/interfaces';
+import STATUS_CODE from 'http-status';
+import jsonwebtoken from 'jsonwebtoken';
+import { Payload, Results } from '../../../commons/constants/interfaces';
+import errorHandler from '../../../commons/errorHandler';
+import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import { MenuType } from './m_menu_type.model';
 import menuTypeService from './m_menu_type.service';
-import { STATUS_CODE } from '../../../commons/constants/keyValues';
-import jsonwebtoken from 'jsonwebtoken';
 
 const menuTypeRouter = Router();
 
-menuTypeRouter.get('/getList', getList_API());
-menuTypeRouter.get('/getOne', getOne_API());
-menuTypeRouter.post('/createOne', createOne_API());
+menuTypeRouter.get('/getList', verifyToken(), getList_API());
+menuTypeRouter.get('/getOne', verifyToken(), getOne_API());
+menuTypeRouter.post('/createOne', verifyToken(), createOne_API());
 
 /* ================================================================================== */
 /*
@@ -20,7 +21,7 @@ export const getList = async () => {
   const results = {
     code: 0,
     message: '',
-    values: [],
+    values: null,
   } as Results;
 
   try {
@@ -30,19 +31,19 @@ export const getList = async () => {
     })) as MenuType[];
 
     if (menuTypeList && menuTypeList.length > 0) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get menuTypeList successfully';
       results.values = menuTypeList;
       return results;
     } else {
-      results.code = STATUS_CODE.NOT_FOUND;
+      results.code = STATUS_CODE.OK;
       results.message = 'menuTypeList not found';
       results.values = menuTypeList;
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'menuType : /getList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -53,7 +54,7 @@ function getList_API() {
       const results = await getList();
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -68,7 +69,7 @@ export const getOne = async (requestQuery: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
@@ -86,18 +87,19 @@ export const getOne = async (requestQuery: any) => {
     })) as MenuType;
 
     if (menuType) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get menuType successfully';
       results.values = menuType;
       return results;
     } else {
-      results.code = STATUS_CODE.NOT_FOUND;
+      results.code = STATUS_CODE.OK;
       results.message = 'menuType not found';
+      results.values = {};
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'menuType : /getOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -109,7 +111,7 @@ function getOne_API() {
       const results = await getOne(requestQuery);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -124,25 +126,20 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserId: string | null = loginUser ? loginUser.id : null;
+    const loginUser: Payload = decodedToken.payload;
+    const createUserId: string = loginUser.id;
 
     const typeName: string | null = requestBody.typeName;
 
     if (!typeName) {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'typeName is missing';
-      return results;
-    }
-    if (!createUserId) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'createUserId is missing';
       return results;
     }
 
@@ -154,13 +151,13 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       null,
     )) as MenuType;
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'create menuType successfully';
     results.values = menuType;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'menuType : /createOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -173,7 +170,7 @@ function createOne_API() {
       const results = await createOne(requestHeaders, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

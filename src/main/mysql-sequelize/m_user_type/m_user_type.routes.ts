@@ -1,15 +1,16 @@
 import express, { Router } from 'express';
+import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
-import errorHandler from '../../../commons/error.handler/errorHandler';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import { STATUS_CODE } from '../../../commons/constants/keyValues';
+import errorHandler from '../../../commons/errorHandler';
+import { verifyToken } from '../../verifyToken/verifyToken.routes';
 import { UserType } from './m_user_type.model';
 import userTypeService from './m_user_type.service';
 
 const userTypeRouter = Router();
 
-userTypeRouter.get('/getList', getList_API());
-userTypeRouter.post('/createOne', createOne_API());
+userTypeRouter.get('/getList', verifyToken(), getList_API());
+userTypeRouter.post('/createOne', verifyToken(), createOne_API());
 
 /* ================================================================================== */
 /*
@@ -19,7 +20,7 @@ export const getList = async () => {
   const results = {
     code: 0,
     message: '',
-    values: [],
+    values: null,
   } as Results;
 
   try {
@@ -28,18 +29,19 @@ export const getList = async () => {
     })) as UserType[];
 
     if (userTypeList && userTypeList.length > 0) {
-      results.code = STATUS_CODE.SUCCESS;
+      results.code = STATUS_CODE.OK;
       results.message = 'get userTypeList successfully';
       results.values = userTypeList;
       return results;
     } else {
-      results.code = STATUS_CODE.NOT_FOUND;
+      results.code = STATUS_CODE.OK;
       results.message = 'userTypeList not found';
+      results.values = [];
       return results;
     }
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'userType : /getList : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -50,7 +52,7 @@ function getList_API() {
       const results = await getList();
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },
@@ -65,14 +67,14 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
   const results = {
     code: 0,
     message: '',
-    values: {},
+    values: null,
   } as Results;
 
   try {
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-    const loginUser: Payload | null = decodedToken ? decodedToken.payload : null;
-    const createUserName: string | null = loginUser ? loginUser.username : null;
+    const loginUser: Payload = decodedToken.payload;
+    const createUserId: string = loginUser.id;
 
     const typeName: string | null = requestBody.typeName;
 
@@ -81,27 +83,22 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       results.message = 'typeName is missing';
       return results;
     }
-    if (!createUserName) {
-      results.code = STATUS_CODE.NOT_FOUND;
-      results.message = 'createUserName is missing';
-      return results;
-    }
 
     const userType = (await userTypeService.postOne(
       {
         typeName: typeName,
-        createUserName: createUserName,
+        createUserId: createUserId,
       },
       null,
     )) as UserType;
 
-    results.code = STATUS_CODE.SUCCESS;
+    results.code = STATUS_CODE.OK;
     results.message = 'create 1 userType successfully';
     results.values = userType;
     return results;
   } catch (err) {
-    results.code = STATUS_CODE.SERVER_ERROR;
-    results.message = 'userType : /createOne : ' + err.toString();
+    results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+    results.message = err.toString();
     return results;
   }
 };
@@ -114,7 +111,7 @@ function createOne_API() {
       const results = await createOne(requestHeaders, requestBody);
 
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.SUCCESS) {
+      if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
     },

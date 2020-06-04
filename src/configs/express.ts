@@ -2,18 +2,18 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
-import express, { json, urlencoded } from 'express';
+import express, { json } from 'express';
 import fs from 'fs';
 import helmet from 'helmet';
 import logger from 'morgan';
+import os from 'os';
 import passport from 'passport';
 import path, { join } from 'path';
-import keys from '../configs/keys';
-import router from './routes';
-import authRouter from '../main/authentication/authentication.routes';
-import awsS3Router from '../main/amazon.S3/amazon.S3.routes';
 import { getFilesizeInBytes } from '../commons/utils/getFileSize';
-import os from 'os';
+import keys from '../configs/keys';
+import awsS3Router from '../main/amazon.S3/amazon.S3.routes';
+import authRouter from '../main/authentication/authentication.routes';
+import router from './routes';
 
 let num = 0;
 
@@ -25,6 +25,10 @@ loadViews();
 
 export default app;
 
+/* ================================================================================== */
+/*
+functions
+*/
 function loadRoutes() {
   app.use('/api', router);
   app.use('/auth', authRouter);
@@ -56,25 +60,34 @@ function loadConfigs() {
   app.use(
     logger(
       '================================================================================================================' +
-      os.EOL +
-      'remote-addr: ' + ':remote-addr' +
-      os.EOL +
-      'remote-user: ' + ':remote-user' +
-      os.EOL +
-      'date: ' + '[:date[clf]]' +
-      os.EOL +
-      'method: ' + '":method :url HTTP/:http-version"' +
-      os.EOL +
-      'status: ' + ':status :res[content-length]' +
-      os.EOL +
-      'referrer: ' + '":referrer"' +
-      os.EOL +
-      'user-agent: ' + '":user-agent"' +
-      os.EOL +
-      'req[query]: ' + ':req[query]' +
-      os.EOL +
-      'req[body]: ' + ':req[body]' +
-      os.EOL,
+        os.EOL +
+        'remote-addr: ' +
+        ':remote-addr' +
+        os.EOL +
+        'remote-user: ' +
+        ':remote-user' +
+        os.EOL +
+        'date: ' +
+        '[:date[clf]]' +
+        os.EOL +
+        'method: ' +
+        '":method :url HTTP/:http-version"' +
+        os.EOL +
+        'status: ' +
+        ':status :res[content-length]' +
+        os.EOL +
+        'referrer: ' +
+        '":referrer"' +
+        os.EOL +
+        'user-agent: ' +
+        '":user-agent"' +
+        os.EOL +
+        'req[query]: ' +
+        ':req[query]' +
+        os.EOL +
+        'req[body]: ' +
+        ':req[body]' +
+        os.EOL,
       {
         stream: accessLogStream,
       },

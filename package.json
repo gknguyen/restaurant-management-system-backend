@@ -31,6 +31,7 @@
     "googleapis": "^48.0.0",
     "helmet": "^3.22.0",
     "http": "0.0.0",
+    "http-status": "^1.4.2",
     "ldapts": "^2.2.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
