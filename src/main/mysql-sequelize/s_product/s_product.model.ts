@@ -1,8 +1,7 @@
-import { BuildOptions, DataTypes, Model, UUIDV4 } from "sequelize";
-import sequelize from "../../../configs/sequelize";
-import menuTypeModel from "../m_menu_type/m_menu_type.model";
-import productTypeModel from "../m_product_type/m_product_type.model";
-
+import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
+import sequelize from '../../../configs/sequelize';
+import menuTypeModel from '../m_menu_type/m_menu_type.model';
+import productTypeModel from '../m_product_type/m_product_type.model';
 
 export interface Product extends Model {
   readonly id: string;
@@ -28,7 +27,7 @@ type ModelStatic = typeof Model & {
 };
 
 const productModel = sequelize.define(
-  "s_product",
+  's_product',
   {
     id: {
       type: DataTypes.UUID,
@@ -39,14 +38,14 @@ const productModel = sequelize.define(
       type: DataTypes.UUID,
       references: {
         model: productTypeModel,
-        key: "id",
+        key: 'id',
       },
     },
     menuTypeId: {
       type: DataTypes.UUID,
       references: {
         model: menuTypeModel,
-        key: "id",
+        key: 'id',
       },
     },
     name: {
@@ -82,35 +81,35 @@ const productModel = sequelize.define(
     },
   },
   {
-    createdAt: "createDateTime",
-    updatedAt: "editDateTime",
-  }
+    createdAt: 'createDateTime',
+    updatedAt: 'editDateTime',
+  },
 ) as ModelStatic;
 
-/* association with product type table */
+/** association with product type table */
 productTypeModel.hasMany(productModel, {
-  sourceKey: "id",
-  foreignKey: "productTypeId",
-  as: "product",
+  sourceKey: 'id',
+  foreignKey: 'productTypeId',
+  as: 'product',
 });
 productModel.belongsTo(productTypeModel, {
-  targetKey: "id",
-  foreignKey: "productTypeId",
-  as: "productType",
-  onDelete: "CASCADE",
+  targetKey: 'id',
+  foreignKey: 'productTypeId',
+  as: 'productType',
+  onDelete: 'CASCADE',
 });
 
-/* association with menu type table */
+/** association with menu type table */
 menuTypeModel.hasMany(productModel, {
-  sourceKey: "id",
-  foreignKey: "menuTypeId",
-  as: "product",
+  sourceKey: 'id',
+  foreignKey: 'menuTypeId',
+  as: 'product',
 });
 productModel.belongsTo(menuTypeModel, {
-  targetKey: "id",
-  foreignKey: "menuTypeId",
-  as: "menuType",
-  onDelete: "CASCADE",
+  targetKey: 'id',
+  foreignKey: 'menuTypeId',
+  as: 'menuType',
+  onDelete: 'CASCADE',
 });
 
 export default productModel;

@@ -1,6 +1,6 @@
-import { BuildOptions, DataTypes, Model, UUIDV4 } from "sequelize";
-import sequelize from "../../../configs/sequelize";
-import userTypeModel from "../m_user_type/m_user_type.model";
+import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
+import sequelize from '../../../configs/sequelize';
+import userTypeModel from '../m_user_type/m_user_type.model';
 
 export interface User extends Model {
   readonly id: string;
@@ -27,7 +27,7 @@ type ModelStatic = typeof Model & {
 };
 
 const userModel = sequelize.define(
-  "s_user",
+  's_user',
   {
     id: {
       type: DataTypes.UUID,
@@ -38,7 +38,7 @@ const userModel = sequelize.define(
       type: DataTypes.UUID,
       references: {
         model: userTypeModel,
-        key: "id",
+        key: 'id',
       },
     },
     username: {
@@ -86,22 +86,22 @@ const userModel = sequelize.define(
     },
   },
   {
-    createdAt: "createDateTime",
-    updatedAt: "editDateTime",
-  }
+    createdAt: 'createDateTime',
+    updatedAt: 'editDateTime',
+  },
 ) as ModelStatic;
 
-/* association with user type table */
+/** association with user type table */
 userTypeModel.hasMany(userModel, {
-  sourceKey: "id",
-  foreignKey: "userTypeId",
-  as: "user",
+  sourceKey: 'id',
+  foreignKey: 'userTypeId',
+  as: 'user',
 });
 userModel.belongsTo(userTypeModel, {
-  targetKey: "id",
-  foreignKey: "userTypeId",
-  as: "userType",
-  onDelete: "CASCADE",
+  targetKey: 'id',
+  foreignKey: 'userTypeId',
+  as: 'userType',
+  onDelete: 'CASCADE',
 });
 
 export default userModel;

@@ -9,14 +9,12 @@
   "editor.formatOnSave": true,
   "cSpell.ignorePaths": [
     "**/package-lock.json",
-    "**/node_modules/**",
-    "**/vscode-extension/**",
-    "**/.git/objects/**",
+    "**/node_modules/***",
+    "**/vscode-extension/***",
+    "**/.git/objects/***",
     ".vscode",
     "**.json"
   ],
   "files.autoSave": "onFocusChange",
-  "cSpell.words": [
-    "oracledb"
-  ]
+  "cSpell.words": ["oracledb"]
 }

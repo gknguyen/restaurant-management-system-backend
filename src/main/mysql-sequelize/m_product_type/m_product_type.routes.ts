@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler';
+import errorHandler from '../../../commons/errorHandler/errorHandler';
 import { ProductType } from './m_product_type.model';
 import productTypeService from './m_product_type.service';
 
@@ -12,8 +12,8 @@ productTypeRouter.get('/getList', getList_API());
 productTypeRouter.get('/getOne', getOne_API());
 productTypeRouter.post('/createOne', createOne_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get product type list
 */
 export const getList = async () => {
@@ -60,8 +60,8 @@ function getList_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get product type by product type name
 */
 export const getOne = async (requestQuery: any) => {
@@ -117,8 +117,8 @@ function getOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 create 1 product type
 */
 export const createOne = async (requestHeaders: any, requestBody: any) => {

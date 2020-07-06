@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jsonwebtoken from 'jsonwebtoken';
-import RestfulService from '../../../commons/restful';
+import { RestfulService } from '../../../commons/constants/interfaces';
 import RestService from '../../../commons/restful-service';
 import userModel, { User } from './s_user.model';
 import { Payload } from '../../../commons/constants/interfaces';
@@ -16,7 +16,7 @@ class UserService implements RestfulService {
     this.restService = new RestService(userModel);
   }
 
-  /* post */
+  /** post */
   postOne(data: any, condition: any) {
     return this.restService.postOne(data, condition);
   }
@@ -24,7 +24,7 @@ class UserService implements RestfulService {
     return this.restService.postAll(data, condition);
   }
 
-  /* put */
+  /** put */
   putOne(data: any, condition: any) {
     return this.restService.putOne(data, condition);
   }
@@ -32,7 +32,7 @@ class UserService implements RestfulService {
     return this.restService.putAll(data, condition);
   }
 
-  /* get */
+  /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);
   }
@@ -40,7 +40,7 @@ class UserService implements RestfulService {
     return this.restService.getAll(condition);
   }
 
-  /* delete */
+  /** delete */
   delete(condition: any) {
     return this.restService.delete(condition);
   }

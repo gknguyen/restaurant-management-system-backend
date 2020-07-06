@@ -4,8 +4,9 @@ import jsonwebtoken from 'jsonwebtoken';
 import moment from 'moment-timezone';
 import os from 'os';
 import { join } from 'path';
-import { Payload } from './constants/interfaces';
-import { getFilesizeInBytes } from './utils/getFileSize';
+import { Payload } from '../constants/interfaces';
+import { getFilesizeInBytes } from '../utils';
+import { MOMENT_TIMEZONE, MOMENT_LOCALE, ERROR_LOG_FILE_MAX_SIZE } from '../constants/env';
 
 let num = 0;
 
@@ -23,18 +24,18 @@ const errorHandler = (fn: any) => (
 
       console.error('errorHandler: ', error.toString());
 
-      /* get current using moment.js */
-      const jaMoment = moment().tz('Asia/Ho_Chi_Minh').locale('vi');
+      /** get current using moment.js */
+      const jaMoment = moment().tz(MOMENT_TIMEZONE).locale(MOMENT_LOCALE);
       console.log('jaMoment: ', jaMoment.format('YYYY-MM-DD, h:mm:ss a'));
 
-      /* check file size */
+      /** check file size */
       let fileSize = getFilesizeInBytes(join(__dirname, '/errorHandler/errorLog' + num + '.txt'));
-      while (fileSize > 10) {
+      while (fileSize > ERROR_LOG_FILE_MAX_SIZE) {
         num++;
         fileSize = getFilesizeInBytes(join(__dirname, '/errorHandler/errorLog' + num + '.txt'));
       }
 
-      /* add error to file errorLog.txt */
+      /** add error to file errorLog.txt */
       fs.appendFile(
         join(__dirname, '/errorHandler/errorLog' + num + '.txt'),
 

@@ -3,7 +3,7 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler';
+import errorHandler from '../../../commons/errorHandler/errorHandler';
 import { client, redisConnected } from '../../../configs/redis';
 import { cache } from '../../cache.redis/cache.redis.routes';
 import menuTypeModel, { MenuType } from '../m_menu_type/m_menu_type.model';
@@ -22,8 +22,8 @@ productRouter.post('/createOne', createOne_API());
 productRouter.put('/editOne', editOne_API());
 productRouter.delete('/deleteList', deleteList_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get product list
 */
 export const getList = async () => {
@@ -87,8 +87,8 @@ function getList_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get 1 product by id
 */
 export const getOne = async (requestQuery: any) => {
@@ -156,8 +156,8 @@ function getOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 search product list
 */
 export const searchList = async (requestQuery: any) => {
@@ -308,8 +308,8 @@ function searchList_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 create 1 product
 */
 export const createOne = async (requestHeaders: any, requestBody: any) => {
@@ -320,13 +320,13 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
   } as Results;
 
   try {
-    /* get request input headers */
+    /** get request input headers */
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload = decodedToken.payload;
     const createUserId: string = loginUser.id;
 
-    /* get request input body */
+    /** get request input body */
     const productTypeName: string | null = requestBody.productTypeName;
     const menuTypeName: string | null = requestBody.menuTypeName;
     const name: string | null = requestBody.name;
@@ -336,7 +336,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
     const description: Text | null = requestBody.description;
     const image: string | null = requestBody.image;
 
-    /* check if mandatory inputs exist or not */
+    /** check if mandatory inputs exist or not */
     if (!productTypeName) {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'productTypeName is missing';
@@ -373,7 +373,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       return results;
     }
 
-    /* get product type id */
+    /** get product type id */
     const productType = (await productTypeService.getOne({
       where: { typeName: productTypeName },
     })) as ProductType;
@@ -384,7 +384,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       return results;
     }
 
-    /* get menu type id */
+    /** get menu type id */
     const menuType = (await menuTypeService.getOne({
       where: { typeName: menuTypeName },
     })) as MenuType;
@@ -395,7 +395,7 @@ export const createOne = async (requestHeaders: any, requestBody: any) => {
       return results;
     }
 
-    /* create product */
+    /** create product */
     const product = (await productService.postOne(
       {
         productTypeId: productType.id,
@@ -442,8 +442,8 @@ function createOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 update 1 product
 */
 export const editOne = async (requestHeaders: any, requestQuery: any, requestBody: any) => {
@@ -454,16 +454,16 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
   } as Results;
 
   try {
-    /* get request input headers */
+    /** get request input headers */
     const token: any = requestHeaders.token;
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const loginUser: Payload = decodedToken.payload;
     const editUserId: string = loginUser.id;
 
-    /* get request input query */
+    /** get request input query */
     const productId: string | null = requestQuery.productId;
 
-    /* get request input body */
+    /** get request input body */
     const productTypeId: string | null = requestBody.productTypeId;
     const menuTypeId: string | null = requestBody.menuTypeId;
     const name: string | null = requestBody.name;
@@ -473,7 +473,7 @@ export const editOne = async (requestHeaders: any, requestQuery: any, requestBod
     const description: Text | null = requestBody.description;
     const image: string | null = requestBody.image;
 
-    /* check if mandatory inputs exist or not */
+    /** check if mandatory inputs exist or not */
     if (!productId) {
       results.code = STATUS_CODE.NOT_FOUND;
       results.message = 'productId is missing';
@@ -543,8 +543,8 @@ function editOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 delete product list
 */
 export const deleteList = async (requestQuery: any) => {

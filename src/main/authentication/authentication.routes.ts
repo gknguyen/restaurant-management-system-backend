@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import { Results } from '../../commons/constants/interfaces';
-import errorHandler from '../../commons/errorHandler';
+import errorHandler from '../../commons/errorHandler/errorHandler';
 import userTypeModel from '../mysql-sequelize/m_user_type/m_user_type.model';
 import { User } from '../mysql-sequelize/s_user/s_user.model';
 import userService from '../mysql-sequelize/s_user/s_user.service';
@@ -11,8 +11,8 @@ const authRouter = Router();
 
 authRouter.post('/login', login_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 login into application
 */
 export const login = async (requestBody: any) => {

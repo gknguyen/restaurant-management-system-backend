@@ -1,6 +1,6 @@
-import RestService from "../../../commons/restful-service";
-import RestfulService from "../../../commons/restful";
-import productTypeModel from "./m_product_type.model";
+import RestService from '../../../commons/restful-service';
+import { RestfulService } from '../../../commons/constants/interfaces';
+import productTypeModel from './m_product_type.model';
 
 class ProductTypeService implements RestfulService {
   private restService: RestService;
@@ -9,7 +9,7 @@ class ProductTypeService implements RestfulService {
     this.restService = new RestService(productTypeModel);
   }
 
-  /* post */
+  /** post */
   postOne(data: any, condition: any) {
     return this.restService.postOne(data, condition);
   }
@@ -17,7 +17,7 @@ class ProductTypeService implements RestfulService {
     return this.restService.postAll(data, condition);
   }
 
-  /* put */
+  /** put */
   putOne(data: any, condition: any) {
     return this.restService.putOne(data, condition);
   }
@@ -25,7 +25,7 @@ class ProductTypeService implements RestfulService {
     return this.restService.putAll(data, condition);
   }
 
-  /* get */
+  /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);
   }
@@ -33,7 +33,7 @@ class ProductTypeService implements RestfulService {
     return this.restService.getAll(condition);
   }
 
-  /* delete */
+  /** delete */
   delete(condition: any) {
     return this.restService.delete(condition);
   }

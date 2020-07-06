@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler';
+import errorHandler from '../../../commons/errorHandler/errorHandler';
 import { MenuType } from './m_menu_type.model';
 import menuTypeService from './m_menu_type.service';
 
@@ -12,8 +12,8 @@ menuTypeRouter.get('/getList', getList_API());
 menuTypeRouter.get('/getOne', getOne_API());
 menuTypeRouter.post('/createOne', createOne_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get menu type list
 */
 export const getList = async () => {
@@ -60,8 +60,8 @@ function getList_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get menu type by menu type name
 */
 export const getOne = async (requestQuery: any) => {
@@ -117,8 +117,8 @@ function getOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get menu type by menu type name
 */
 export const createOne = async (requestHeaders: any, requestBody: any) => {

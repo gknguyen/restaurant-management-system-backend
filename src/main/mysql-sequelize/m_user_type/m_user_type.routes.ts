@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler';
+import errorHandler from '../../../commons/errorHandler/errorHandler';
 import { UserType } from './m_user_type.model';
 import userTypeService from './m_user_type.service';
 
@@ -11,8 +11,8 @@ const userTypeRouter = Router();
 userTypeRouter.get('/getList', getList_API());
 userTypeRouter.post('/createOne', createOne_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get user type list
 */
 export const getList = async () => {
@@ -58,8 +58,8 @@ function getList_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 create 1 user type
 */
 export const createOne = async (requestHeaders: any, requestBody: any) => {

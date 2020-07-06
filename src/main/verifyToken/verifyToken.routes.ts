@@ -1,7 +1,7 @@
 import express from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import STATUS_CODE from 'http-status';
-import errorHandler from '../../commons/errorHandler';
+import errorHandler from '../../commons/errorHandler/errorHandler';
 import { Results, Payload } from '../../commons/constants/interfaces';
 
 export const getVerify = async (token: string | null) => {
@@ -18,7 +18,7 @@ export const getVerify = async (token: string | null) => {
       return results;
     }
 
-    /* decode token to get user data */
+    /** decode token to get user data */
     const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
     const userInfo: Payload | null = decodedToken ? decodedToken.payload : null;
 

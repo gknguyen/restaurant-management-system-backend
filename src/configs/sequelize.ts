@@ -1,16 +1,22 @@
-import debug from 'debug';
 import { Sequelize } from 'sequelize';
-
-const logger = debug('restaurant_management_system:server');
+import {
+  ORM_DATABASES,
+  ORM_USERNAME,
+  ORM_PASSWORD,
+  ORM_HOST,
+  ORM_PORT,
+  ORM_DIALECT,
+  ORM_LOGGING,
+} from '../commons/constants/env';
 
 const sequelize = new Sequelize({
-  database: 'restaurant_management_system',
-  username: 'gknguyen',
-  password: '123jkndsjkn3242k5453bkj2',
-  host: 'mysql-databases.cb9ydlohbhb0.ap-southeast-1.rds.amazonaws.com',
-  port: 3306,
-  dialect: 'mysql',
-  logging: false,
+  database: ORM_DATABASES,
+  username: ORM_USERNAME,
+  password: ORM_PASSWORD,
+  host: ORM_HOST,
+  port: ORM_PORT,
+  dialect: ORM_DIALECT,
+  logging: ORM_LOGGING,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
@@ -18,13 +24,6 @@ const sequelize = new Sequelize({
   },
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    logger('=> Connected to MySQL');
-  })
-  .catch((err: Error) => {
-    return console.error('Unable to connect to the database:', err);
-  });
+sequelize.sync({ alter: false, force: false });
 
 export default sequelize;

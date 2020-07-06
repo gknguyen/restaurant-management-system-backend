@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler';
+import errorHandler from '../../../commons/errorHandler/errorHandler';
 import userTypeModel, { UserType } from '../m_user_type/m_user_type.model';
 import userTypeService from '../m_user_type/m_user_type.service';
 import { User } from './s_user.model';
@@ -17,8 +17,8 @@ userRouter.get('/getOne', getOne_API());
 userRouter.post('/createOne', createOne_API());
 userRouter.put('/editOne', editOne_API());
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get user list
 */
 export const getList = async () => {
@@ -78,8 +78,8 @@ function getList_API() {
     },
   );
 }
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 get 1 user
 */
 export const getOne = async (requestQuery: any) => {
@@ -152,8 +152,8 @@ function getOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 create 1 user
 */
 export const createOne = async (requestHeaders: any, requestBody: any) => {
@@ -272,8 +272,8 @@ function createOne_API() {
   );
 }
 
-/* ================================================================================== */
-/*
+/** ================================================================================== */
+/**
 update 1 user
 */
 export const editOne = async (requestHeaders: any, requestQuery: any, requestBody: any) => {

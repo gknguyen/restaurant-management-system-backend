@@ -1,7 +1,8 @@
-import RedisClient from "redis";
+import RedisClient from 'redis';
+import { REDIS_PORT } from '../commons/constants/env';
 // import RedisClustr from "redis-clustr";
 
-export const client = RedisClient.createClient(6379);
+export const client = RedisClient.createClient(REDIS_PORT);
 // export const client = new RedisClustr({
 //   servers: [
 //     {
@@ -17,10 +18,10 @@ export const client = RedisClient.createClient(6379);
 // });
 
 export let redisConnected = false;
-client.on("connect", () => {
+client.on('connect', () => {
   redisConnected = true;
-  console.log("Redis client connected");
+  console.log('Redis client connected');
 });
-client.on("error", () => {
+client.on('error', () => {
   redisConnected = false;
 });
