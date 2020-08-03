@@ -1,6 +1,6 @@
 import RestService from '../../../commons/restful-service';
 import { RestfulService } from '../../../commons/constants/interfaces';
-import menuTypeModel from '../m_menu_type/m_menu_type.model';
+import menuTypeModel from './m_menu_type.model';
 
 class MenuTypeService implements RestfulService {
   private restService: RestService;

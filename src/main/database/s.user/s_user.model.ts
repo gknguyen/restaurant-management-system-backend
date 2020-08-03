@@ -1,6 +1,6 @@
 import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
 import sequelize from '../../../configs/sequelize';
-import userTypeModel from '../m_user_type/m_user_type.model';
+import userTypeModel from '../m.user.type/m_user_type.model';
 
 export interface User extends Model {
   readonly id: string;

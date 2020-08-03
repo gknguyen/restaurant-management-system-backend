@@ -3,8 +3,8 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler/errorHandler';
-import userTypeModel, { UserType } from '../m_user_type/m_user_type.model';
-import userTypeService from '../m_user_type/m_user_type.service';
+import userTypeModel, { UserType } from '../m.user.type/m_user_type.model';
+import userTypeService from '../m.user.type/m_user_type.service';
 import { User } from './s_user.model';
 import userService from './s_user.service';
 
@@ -78,6 +78,7 @@ function getList_API() {
     },
   );
 }
+
 /** ================================================================================== */
 /**
 get 1 user

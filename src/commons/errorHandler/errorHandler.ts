@@ -41,23 +41,17 @@ const errorHandler = (fn: any) => (
 
         '========================================================' +
           os.EOL +
-          'date: ' +
-          JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a')) +
+          `date: ${JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a'))}` +
           os.EOL +
-          'API: ' +
-          JSON.stringify(req.baseUrl + req.path) +
+          `API: ${JSON.stringify(req.baseUrl + req.path)}` +
           os.EOL +
-          'error: ' +
-          JSON.stringify(error) +
+          `error: ${JSON.stringify(error)}` +
           os.EOL +
-          'username: ' +
-          JSON.stringify(userInfo?.username) +
+          `username: ${JSON.stringify(userInfo?.username)}` +
           os.EOL +
-          'query: ' +
-          JSON.stringify(req.query) +
+          `query: ${JSON.stringify(req.query)}` +
           os.EOL +
-          'body: ' +
-          JSON.stringify(req.body) +
+          `body: ${JSON.stringify(req.body)}` +
           os.EOL,
 
         (err) => {

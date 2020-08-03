@@ -10,10 +10,9 @@ import os from 'os';
 import passport from 'passport';
 import path, { join } from 'path';
 import { getFilesizeInBytes } from '../commons/utils';
-import awsS3Router from '../main/amazon.S3/amazon.S3.routes';
-import authRouter from '../main/authentication/authentication.routes';
-import { verifyToken } from '../main/verifyToken/verifyToken.routes';
-import apiRouter from './routes';
+import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
+import authRouter, { verifyToken } from '../main/api/general/authentication/authentication.routes';
+import apiRouter from '../main/api/routes';
 import { ACCESS_LOG_FILE_MAX_SIZE, NODE_ENV } from '../commons/constants/env';
 
 let num = 0;
@@ -53,41 +52,30 @@ function loadConfigs() {
 
   const accessLogStream = fs.createWriteStream(
     path.join(__dirname, '/accessLog/access' + num + '.log'),
-    {
-      flags: 'a',
-    },
+    { flags: 'a' },
   );
 
   app.use(
     morgan(
       '============================================================================================' +
         os.EOL +
-        'remote-addr: ' +
-        ':remote-addr' +
+        'remote-addr: :remote-addr' +
         os.EOL +
-        'remote-user: ' +
-        ':remote-user' +
+        'remote-user: :remote-user' +
         os.EOL +
-        'date: ' +
-        '[:date[clf]]' +
+        'date: [:date[clf]]' +
         os.EOL +
-        'method: ' +
-        '":method :url HTTP/:http-version"' +
+        'method: ":method :url HTTP/:http-version"' +
         os.EOL +
-        'status: ' +
-        ':status :res[content-length]' +
+        'status: :status :res[content-length]' +
         os.EOL +
-        'referrer: ' +
-        '":referrer"' +
+        'referrer: ":referrer"' +
         os.EOL +
-        'user-agent: ' +
-        '":user-agent"' +
+        'user-agent: ":user-agent"' +
         os.EOL +
-        'req[query]: ' +
-        ':req[query]' +
+        'req[query]: :req[query]' +
         os.EOL +
-        'req[body]: ' +
-        ':req[body]' +
+        'req[body]: :req[body]' +
         os.EOL,
       {
         stream: accessLogStream,

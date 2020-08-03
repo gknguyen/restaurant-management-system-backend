@@ -5,17 +5,16 @@ import { Op } from 'sequelize';
 import { Payload, Results } from '../../../commons/constants/interfaces';
 import errorHandler from '../../../commons/errorHandler/errorHandler';
 import { client, redisConnected } from '../../../configs/redis';
-import { cache } from '../../cache.redis/cache.redis.routes';
-import menuTypeModel, { MenuType } from '../m_menu_type/m_menu_type.model';
-import menuTypeService from '../m_menu_type/m_menu_type.service';
-import productTypeModel, { ProductType } from '../m_product_type/m_product_type.model';
-import productTypeService from '../m_product_type/m_product_type.service';
+import menuTypeModel, { MenuType } from '../m.menu.type/m_menu_type.model';
+import menuTypeService from '../m.menu.type/m_menu_type.service';
+import productTypeModel, { ProductType } from '../m.product.type/m_product_type.model';
+import productTypeService from '../m.product.type/m_product_type.service';
 import { Product } from './s_product.model';
 import productService from './s_product.service';
 
 const productRouter = Router();
 
-productRouter.get('/getList', cache('productList'), getList_API());
+productRouter.get('/getList', getList_API());
 productRouter.get('/getOne', getOne_API());
 productRouter.get('/searchList', searchList_API());
 productRouter.post('/createOne', createOne_API());
