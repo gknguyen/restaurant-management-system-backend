@@ -12,7 +12,7 @@ import path, { join } from 'path';
 import { getFilesizeInBytes } from '../commons/utils';
 import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
 import authRouter, { verifyToken } from '../main/api/general/authentication/authentication.routes';
-import apiRouter from '../main/api/routes';
+import apiRouter from './routes';
 import { ACCESS_LOG_FILE_MAX_SIZE, NODE_ENV } from '../commons/constants/env';
 
 let num = 0;
