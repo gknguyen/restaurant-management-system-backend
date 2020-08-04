@@ -3,7 +3,7 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../commons/errorHandler';
 import { client, redisConnected } from '../../../configs/redis';
 import menuTypeModel, { MenuType } from '../m.menu.type/m_menu_type.model';
 import menuTypeService from '../m.menu.type/m_menu_type.service';

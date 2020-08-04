@@ -1,7 +1,7 @@
 import express from 'express';
 import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
-import errorHandler from '../../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../../commons/errorHandler';
 import { client, redisConnected } from '../../../../configs/redis';
 
 /** ================================================================================== */

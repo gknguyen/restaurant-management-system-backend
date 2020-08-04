@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload, Results } from '../../../commons/constants/interfaces';
-import errorHandler from '../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../commons/errorHandler';
 import { ProductType } from './m_product_type.model';
 import productTypeService from './m_product_type.service';
 

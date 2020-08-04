@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
-import errorHandler from '../../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../../commons/errorHandler';
 import productController from './product.controllers';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';

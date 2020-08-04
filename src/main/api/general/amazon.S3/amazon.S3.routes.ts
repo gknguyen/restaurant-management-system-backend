@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import multer from 'multer';
-import errorHandler from '../../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../../commons/errorHandler';
 import amazonS3nController from './amazon.S3.controllers';
 
 const uploadMulter = multer();

@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';
-import errorHandler from '../../../../commons/errorHandler/errorHandler';
+import errorHandler from '../../../../commons/errorHandler';
 import userController from './user.controllers';
 
 const userScreenRouter = Router();
