@@ -44,14 +44,14 @@ function loadViews() {
 
 function loadConfigs() {
   /** check file size */
-  let fileSize = getFilesizeInBytes(join(__dirname, '/accessLogs/access' + num + '.log'));
+  let fileSize = getFilesizeInBytes(join(__dirname, `/accessLogs/access${num}.log`));
   while (fileSize > ACCESS_LOG_FILE_MAX_SIZE) {
     num++;
-    fileSize = getFilesizeInBytes(join(__dirname, '/accessLogs/access' + num + '.log'));
+    fileSize = getFilesizeInBytes(join(__dirname, `/accessLogs/access${num}.log`));
   }
 
   const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, '/accessLogs/access' + num + '.log'),
+    path.join(__dirname, `/accessLogs/access${num}.log`),
     { flags: 'a' },
   );
 

@@ -29,15 +29,15 @@ const errorHandler = (fn: any) => (
       console.log('jaMoment: ', jaMoment.format('YYYY-MM-DD, h:mm:ss a'));
 
       /** check file size */
-      let fileSize = getFilesizeInBytes(join(__dirname, '/errorLogs/errorLog' + num + '.txt'));
+      let fileSize = getFilesizeInBytes(join(__dirname, `/errorLogs/errorLog${num}.txt`));
       while (fileSize > ERROR_LOG_FILE_MAX_SIZE) {
         num++;
-        fileSize = getFilesizeInBytes(join(__dirname, '/errorLogs/errorLog' + num + '.txt'));
+        fileSize = getFilesizeInBytes(join(__dirname, `/errorLogs/errorLog${num}.txt`));
       }
 
       /** add error to file errorLog.txt */
       fs.appendFile(
-        join(__dirname, '/errorLogs/errorLog' + num + '.txt'),
+        join(__dirname, `/errorLogs/errorLog${num}.txt`),
 
         '========================================================' +
           os.EOL +

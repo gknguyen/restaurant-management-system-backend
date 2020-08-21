@@ -46,10 +46,7 @@ class AuthenticationController {
   /**
   login into application
   */
-  login = async (
-    loginUsername: string | null | undefined,
-    loginPassword: string | null | undefined,
-  ) => {
+  login = async (loginUsername: string | null | undefined, loginPassword: string | null | undefined) => {
     const results = {
       code: 0,
       message: '',
@@ -57,8 +54,6 @@ class AuthenticationController {
     } as Results;
 
     try {
-      // const loginUsername: string | null = requestBody.username;
-      // const loginPassword: string | null = requestBody.password;
       if (!loginUsername) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'loginUsername is missing';

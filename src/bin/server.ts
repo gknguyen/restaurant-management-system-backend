@@ -50,6 +50,8 @@ sequelize
   .then(() => logger('Connected to MySQL'))
   .catch((err: Error) => console.error('Unable to connect to the database:', err));
 
+sequelize.sync({ alter: false, force: false });
+
 /**
 connect to S3
 */

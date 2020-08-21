@@ -20,10 +20,6 @@ class AmazonS3nController {
     } as Results;
 
     try {
-      // const fileName: string | null = requestQuery.fileName;
-      // const fileType: string | null = requestQuery.fileType;
-      // let folderName: string | null = requestQuery.folderName;
-
       if (!fileName || !fileType) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input is missing';
@@ -58,7 +54,10 @@ class AmazonS3nController {
   /**
   get file metadata
   */
-  headObject = async (key: string | null | undefined, versionId: string | null | undefined) => {
+  headObject = async (
+    key: string | null | undefined,
+    versionId: string | null | undefined,
+  ) => {
     const results = {
       code: 0,
       message: '',
@@ -96,7 +95,10 @@ class AmazonS3nController {
   /**
   upload files to S3
   */
-  uploadFileToS3 = async (files: Express.Multer.File[]) => {
+  uploadFileToS3 = async (
+    files: Express.Multer.File[] | null | undefined,
+    folderName: string | null | undefined,
+  ) => {
     const results = {
       code: 0,
       message: '',
@@ -106,7 +108,7 @@ class AmazonS3nController {
     try {
       if (!files || (files && files.length === 0)) {
         results.code = STATUS_CODE.NOT_FOUND;
-        results.message = 'input missing';
+        results.message = 'input : files missing';
         return results;
       }
 
@@ -116,7 +118,9 @@ class AmazonS3nController {
           .upload({
             Bucket: AWS_S3_BUCKET_NAME,
             Body: files[x]['buffer'],
-            Key: files[x]['originalname'],
+            Key: folderName
+              ? `${folderName}/${files[x]['originalname']}`
+              : files[x]['originalname'],
             ContentType: files[x]['mimetype'],
             ACL: 'public-read',
           })

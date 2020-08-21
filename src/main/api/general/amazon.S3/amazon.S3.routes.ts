@@ -9,7 +9,11 @@ const awsS3Router = Router();
 
 awsS3Router.get('/getSignedUrl', getSignedUrl_API());
 awsS3Router.get('/headObject', headObject_API());
-awsS3Router.post('/uploadFileToS3', uploadMulter.array('files', 12), uploadFileToS3_API());
+awsS3Router.post(
+  '/uploadFileToS3',
+  uploadMulter.array('files', 12),
+  uploadFileToS3_API(),
+);
 
 /** ================================================================================== */
 /**
@@ -17,12 +21,20 @@ get signed URL
 */
 function getSignedUrl_API() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const fileName = req.query.fileName as string;
       const fileType = req.query.fileType as string;
       const folderName = req.query.folderName as string;
 
-      const results = await amazonS3nController.getSignedUrl(fileName, fileType, folderName);
+      const results = await amazonS3nController.getSignedUrl(
+        fileName,
+        fileType,
+        folderName,
+      );
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -38,7 +50,11 @@ get file metadata
 */
 function headObject_API() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const key = req.query.key as string;
       const versionId = req.query.versionId as string;
 
@@ -56,11 +72,24 @@ function headObject_API() {
 /**
 upload files to S3
 */
-function uploadFileToS3_API() {
+export function uploadFileToS3_API() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const files = req.files as Express.Multer.File[];
-      const results = await amazonS3nController.uploadFileToS3(files);
+      const folderName = req.query.folderName as string;
+
+      console.log(req.query.folderName);
+      console.log(req.files);
+      // res.status(200).send({
+      //   body: req.body,
+      //   files: req.files,
+      // });
+      const results = await amazonS3nController.uploadFileToS3(files, folderName);
+      console.log({ results });
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {

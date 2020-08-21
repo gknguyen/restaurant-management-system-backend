@@ -24,6 +24,4 @@ const sequelize = new Sequelize({
   },
 });
 
-sequelize.sync({ alter: false, force: false });
-
 export default sequelize;
