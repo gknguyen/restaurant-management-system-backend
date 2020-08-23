@@ -24,7 +24,7 @@ class AuthenticationController {
       userTypeName: user.userType.typeName,
     } as Payload;
     const secret = JWT_SECRET;
-    const options: jsonwebtoken.SignOptions = { expiresIn: JWT_EXPIRES_IN };
+    const options = { expiresIn: JWT_EXPIRES_IN } as jsonwebtoken.SignOptions;
     const token = jsonwebtoken.sign(payload, secret, options);
     return token;
   }
@@ -46,7 +46,10 @@ class AuthenticationController {
   /**
   login into application
   */
-  login = async (loginUsername: string | null | undefined, loginPassword: string | null | undefined) => {
+  login = async (
+    loginUsername: string | null | undefined,
+    loginPassword: string | null | undefined,
+  ) => {
     const results = {
       code: 0,
       message: '',
@@ -90,7 +93,7 @@ class AuthenticationController {
       })) as User;
 
       if (user) {
-        const status: boolean = this.comparePassword(loginPassword, user.password);
+        const status = this.comparePassword(loginPassword, user.password);
 
         if (status) {
           const token = this.getToken(user);
@@ -132,29 +135,54 @@ class AuthenticationController {
     } as Results;
 
     try {
+      /** check token existed or not */
       if (!token) {
-        results.code = STATUS_CODE.NOT_FOUND;
+        results.code = STATUS_CODE.UNAUTHORIZED;
         results.message = 'token not found';
         return results;
       }
 
       /** decode token to get user data */
       const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-      const userInfo: Payload | null = decodedToken ? decodedToken.payload : null;
+      const userInfo: Payload | null | undefined = decodedToken?.payload;
 
       if (!userInfo) {
-        results.code = STATUS_CODE.NOT_FOUND;
-        results.message = 'userInfo not found';
+        results.code = STATUS_CODE.UNAUTHORIZED;
+        results.message = 'userInfo in token not found';
         return results;
       }
 
-      results.code = STATUS_CODE.OK;
-      results.message = 'valid token, valid route';
-      results.values = {
-        userInfo: userInfo,
-        validToken: true,
-      };
-      return results;
+      /* check token TTL */
+      const TTL = Math.round(new Date().getTime() / 1000);
+      if (parseInt(decodedToken.payload.exp) < TTL) {
+        results.code = STATUS_CODE.UNAUTHORIZED;
+        results.message = 'token expired';
+        return results;
+      }
+
+      /* get user data */
+      const userData = (await userService.getOne({
+        attributes: ['username', 'authToken'],
+        where: { username: userInfo.username },
+      })) as User;
+
+      if (!userData) {
+        results.code = STATUS_CODE.UNAUTHORIZED;
+        results.message = 'userData in DB not found';
+        return results;
+      }
+
+      /* verify token */
+      if (userData.authToken === token) {
+        results.code = STATUS_CODE.OK;
+        results.message = 'valid token';
+        results.values = userInfo;
+        return results;
+      } else {
+        results.code = STATUS_CODE.UNAUTHORIZED;
+        results.message = 'invalid token';
+        return results;
+      }
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
       results.message = err.toString();

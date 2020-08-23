@@ -19,9 +19,13 @@ function
 
 function getUserList() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const results = await userController.getUserList();
-
+      console.log(results);
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
         throw results.message;
@@ -32,7 +36,11 @@ function getUserList() {
 
 function getUser() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const userId = req.query.userId as string;
 
       const results = await userController.getUser(userId);
@@ -47,7 +55,11 @@ function getUser() {
 
 function createUser() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const createUserId = userInfo.id;
@@ -83,7 +95,11 @@ function createUser() {
 
 function editUser() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const editUserId = userInfo.id;

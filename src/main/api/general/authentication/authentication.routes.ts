@@ -15,11 +15,18 @@ functions
 
 function login() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const loginUsername = req.body.username as string;
       const loginPassword = req.body.password as string;
 
-      const results = await authenticationController.login(loginUsername, loginPassword);
+      const results = await authenticationController.login(
+        loginUsername,
+        loginPassword,
+      );
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -31,7 +38,11 @@ function login() {
 
 export function verifyToken() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
 
       const results = await authenticationController.getVerify(token);
