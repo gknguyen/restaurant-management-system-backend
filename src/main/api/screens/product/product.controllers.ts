@@ -2,7 +2,9 @@ import STATUS_CODE from 'http-status';
 import moment, { utc } from 'moment-timezone';
 import { Op } from 'sequelize';
 import { Results } from '../../../../commons/constants/interfaces';
-import menuTypeModel, { MenuType } from '../../../database/m.menu.type/m_menu_type.model';
+import menuTypeModel, {
+  MenuType,
+} from '../../../database/m.menu.type/m_menu_type.model';
 import menuTypeService from '../../../database/m.menu.type/m_menu_type.service';
 import productTypeModel, {
   ProductType,
@@ -140,11 +142,11 @@ class ProductController {
         attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
         where: {
           [Op.or]: [
-            { name: { [Op.substring]: searchValue } },
-            { price: { [Op.substring]: searchValue } },
-            { unit: { [Op.substring]: searchValue } },
-            { amount: { [Op.substring]: searchValue } },
-            { activeStatus: { [Op.substring]: searchValue } },
+            { name: { [Op.startsWith]: searchValue } },
+            { price: { [Op.startsWith]: searchValue } },
+            { unit: { [Op.startsWith]: searchValue } },
+            { amount: { [Op.startsWith]: searchValue } },
+            { activeStatus: { [Op.startsWith]: searchValue } },
           ],
         },
         include: [
@@ -174,7 +176,7 @@ class ProductController {
               model: productTypeModel,
               as: 'productType',
               attributes: ['typeName'],
-              where: { typeName: { [Op.substring]: searchValue } },
+              where: { typeName: { [Op.startsWith]: searchValue } },
             },
             {
               model: menuTypeModel,
@@ -202,7 +204,7 @@ class ProductController {
                 model: menuTypeModel,
                 as: 'menuType',
                 attributes: ['typeName'],
-                where: { typeName: { [Op.substring]: searchValue } },
+                where: { typeName: { [Op.startsWith]: searchValue } },
               },
             ],
           })) as Product[];
@@ -213,33 +215,10 @@ class ProductController {
             results.values = productList;
             return results;
           } else {
-            const productList = (await productService.getAll({
-              attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
-              include: [
-                {
-                  model: productTypeModel,
-                  as: 'productType',
-                  attributes: ['typeName'],
-                },
-                {
-                  model: menuTypeModel,
-                  as: 'menuType',
-                  attributes: ['typeName'],
-                },
-              ],
-            })) as Product[];
-
-            if (productList && productList.length > 0) {
-              results.code = STATUS_CODE.OK;
-              results.message = 'successfully';
-              results.values = productList;
-              return results;
-            } else {
-              results.code = STATUS_CODE.OK;
-              results.message = 'no result';
-              results.values = [];
-              return results;
-            }
+            results.code = STATUS_CODE.OK;
+            results.message = 'no result';
+            results.values = [];
+            return results;
           }
         }
       }
@@ -273,24 +252,16 @@ class ProductController {
     } as Results;
 
     try {
-      // /** get request input headers */
-      // const token: any = requestHeaders.token;
-      // const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-      // const loginUser: Payload = decodedToken.payload;
-      // const createUserId: string = loginUser.id;
-
-      // /** get request input body */
-      // const productTypeName: string | null = requestBody.productTypeName;
-      // const menuTypeName: string | null = requestBody.menuTypeName;
-      // const name: string | null = requestBody.name;
-      // const price: string | null = requestBody.price;
-      // const unit: string | null = requestBody.unit;
-      // const amount: number | null = requestBody.amount;
-      // const description: Text | null = requestBody.description;
-      // const image: string | null = requestBody.image;
-
       /** check if mandatory inputs exist or not */
-      if (!productTypeName || !menuTypeName || !name || !price || !unit || !amount || !image) {
+      if (
+        !productTypeName ||
+        !menuTypeName ||
+        !name ||
+        !price ||
+        !unit ||
+        !amount ||
+        !image
+      ) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
