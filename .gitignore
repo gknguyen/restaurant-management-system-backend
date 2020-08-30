@@ -112,5 +112,5 @@ package.json.bak
 errorLog*.txt
 
 # folders
-errorLogs/
-accessLogs/
+# errorLogs/
+# accessLogs/

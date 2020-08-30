@@ -27,7 +27,15 @@ class ProductController {
 
     try {
       const productList = (await productService.getAll({
-        attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
+        attributes: [
+          'id',
+          'name',
+          'price',
+          'unit',
+          'amount',
+          'activeStatus',
+          'editDateTime',
+        ],
         include: [
           {
             model: productTypeModel,
@@ -40,6 +48,7 @@ class ProductController {
             attributes: ['typeName'],
           },
         ],
+        order: [['editDateTime', 'DESC']],
       })) as Product[];
 
       if (productList && productList.length > 0) {
@@ -139,7 +148,15 @@ class ProductController {
     try {
       // const searchValue: any | null = requestQuery.searchValue;
       const productList = (await productService.getAll({
-        attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
+        attributes: [
+          'id',
+          'name',
+          'price',
+          'unit',
+          'amount',
+          'activeStatus',
+          'editDateTime',
+        ],
         where: {
           [Op.or]: [
             { name: { [Op.startsWith]: searchValue } },
@@ -161,6 +178,7 @@ class ProductController {
             attributes: ['typeName'],
           },
         ],
+        order: [['editDateTime', 'DESC']],
       })) as Product[];
 
       if (productList && productList.length > 0) {
@@ -170,7 +188,15 @@ class ProductController {
         return results;
       } else {
         const productList = (await productService.getAll({
-          attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
+          attributes: [
+            'id',
+            'name',
+            'price',
+            'unit',
+            'amount',
+            'activeStatus',
+            'editDateTime',
+          ],
           include: [
             {
               model: productTypeModel,
@@ -184,6 +210,7 @@ class ProductController {
               attributes: ['typeName'],
             },
           ],
+          order: [['editDateTime', 'DESC']],
         })) as Product[];
 
         if (productList && productList.length > 0) {
@@ -193,7 +220,15 @@ class ProductController {
           return results;
         } else {
           const productList = (await productService.getAll({
-            attributes: ['id', 'name', 'price', 'unit', 'amount', 'activeStatus'],
+            attributes: [
+              'id',
+              'name',
+              'price',
+              'unit',
+              'amount',
+              'activeStatus',
+              'editDateTime',
+            ],
             include: [
               {
                 model: productTypeModel,
@@ -207,6 +242,7 @@ class ProductController {
                 where: { typeName: { [Op.startsWith]: searchValue } },
               },
             ],
+            order: [['editDateTime', 'DESC']],
           })) as Product[];
 
           if (productList && productList.length > 0) {
@@ -305,6 +341,7 @@ class ProductController {
         null,
       )) as Product;
 
+      /** send responses to client-side */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
       results.values = product;
@@ -340,25 +377,6 @@ class ProductController {
     } as Results;
 
     try {
-      // /** get request input headers */
-      // const token: any = requestHeaders.token;
-      // const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-      // const loginUser: Payload = decodedToken.payload;
-      // const editUserId: string = loginUser.id;
-
-      // /** get request input query */
-      // const productId: string | null = requestQuery.productId;
-
-      // /** get request input body */
-      // const productTypeId: string | null = requestBody.productTypeId;
-      // const menuTypeId: string | null = requestBody.menuTypeId;
-      // const name: string | null = requestBody.name;
-      // const price: string | null = requestBody.price;
-      // const unit: string | null = requestBody.unit;
-      // const amount: number | null = requestBody.amount;
-      // const description: Text | null = requestBody.description;
-      // const image: string | null = requestBody.image;
-
       /** check if mandatory inputs exist or not */
       if (!productId || !editUserId) {
         results.code = STATUS_CODE.NOT_FOUND;
@@ -396,6 +414,7 @@ class ProductController {
         menuTypeName = menuType.id;
       }
 
+      /** edit product */
       await productService.putOne(
         {
           id: productId,
@@ -407,15 +426,43 @@ class ProductController {
           amount: amount || null,
           activeStatus: amount && amount > 0 ? true : false,
           description: description || null,
-          image: image || null,
+          image: image || undefined,
           editUserId: editUserId,
         },
         null,
       );
 
+      /** get edited product */
+      const product = (await productService.getOne({
+        attributes: [
+          'id',
+          'name',
+          'price',
+          'unit',
+          'amount',
+          'activeStatus',
+          'image',
+          'description',
+        ],
+        where: { id: productId },
+        include: [
+          {
+            model: productTypeModel,
+            as: 'productType',
+            attributes: ['id', 'typeName'],
+          },
+          {
+            model: menuTypeModel,
+            as: 'menuType',
+            attributes: ['id', 'typeName'],
+          },
+        ],
+      })) as Product;
+
+      /** send responses to client-side */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = moment(utc()).format('YYYY-MM-DD hh:mm:ss');
+      results.values = product;
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;

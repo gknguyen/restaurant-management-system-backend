@@ -5,7 +5,7 @@ import productController from './product.controllers';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';
 import multer from 'multer';
-import { uploadFileToS3_API } from '../../general/amazon.S3/amazon.S3.routes';
+import { uploadFileToS3 } from '../../general/amazon.S3/amazon.S3.routes';
 
 const uploadMulter = multer();
 const productScreenRouter = Router();
@@ -17,9 +17,14 @@ productScreenRouter.post(
   '/createOne',
   uploadMulter.array('files', 12),
   createProduct(false),
-  uploadFileToS3_API(),
+  uploadFileToS3(),
 );
-productScreenRouter.put('/editOne', editProduct());
+productScreenRouter.put(
+  '/editOne',
+  uploadMulter.array('files', 12),
+  editProduct(false),
+  uploadFileToS3(),
+);
 productScreenRouter.delete('/deleteList', deleteProductList());
 
 /** ================================================================================== */
@@ -124,7 +129,7 @@ function createProduct(endHere = true) {
   );
 }
 
-function editProduct() {
+function editProduct(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -146,6 +151,8 @@ function editProduct() {
       const description = req.body.description as string;
       const image = req.body.image as string;
 
+      const files = req.files as Express.Multer.File[];
+
       const results = await productController.editProduct(
         productId,
         productTypeName,
@@ -159,8 +166,25 @@ function editProduct() {
         editUserId,
       );
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) throw results.message;
+      // res.status(results.code).send(results);
+      // if (results.code !== STATUS_CODE.OK) throw results.message;
+      if (endHere) {
+        res.status(results.code).send(results);
+        if (results.code !== STATUS_CODE.OK) throw results.message;
+      } else {
+        if (!files || (files && files.length === 0)) {
+          res.status(results.code).send(results);
+          if (results.code !== STATUS_CODE.OK) throw results.message;
+        } else {
+          if (results.code === STATUS_CODE.OK) {
+            req.query.folderName = 'products';
+            next();
+          } else {
+            res.status(results.code).send(results);
+            throw results.message;
+          }
+        }
+      }
     },
   );
 }

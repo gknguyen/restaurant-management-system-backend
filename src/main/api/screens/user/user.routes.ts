@@ -9,8 +9,10 @@ const userScreenRouter = Router();
 
 userScreenRouter.get('/getList', getUserList());
 userScreenRouter.get('/getOne', getUser());
+userScreenRouter.get('/searchList', searchUserList());
 userScreenRouter.post('/createOne', createUser());
 userScreenRouter.put('/editOne', editUser());
+userScreenRouter.delete('/deleteList', deleteUserList());
 
 /** ================================================================================== */
 /**
@@ -49,6 +51,23 @@ function getUser() {
       if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
+    },
+  );
+}
+
+function searchUserList() {
+  return errorHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      const searchValue = req.query.searchValue as any;
+
+      const results = await userController.searcUserList(searchValue);
+
+      res.status(results.code).send(results);
+      if (results.code !== STATUS_CODE.OK) throw results.message;
     },
   );
 }
@@ -132,6 +151,23 @@ function editUser() {
       if (results.code !== STATUS_CODE.OK) {
         throw results.message;
       }
+    },
+  );
+}
+
+function deleteUserList() {
+  return errorHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      const userIdList = req.query.userIdList as string[];
+
+      const results = await userController.deleteUserList(userIdList);
+
+      res.status(results.code).send(results);
+      if (results.code !== STATUS_CODE.OK) throw results.message;
     },
   );
 }
