@@ -83,12 +83,8 @@ export function uploadFileToS3() {
       const folderName = req.query.folderName as string;
 
       const results = await amazonS3nController.uploadFileToS3(files, folderName);
-      console.log({ results });
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) {
-        throw results.message;
-      }
+      if (results.code !== STATUS_CODE.OK) throw results.message;
     },
   );
 }

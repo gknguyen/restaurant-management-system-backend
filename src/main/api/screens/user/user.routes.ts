@@ -4,14 +4,28 @@ import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';
 import errorHandler from '../../../../commons/errorHandler';
 import userController from './user.controllers';
+import multer from 'multer';
+import { uploadFileToS3 } from '../../general/amazon.S3/amazon.S3.routes';
 
+const uploadMulter = multer();
 const userScreenRouter = Router();
 
 userScreenRouter.get('/getList', getUserList());
 userScreenRouter.get('/getOne', getUser());
 userScreenRouter.get('/searchList', searchUserList());
-userScreenRouter.post('/createOne', createUser());
-userScreenRouter.put('/editOne', editUser());
+userScreenRouter.post(
+  '/createOne',
+  uploadMulter.array('files', 12),
+  createUser(false),
+  uploadFileToS3(),
+);
+userScreenRouter.put(
+  '/editOne',
+  uploadMulter.array('files', 12),
+  editUser(false),
+  getUser(false),
+  uploadFileToS3(),
+);
 userScreenRouter.delete('/deleteList', deleteUserList());
 
 /** ================================================================================== */
@@ -27,16 +41,14 @@ function getUserList() {
       next: express.NextFunction,
     ) => {
       const results = await userController.getUserList();
-      console.log(results);
+
       res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) {
-        throw results.message;
-      }
+      if (results.code !== STATUS_CODE.OK) throw results.message;
     },
   );
 }
 
-function getUser() {
+function getUser(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -47,9 +59,17 @@ function getUser() {
 
       const results = await userController.getUser(userId);
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) {
-        throw results.message;
+      if (endHere) {
+        res.status(results.code).send(results);
+        if (results.code !== STATUS_CODE.OK) throw results.message;
+      } else {
+        if (results.code === STATUS_CODE.OK) {
+          res.status(results.code).send(results);
+          next();
+        } else {
+          res.status(results.code).send(results);
+          throw results.message;
+        }
       }
     },
   );
@@ -72,7 +92,7 @@ function searchUserList() {
   );
 }
 
-function createUser() {
+function createUser(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -104,15 +124,22 @@ function createUser() {
         createUserId,
       );
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) {
-        throw results.message;
+      if (endHere) {
+        res.status(results.code).send(results);
+        if (results.code !== STATUS_CODE.OK) throw results.message;
+      } else {
+        if (results.code === STATUS_CODE.OK) {
+          next();
+        } else {
+          res.status(results.code).send(results);
+          throw results.message;
+        }
       }
     },
   );
 }
 
-function editUser() {
+function editUser(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -123,11 +150,11 @@ function editUser() {
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const editUserId = userInfo.id;
 
-      const userId: string | null = req.query.userId as string;
+      const userId = req.query.userId as string;
 
-      const userTypeId = req.body.userTypeId as string;
+      const userTypeName = req.body.userTypeName as string;
       const username = req.body.username as string;
-      const password = req.body.password as string;
+      // const password = req.body.password as string;
       const fullName = req.body.fullName as string;
       const age = req.body.age as number;
       const phoneNumber = req.body.phoneNumber as string;
@@ -136,9 +163,9 @@ function editUser() {
 
       const results = await userController.editUser(
         userId,
-        userTypeId,
+        userTypeName,
         username,
-        password,
+        // password,
         fullName,
         age,
         phoneNumber,
@@ -147,9 +174,17 @@ function editUser() {
         editUserId,
       );
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) {
-        throw results.message;
+      if (endHere) {
+        res.status(results.code).send(results);
+        if (results.code !== STATUS_CODE.OK) throw results.message;
+      } else {
+        if (results.code === STATUS_CODE.OK) {
+          req.query.folderName = 'users';
+          next();
+        } else {
+          res.status(results.code).send(results);
+          throw results.message;
+        }
       }
     },
   );

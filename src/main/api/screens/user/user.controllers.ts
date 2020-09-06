@@ -32,7 +32,7 @@ class UserController {
           'phoneNumber',
           'email',
           'activeStatus',
-          'loginDatetime',
+          'loginDateTime',
         ],
         include: [
           {
@@ -141,7 +141,7 @@ class UserController {
           'phoneNumber',
           'email',
           'activeStatus',
-          'loginDatetime',
+          'loginDateTime',
         ],
         where: {
           [Op.or]: [
@@ -175,7 +175,7 @@ class UserController {
             'phoneNumber',
             'email',
             'activeStatus',
-            'loginDatetime',
+            'loginDateTime',
           ],
           include: [
             {
@@ -289,9 +289,9 @@ class UserController {
   */
   editUser = async (
     userId: string | null | undefined,
-    userTypeId: string | null | undefined,
+    userTypeName: string | null | undefined,
     username: string | null | undefined,
-    password: string | null | undefined,
+    // password: string | null | undefined,
     fullName: string | null | undefined,
     age: number | null | undefined,
     phoneNumber: string | null | undefined,
@@ -306,25 +306,38 @@ class UserController {
     } as Results;
 
     try {
-      if (!userId || !editUserId) {
+      /** check if mandatory inputs exist or not */
+      if (!userId || !userTypeName || !editUserId) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
+        return results;
+      }
+
+      /** find userTypeId bt userTypeName */
+      const userType = (await userTypeService.getOne({
+        attributes: ['id', 'typeName'],
+        where: { typeName: userTypeName },
+      })) as UserType;
+
+      if (!userType) {
+        results.code = STATUS_CODE.PRECONDITION_FAILED;
+        results.message = 'invalid userTypeName';
         return results;
       }
 
       await userService.putOne(
         {
           id: userId,
-          userTypeId: userTypeId || null,
+          userTypeId: userType.id,
           username: username || null,
-          password: password
-            ? Crypto.AES.encrypt(password, 'Secret Passphrase')
-            : null,
+          // password: password
+          //   ? Crypto.AES.encrypt(password, 'Secret Passphrase')
+          //   : undefined,
           fullName: fullName || null,
           age: age || null,
           phoneNumber: phoneNumber || null,
           email: email || null,
-          avatar: avatar || null,
+          avatar: avatar || undefined,
           editUserId: editUserId,
         },
         null,

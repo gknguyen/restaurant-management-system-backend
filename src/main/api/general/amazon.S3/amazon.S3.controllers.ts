@@ -107,7 +107,7 @@ class AmazonS3nController {
 
     try {
       if (!files || (files && files.length === 0)) {
-        results.code = STATUS_CODE.NOT_FOUND;
+        results.code = STATUS_CODE.OK;
         results.message = 'input : files missing';
         return results;
       }

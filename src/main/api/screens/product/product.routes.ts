@@ -23,6 +23,7 @@ productScreenRouter.put(
   '/editOne',
   uploadMulter.array('files', 12),
   editProduct(false),
+  getProduct(false),
   uploadFileToS3(),
 );
 productScreenRouter.delete('/deleteList', deleteProductList());
@@ -47,7 +48,7 @@ function getProductList() {
   );
 }
 
-function getProduct() {
+function getProduct(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -58,8 +59,18 @@ function getProduct() {
 
       const results = await productController.getProduct(productId);
 
-      res.status(results.code).send(results);
-      if (results.code !== STATUS_CODE.OK) throw results.message;
+      if (endHere) {
+        res.status(results.code).send(results);
+        if (results.code !== STATUS_CODE.OK) throw results.message;
+      } else {
+        if (results.code === STATUS_CODE.OK) {
+          res.status(results.code).send(results);
+          next();
+        } else {
+          res.status(results.code).send(results);
+          throw results.message;
+        }
+      }
     },
   );
 }
@@ -118,6 +129,7 @@ function createProduct(endHere = true) {
         if (results.code !== STATUS_CODE.OK) throw results.message;
       } else {
         if (results.code === STATUS_CODE.OK) {
+          res.status(results.code).send(results);
           req.query.folderName = 'products';
           next();
         } else {
@@ -151,8 +163,6 @@ function editProduct(endHere = true) {
       const description = req.body.description as string;
       const image = req.body.image as string;
 
-      const files = req.files as Express.Multer.File[];
-
       const results = await productController.editProduct(
         productId,
         productTypeName,
@@ -166,23 +176,16 @@ function editProduct(endHere = true) {
         editUserId,
       );
 
-      // res.status(results.code).send(results);
-      // if (results.code !== STATUS_CODE.OK) throw results.message;
       if (endHere) {
         res.status(results.code).send(results);
         if (results.code !== STATUS_CODE.OK) throw results.message;
       } else {
-        if (!files || (files && files.length === 0)) {
-          res.status(results.code).send(results);
-          if (results.code !== STATUS_CODE.OK) throw results.message;
+        if (results.code === STATUS_CODE.OK) {
+          req.query.folderName = 'products';
+          next();
         } else {
-          if (results.code === STATUS_CODE.OK) {
-            req.query.folderName = 'products';
-            next();
-          } else {
-            res.status(results.code).send(results);
-            throw results.message;
-          }
+          res.status(results.code).send(results);
+          throw results.message;
         }
       }
     },

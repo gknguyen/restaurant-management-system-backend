@@ -378,48 +378,40 @@ class ProductController {
 
     try {
       /** check if mandatory inputs exist or not */
-      if (!productId || !editUserId) {
+      if (!productId || !productTypeName || !menuTypeName || !editUserId) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
       }
 
       /** get product type id */
-      if (productTypeName) {
-        const productType = (await productTypeService.getOne({
-          where: { typeName: productTypeName },
-        })) as ProductType;
+      const productType = (await productTypeService.getOne({
+        where: { typeName: productTypeName },
+      })) as ProductType;
 
-        if (!productType) {
-          results.code = STATUS_CODE.PRECONDITION_FAILED;
-          results.message = 'invalid productTypeName';
-          return results;
-        }
-
-        productTypeName = productType.id;
+      if (!productType) {
+        results.code = STATUS_CODE.PRECONDITION_FAILED;
+        results.message = 'invalid productTypeName';
+        return results;
       }
 
       /** get menu type id */
-      if (menuTypeName) {
-        const menuType = (await menuTypeService.getOne({
-          where: { typeName: menuTypeName },
-        })) as MenuType;
+      const menuType = (await menuTypeService.getOne({
+        where: { typeName: menuTypeName },
+      })) as MenuType;
 
-        if (!menuType) {
-          results.code = STATUS_CODE.PRECONDITION_FAILED;
-          results.message = 'invalid menuTypeName';
-          return results;
-        }
-
-        menuTypeName = menuType.id;
+      if (!menuType) {
+        results.code = STATUS_CODE.PRECONDITION_FAILED;
+        results.message = 'invalid menuTypeName';
+        return results;
       }
 
       /** edit product */
       await productService.putOne(
         {
           id: productId,
-          productTypeId: productTypeName || null,
-          menuTypeId: menuTypeName || null,
+          productTypeId: productType.id,
+          menuTypeId: menuType.id,
           name: name || null,
           price: price || null,
           unit: unit || null,
@@ -432,37 +424,38 @@ class ProductController {
         null,
       );
 
-      /** get edited product */
-      const product = (await productService.getOne({
-        attributes: [
-          'id',
-          'name',
-          'price',
-          'unit',
-          'amount',
-          'activeStatus',
-          'image',
-          'description',
-        ],
-        where: { id: productId },
-        include: [
-          {
-            model: productTypeModel,
-            as: 'productType',
-            attributes: ['id', 'typeName'],
-          },
-          {
-            model: menuTypeModel,
-            as: 'menuType',
-            attributes: ['id', 'typeName'],
-          },
-        ],
-      })) as Product;
+      // /** get edited product */
+      // const product = (await productService.getOne({
+      //   attributes: [
+      //     'id',
+      //     'name',
+      //     'price',
+      //     'unit',
+      //     'amount',
+      //     'activeStatus',
+      //     'image',
+      //     'description',
+      //   ],
+      //   where: { id: productId },
+      //   include: [
+      //     {
+      //       model: productTypeModel,
+      //       as: 'productType',
+      //       attributes: ['id', 'typeName'],
+      //     },
+      //     {
+      //       model: menuTypeModel,
+      //       as: 'menuType',
+      //       attributes: ['id', 'typeName'],
+      //     },
+      //   ],
+      // })) as Product;
 
       /** send responses to client-side */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = product;
+      // results.values = product;
+      results.values = moment(utc()).format('YYYY-MM-DD hh:mm:ss');
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
