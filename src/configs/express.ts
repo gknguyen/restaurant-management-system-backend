@@ -11,13 +11,15 @@ import passport from 'passport';
 import path, { join } from 'path';
 import { getFilesizeInBytes } from '../commons/utils';
 import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
-import authRouter, { verifyToken } from '../main/api/general/authentication/authentication.routes';
+import authRouter, {
+  verifyToken,
+} from '../main/api/general/authentication/authentication.routes';
 import apiRouter from './routes';
 import { ACCESS_LOG_FILE_MAX_SIZE, NODE_ENV } from '../commons/constants/env';
 
 let num = 0;
 
-const app: express.Application = express();
+const app = express();
 
 loadConfigs();
 loadRoutes();
@@ -36,8 +38,8 @@ function loadRoutes() {
 }
 
 function loadViews() {
-  app.use(express.static(join(__dirname, '../public')));
-  app.get('/**', function (req, res) {
+  app.use(express.static(join(__dirname, '../../build')));
+  app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '../../build', 'index.html'));
   });
 }
@@ -82,7 +84,11 @@ function loadConfigs() {
       },
     ),
   );
-  app.use(morgan(NODE_ENV === 'production' ? 'common' : 'dev', { stream: accessLogStream }));
+  app.use(
+    morgan(NODE_ENV === 'production' ? 'common' : 'dev', {
+      stream: accessLogStream,
+    }),
+  );
 
   app.use(compression());
   app.use(json());

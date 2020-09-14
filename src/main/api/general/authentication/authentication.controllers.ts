@@ -21,7 +21,7 @@ class AuthenticationController {
       email: user.email,
       activeStatus: user.activeStatus,
       loginDateTime: user.loginDateTime,
-      userTypeName: user.userType.typeName,
+      userTypeName: user.userType?.typeName,
     } as Payload;
     const secret = JWT_SECRET;
     const options = { expiresIn: JWT_EXPIRES_IN } as jsonwebtoken.SignOptions;
@@ -103,7 +103,14 @@ class AuthenticationController {
 
           results.code = STATUS_CODE.OK;
           results.message = 'login successfully';
-          results.values = token;
+          results.values = {
+            token: token,
+            userInfo: {
+              role: user.userType?.typeName,
+              fullName: user.fullName,
+              avatar: user.avatar,
+            },
+          };
           return results;
         } else {
           results.code = STATUS_CODE.PRECONDITION_FAILED;

@@ -1,6 +1,6 @@
 import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
 import sequelize from '../../../configs/sequelize';
-import userTypeModel from '../m.user.type/m_user_type.model';
+import userTypeModel, { UserType } from '../m.user.type/m_user_type.model';
 
 export interface User extends Model {
   readonly id: string;
@@ -19,7 +19,7 @@ export interface User extends Model {
   createDateTime: Date;
   editUserId: string;
   editDateTime: Date;
-  userType?: any;
+  userType?: UserType;
 }
 
 type ModelStatic = typeof Model & {

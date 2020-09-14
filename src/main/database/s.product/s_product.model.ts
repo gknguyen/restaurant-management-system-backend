@@ -1,7 +1,9 @@
 import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
 import sequelize from '../../../configs/sequelize';
-import menuTypeModel from '../m.menu.type/m_menu_type.model';
-import productTypeModel from '../m.product.type/m_product_type.model';
+import menuTypeModel, { MenuType } from '../m.menu.type/m_menu_type.model';
+import productTypeModel, {
+  ProductType,
+} from '../m.product.type/m_product_type.model';
 
 export interface Product extends Model {
   readonly id: string;
@@ -18,8 +20,8 @@ export interface Product extends Model {
   createDateTime: Date;
   editUserId: string;
   editDateTime: Date;
-  productType?: any;
-  menuType?: any;
+  productType?: ProductType;
+  menuType?: MenuType;
 }
 
 type ModelStatic = typeof Model & {
