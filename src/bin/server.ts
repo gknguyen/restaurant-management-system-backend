@@ -38,7 +38,11 @@ function onError(error: { syscall: string; code: any }) {
 
 function onListening() {
   const addr = server.address();
-  const bind = addr ? (typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port) : '';
+  const bind = addr
+    ? typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port
+    : '';
   logger('Listening on ' + bind);
 }
 
@@ -58,7 +62,9 @@ connect to S3
 s3.headBucket({ Bucket: AWS_S3_BUCKET_NAME })
   .promise()
   .then(() => logger('Connected to S3'))
-  .catch((err: Error) => console.error('Unable to connect to the S3:', err.toString()));
+  .catch((err: Error) =>
+    console.error('Unable to connect to the S3:', err.toString()),
+  );
 
 /**
 start server

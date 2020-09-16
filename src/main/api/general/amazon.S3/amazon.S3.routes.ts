@@ -9,6 +9,7 @@ const awsS3Router = Router();
 
 awsS3Router.get('/getSignedUrl', getSignedUrl());
 awsS3Router.get('/headObject', headObject());
+
 awsS3Router.post(
   '/uploadFileToS3',
   uploadMulter.array('files', 12),

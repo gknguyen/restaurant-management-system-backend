@@ -13,12 +13,14 @@ const productScreenRouter = Router();
 productScreenRouter.get('/getList', getProductList());
 productScreenRouter.get('/getOne', getProduct());
 productScreenRouter.get('/searchList', searchProductList());
+
 productScreenRouter.post(
   '/createOne',
   uploadMulter.array('files', 12),
   createProduct(false),
   uploadFileToS3(),
 );
+
 productScreenRouter.put(
   '/editOne',
   uploadMulter.array('files', 12),
@@ -26,6 +28,7 @@ productScreenRouter.put(
   getProduct(false),
   uploadFileToS3(),
 );
+
 productScreenRouter.delete('/deleteList', deleteProductList());
 
 /** ================================================================================== */

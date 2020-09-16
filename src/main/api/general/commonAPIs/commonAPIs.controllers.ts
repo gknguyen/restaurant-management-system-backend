@@ -21,7 +21,7 @@ class CommonAPIsController {
 
     try {
       const menuTypeList = (await menuTypeService.getAll({
-        attributes: ['id', 'typeName'],
+        attributes: ['id', 'typeName', 'icon'],
         order: [['createDateTime', 'ASC']],
       })) as MenuType[];
 

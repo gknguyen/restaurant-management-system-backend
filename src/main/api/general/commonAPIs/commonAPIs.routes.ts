@@ -26,7 +26,11 @@ functions
 /** menu type */
 function getMenuTypeList() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const results = await commonAPIsController.getMenuTypeList();
 
       res.status(results.code).send(results);
@@ -39,7 +43,11 @@ function getMenuTypeList() {
 
 function getMenuType() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const typeName = req.query.typeName as string;
 
       const results = await commonAPIsController.getMenuType(typeName);
@@ -54,14 +62,21 @@ function getMenuType() {
 
 function createMenuType() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const createUserId = userInfo.id;
 
       const typeName = req.body.typeName as string;
 
-      const results = await commonAPIsController.createMenuType(typeName, createUserId);
+      const results = await commonAPIsController.createMenuType(
+        typeName,
+        createUserId,
+      );
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -74,7 +89,11 @@ function createMenuType() {
 /** product type */
 function getProductTypeList() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const results = await commonAPIsController.getProductTypeList();
 
       res.status(results.code).send(results);
@@ -87,7 +106,11 @@ function getProductTypeList() {
 
 function getProductType() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const typeName = req.query.typeName as string;
 
       const results = await commonAPIsController.getProductType(typeName);
@@ -102,14 +125,21 @@ function getProductType() {
 
 function createProductType() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const createUserId = userInfo.id;
 
       const typeName: string | null = req.body.typeName as string;
 
-      const results = await commonAPIsController.createProductType(typeName, createUserId);
+      const results = await commonAPIsController.createProductType(
+        typeName,
+        createUserId,
+      );
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -122,7 +152,11 @@ function createProductType() {
 /** user type */
 function getUserTypeList() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const results = await commonAPIsController.getUserTypeList();
 
       res.status(results.code).send(results);
@@ -135,14 +169,21 @@ function getUserTypeList() {
 
 function createUserType() {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const token = req.headers.token as string;
       const userInfo = jsonwebtoken.decode(token) as Payload;
       const createUserId = userInfo.id;
 
       const typeName = req.body.typeName as string;
 
-      const results = await commonAPIsController.createUserType(typeName, createUserId);
+      const results = await commonAPIsController.createUserType(
+        typeName,
+        createUserId,
+      );
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {

@@ -1,9 +1,10 @@
-import { DataTypes, Model, BuildOptions, UUIDV4 } from "sequelize";
-import sequelize from "../../../configs/sequelize";
+import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
+import sequelize from '../../../configs/sequelize';
 
 export interface MenuType extends Model {
   readonly id: string;
   typeName: string;
+  icon: string;
   createUserId: string;
   createDateTime: Date;
   editUserId: string;
@@ -15,7 +16,7 @@ type ModelStatic = typeof Model & {
 };
 
 const menuTypeModel = sequelize.define(
-  "m_menu_type",
+  'm_menu_type',
   {
     id: {
       type: DataTypes.UUID,
@@ -27,6 +28,9 @@ const menuTypeModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    icon: {
+      type: DataTypes.STRING,
+    },
     createUserId: {
       type: DataTypes.STRING,
     },
@@ -35,9 +39,9 @@ const menuTypeModel = sequelize.define(
     },
   },
   {
-    createdAt: "createDateTime",
-    updatedAt: "editDateTime",
-  }
+    createdAt: 'createDateTime',
+    updatedAt: 'editDateTime',
+  },
 ) as ModelStatic;
 
 export default menuTypeModel;
