@@ -1,6 +1,6 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
-import sequelize from '../../../configs/sequelize';
-import { ProductTypeName } from '../../../commons/constants/enum-list';
+import sequelize from '../../../../configs/sequelize';
+import { ProductTypeName } from '../../../../commons/constants/enum-list';
 
 export interface ProductType extends Model {
   readonly id: string;

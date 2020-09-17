@@ -10,7 +10,11 @@ get data from redis cache
 */
 export function cache(redisKey: string) {
   return errorHandler(
-    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
       const results = {
         code: 0,
         message: '',

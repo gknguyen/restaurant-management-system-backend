@@ -1,5 +1,5 @@
-import RestService from '../../../commons/restful-service';
-import { RestfulService } from '../../../commons/constants/interfaces';
+import RestService from '../../../../commons/restful-service';
+import { RestfulService } from '../../../../commons/constants/interfaces';
 import productModel from './s_product.model';
 
 class ProductService implements RestfulService {

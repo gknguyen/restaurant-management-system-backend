@@ -2,9 +2,9 @@ import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { JWT_EXPIRES_IN, JWT_SECRET } from '../../../../commons/constants/env';
 import { Payload, Results } from '../../../../commons/constants/interfaces';
-import userTypeModel from '../../../database/m.user.type/m_user_type.model';
-import { User } from '../../../database/s.user/s_user.model';
-import userService from '../../../database/s.user/s_user.service';
+import userTypeModel from '../../../database/mysql/m.user.type/m_user_type.model';
+import { User } from '../../../database/mysql/s.user/s_user.model';
+import userService from '../../../database/mysql/s.user/s_user.service';
 
 const Crypto = require('cryptojs').Crypto;
 

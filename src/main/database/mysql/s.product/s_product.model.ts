@@ -1,5 +1,5 @@
 import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
-import sequelize from '../../../configs/sequelize';
+import sequelize from '../../../../configs/sequelize';
 import menuTypeModel, { MenuType } from '../m.menu.type/m_menu_type.model';
 import productTypeModel, {
   ProductType,

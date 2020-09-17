@@ -1,19 +1,12 @@
-import bcrypt from 'bcryptjs';
-import jsonwebtoken from 'jsonwebtoken';
-import { RestfulService } from '../../../commons/constants/interfaces';
-import RestService from '../../../commons/restful-service';
-import userModel, { User } from './s_user.model';
-import { Payload } from '../../../commons/constants/interfaces';
+import RestService from '../../../../commons/restful-service';
+import { RestfulService } from '../../../../commons/constants/interfaces';
+import menuTypeModel from './m_menu_type.model';
 
-const Crypto = require('cryptojs').Crypto;
-
-const saltRounds: number = 10;
-
-class UserService implements RestfulService {
+class MenuTypeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
-    this.restService = new RestService(userModel);
+    this.restService = new RestService(menuTypeModel);
   }
 
   /** post */
@@ -46,6 +39,6 @@ class UserService implements RestfulService {
   }
 }
 
-const userService = new UserService();
+const menuTypeService = new MenuTypeService();
 
-export default userService;
+export default menuTypeService;

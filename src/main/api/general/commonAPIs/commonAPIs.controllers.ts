@@ -1,11 +1,11 @@
 import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
-import { MenuType } from '../../../database/m.menu.type/m_menu_type.model';
-import menuTypeService from '../../../database/m.menu.type/m_menu_type.service';
-import { ProductType } from '../../../database/m.product.type/m_product_type.model';
-import productTypeService from '../../../database/m.product.type/m_product_type.service';
-import { UserType } from '../../../database/m.user.type/m_user_type.model';
-import userTypeService from '../../../database/m.user.type/m_user_type.service';
+import { MenuType } from '../../../database/mysql/m.menu.type/m_menu_type.model';
+import menuTypeService from '../../../database/mysql/m.menu.type/m_menu_type.service';
+import { ProductType } from '../../../database/mysql/m.product.type/m_product_type.model';
+import productTypeService from '../../../database/mysql/m.product.type/m_product_type.service';
+import { UserType } from '../../../database/mysql/m.user.type/m_user_type.model';
+import userTypeService from '../../../database/mysql/m.user.type/m_user_type.service';
 
 class CommonAPIsController {
   /** ================================================================================== */
@@ -63,7 +63,7 @@ class CommonAPIsController {
       }
 
       const menuType = (await menuTypeService.getOne({
-        attributes: ['id', 'typeName'],
+        attributes: ['id', 'typeName', 'icon'],
         where: { typeName: typeName },
       })) as MenuType;
 

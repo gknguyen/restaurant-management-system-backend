@@ -1,12 +1,12 @@
-import RestService from '../../../commons/restful-service';
-import { RestfulService } from '../../../commons/constants/interfaces';
-import productTypeModel from './m_product_type.model';
+import RestService from '../../../../commons/restful-service';
+import { RestfulService } from '../../../../commons/constants/interfaces';
+import userTypeModel from './m_user_type.model';
 
-class ProductTypeService implements RestfulService {
+class UserTypeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
-    this.restService = new RestService(productTypeModel);
+    this.restService = new RestService(userTypeModel);
   }
 
   /** post */
@@ -39,6 +39,6 @@ class ProductTypeService implements RestfulService {
   }
 }
 
-const productTypeService = new ProductTypeService();
+const userTypeService = new UserTypeService();
 
-export default productTypeService;
+export default userTypeService;

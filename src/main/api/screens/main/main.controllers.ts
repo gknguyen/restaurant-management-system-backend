@@ -1,8 +1,8 @@
 import { Results } from '../../../../commons/constants/interfaces';
-import menuTypeModel from '../../../database/m.menu.type/m_menu_type.model';
-import productTypeModel from '../../../database/m.product.type/m_product_type.model';
-import { Product } from '../../../database/s.product/s_product.model';
-import productService from '../../../database/s.product/s_product.service';
+import menuTypeModel from '../../../database/mysql/m.menu.type/m_menu_type.model';
+import productTypeModel from '../../../database/mysql/m.product.type/m_product_type.model';
+import { Product } from '../../../database/mysql/s.product/s_product.model';
+import productService from '../../../database/mysql/s.product/s_product.service';
 import STATUS_CODE from 'http-status';
 
 class MainController {

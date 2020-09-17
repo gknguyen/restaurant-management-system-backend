@@ -4,14 +4,14 @@ import { Op } from 'sequelize';
 import { Results } from '../../../../commons/constants/interfaces';
 import menuTypeModel, {
   MenuType,
-} from '../../../database/m.menu.type/m_menu_type.model';
-import menuTypeService from '../../../database/m.menu.type/m_menu_type.service';
+} from '../../../database/mysql/m.menu.type/m_menu_type.model';
+import menuTypeService from '../../../database/mysql/m.menu.type/m_menu_type.service';
 import productTypeModel, {
   ProductType,
-} from '../../../database/m.product.type/m_product_type.model';
-import productTypeService from '../../../database/m.product.type/m_product_type.service';
-import { Product } from '../../../database/s.product/s_product.model';
-import productService from '../../../database/s.product/s_product.service';
+} from '../../../database/mysql/m.product.type/m_product_type.model';
+import productTypeService from '../../../database/mysql/m.product.type/m_product_type.service';
+import { Product } from '../../../database/mysql/s.product/s_product.model';
+import productService from '../../../database/mysql/s.product/s_product.service';
 
 class ProductController {
   /** ================================================================================== */

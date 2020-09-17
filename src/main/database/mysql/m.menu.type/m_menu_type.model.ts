@@ -1,5 +1,5 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
-import sequelize from '../../../configs/sequelize';
+import sequelize from '../../../../configs/sequelize';
 
 export interface MenuType extends Model {
   readonly id: string;

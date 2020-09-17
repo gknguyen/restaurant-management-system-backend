@@ -1,11 +1,11 @@
-import userService from '../../../database/s.user/s_user.service';
+import userService from '../../../database/mysql/s.user/s_user.service';
 import { Results } from '../../../../commons/constants/interfaces';
 import userTypeModel, {
   UserType,
-} from '../../../database/m.user.type/m_user_type.model';
-import { User } from '../../../database/s.user/s_user.model';
+} from '../../../database/mysql/m.user.type/m_user_type.model';
+import { User } from '../../../database/mysql/s.user/s_user.model';
 import STATUS_CODE from 'http-status';
-import userTypeService from '../../../database/m.user.type/m_user_type.service';
+import userTypeService from '../../../database/mysql/m.user.type/m_user_type.service';
 import moment, { utc } from 'moment-timezone';
 import { Op } from 'sequelize';
 
