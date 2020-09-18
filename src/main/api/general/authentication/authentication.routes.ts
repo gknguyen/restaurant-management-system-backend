@@ -5,6 +5,7 @@ import authenticationController from './authentication.controllers';
 
 const authRouter = Router();
 
+/** post APIs */
 authRouter.post('/login', login());
 authRouter.post('/getVerify', verifyToken());
 

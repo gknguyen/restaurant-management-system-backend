@@ -7,9 +7,11 @@ import amazonS3nController from './amazon.S3.controllers';
 const uploadMulter = multer();
 const awsS3Router = Router();
 
+/** get APIs */
 awsS3Router.get('/getSignedUrl', getSignedUrl());
 awsS3Router.get('/headObject', headObject());
 
+/** post APIs */
 awsS3Router.post(
   '/uploadFileToS3',
   uploadMulter.array('files', 12),
@@ -18,8 +20,9 @@ awsS3Router.post(
 
 /** ================================================================================== */
 /**
-get signed URL
+functions
 */
+
 function getSignedUrl() {
   return errorHandler(
     async (
@@ -45,10 +48,6 @@ function getSignedUrl() {
   );
 }
 
-/** ================================================================================== */
-/**
-get file metadata
-*/
 function headObject() {
   return errorHandler(
     async (
@@ -69,10 +68,6 @@ function headObject() {
   );
 }
 
-/** ================================================================================== */
-/**
-upload files to S3
-*/
 export function uploadFileToS3() {
   return errorHandler(
     async (

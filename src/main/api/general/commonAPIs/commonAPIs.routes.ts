@@ -7,14 +7,17 @@ import commonAPIsController from './commonAPIs.controllers';
 
 const commonAPIsRouter = Router();
 
+/** menu type */
 commonAPIsRouter.get('/menuType/getList', getMenuTypeList());
 commonAPIsRouter.get('/menuType/getOne', getMenuType());
 commonAPIsRouter.post('/menuType/createOne', createMenuType());
 
+/** product type */
 commonAPIsRouter.get('/productType/getList', getProductTypeList());
 commonAPIsRouter.get('/productType/getOne', getProductType());
 commonAPIsRouter.post('/productType/createOne', createProductType());
 
+/** user type */
 commonAPIsRouter.get('/userType/getList', getUserTypeList());
 commonAPIsRouter.post('/userType/createOne', createUserType());
 

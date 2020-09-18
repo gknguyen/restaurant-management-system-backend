@@ -31,6 +31,7 @@ export default app;
 /**
 functions
 */
+
 function loadRoutes() {
   app.use('/api', verifyToken(), apiRouter);
   app.use('/auth', authRouter);

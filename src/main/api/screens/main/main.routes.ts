@@ -5,6 +5,7 @@ import mainController from './main.controllers';
 
 const mainScreenRouter = Router();
 
+/** get APIs */
 mainScreenRouter.get('/getList', getProductList());
 
 /** ================================================================================== */

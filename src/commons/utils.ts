@@ -1,6 +1,16 @@
 import fs from 'fs';
 import { Duplex } from 'stream';
 
+/**
+Normalize a port into a number, string, or false.
+*/
+export function normalizePort(val: string) {
+  const normalizingPort = parseInt(val, 10);
+  if (isNaN(normalizingPort)) return val;
+  if (normalizingPort >= 0) return normalizingPort;
+  return false;
+}
+
 export function getFilesizeInBytes(filename: string) {
   try {
     const stats = fs.statSync(filename);

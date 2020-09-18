@@ -1,22 +1,21 @@
 import { Sequelize } from 'sequelize';
 import {
-  ORM_DATABASES,
-  ORM_USERNAME,
-  ORM_PASSWORD,
-  ORM_HOST,
-  ORM_PORT,
-  ORM_DIALECT,
-  ORM_LOGGING,
+  MYSQL_DATABASES,
+  MYSQL_USERNAME,
+  MYSQL_PASSWORD,
+  MYSQL_HOST,
+  MYSQL_PORT,
+  MYSQL_DIALECT,
 } from '../commons/constants/env';
 
 const sequelize = new Sequelize({
-  database: ORM_DATABASES,
-  username: ORM_USERNAME,
-  password: ORM_PASSWORD,
-  host: ORM_HOST,
-  port: ORM_PORT,
-  dialect: ORM_DIALECT,
-  logging: ORM_LOGGING,
+  database: MYSQL_DATABASES,
+  username: MYSQL_USERNAME,
+  password: MYSQL_PASSWORD,
+  host: MYSQL_HOST,
+  port: MYSQL_PORT,
+  dialect: MYSQL_DIALECT,
+  logging: false,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,

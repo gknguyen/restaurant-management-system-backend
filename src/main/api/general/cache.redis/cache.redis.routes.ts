@@ -4,10 +4,6 @@ import { Results } from '../../../../commons/constants/interfaces';
 import errorHandler from '../../../../commons/errorHandler';
 import { client, redisConnected } from '../../../../configs/redis';
 
-/** ================================================================================== */
-/**
-get data from redis cache
-*/
 export function cache(redisKey: string) {
   return errorHandler(
     async (

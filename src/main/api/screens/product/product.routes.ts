@@ -10,10 +10,12 @@ import { uploadFileToS3 } from '../../general/amazon.S3/amazon.S3.routes';
 const uploadMulter = multer();
 const productScreenRouter = Router();
 
+/** get APIs */
 productScreenRouter.get('/getList', getProductList());
 productScreenRouter.get('/getOne', getProduct());
 productScreenRouter.get('/searchList', searchProductList());
 
+/** post APIs */
 productScreenRouter.post(
   '/createOne',
   uploadMulter.array('files', 12),
@@ -21,6 +23,7 @@ productScreenRouter.post(
   uploadFileToS3(),
 );
 
+/** put APIs */
 productScreenRouter.put(
   '/editOne',
   uploadMulter.array('files', 12),
@@ -29,6 +32,7 @@ productScreenRouter.put(
   uploadFileToS3(),
 );
 
+/** delete APIs */
 productScreenRouter.delete('/deleteList', deleteProductList());
 
 /** ================================================================================== */

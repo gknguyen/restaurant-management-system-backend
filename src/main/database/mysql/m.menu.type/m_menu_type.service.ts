@@ -9,6 +9,14 @@ class MenuTypeService implements RestfulService {
     this.restService = new RestService(menuTypeModel);
   }
 
+  /** get */
+  getOne(condition: any) {
+    return this.restService.getOne(condition);
+  }
+  getAll(condition: any) {
+    return this.restService.getAll(condition);
+  }
+
   /** post */
   postOne(data: any, condition: any) {
     return this.restService.postOne(data, condition);
@@ -23,14 +31,6 @@ class MenuTypeService implements RestfulService {
   }
   putAll(data: any, condition: any) {
     return this.restService.putAll(data, condition);
-  }
-
-  /** get */
-  getOne(condition: any) {
-    return this.restService.getOne(condition);
-  }
-  getAll(condition: any) {
-    return this.restService.getAll(condition);
   }
 
   /** delete */

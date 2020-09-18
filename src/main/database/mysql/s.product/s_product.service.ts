@@ -9,6 +9,14 @@ class ProductService implements RestfulService {
     this.restService = new RestService(productModel);
   }
 
+  /** get */
+  getOne(condition: any) {
+    return this.restService.getOne(condition);
+  }
+  getAll(condition: any) {
+    return this.restService.getAll(condition);
+  }
+
   /** post */
   postOne(data: any, condition: any) {
     return this.restService.postOne(data, condition);
@@ -23,14 +31,6 @@ class ProductService implements RestfulService {
   }
   putAll(data: any, condition: any) {
     return this.restService.putAll(data, condition);
-  }
-
-  /** get */
-  getOne(condition: any) {
-    return this.restService.getOne(condition);
-  }
-  getAll(condition: any) {
-    return this.restService.getAll(condition);
   }
 
   /** delete */

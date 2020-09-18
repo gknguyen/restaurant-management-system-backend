@@ -14,36 +14,6 @@ class RestService implements RestfulService {
 
   /** ================================================================================== */
   /**
-  post 1 record
-  */
-  async postOne(data: any, condition: any) {
-    return this.model.create({ ...data }, { ...condition });
-  }
-
-  /**
-  post many records
-  */
-  async postAll(data: any[], condition: any) {
-    return this.model.bulkCreate([...data], { ...condition });
-  }
-
-  /** ================================================================================== */
-  /**
-  put 1 record
-  */
-  async putOne(data: any, condition: any) {
-    return this.model.upsert({ ...data }, { ...condition });
-  }
-
-  /**
-  put 1 record
-  */
-  async putAll(data: any, condition: any) {
-    return this.model.update({ ...data }, { ...condition });
-  }
-
-  /** ================================================================================== */
-  /**
   get 1 record
   */
   async getOne(condition: any) {
@@ -55,6 +25,36 @@ class RestService implements RestfulService {
   */
   async getAll(condition: any) {
     return await this.model.findAll({ ...condition });
+  }
+
+  /** ================================================================================== */
+  /**
+  create 1 record
+  */
+  async postOne(data: any, condition: any) {
+    return this.model.create({ ...data }, { ...condition });
+  }
+
+  /**
+  create many records
+  */
+  async postAll(data: any[], condition: any) {
+    return this.model.bulkCreate([...data], { ...condition });
+  }
+
+  /** ================================================================================== */
+  /**
+  edit 1 record
+  */
+  async putOne(data: any, condition: any) {
+    return this.model.upsert({ ...data }, { ...condition });
+  }
+
+  /**
+  edit many records
+  */
+  async putAll(data: any, condition: any) {
+    return this.model.update({ ...data }, { ...condition });
   }
 
   /** ================================================================================== */
