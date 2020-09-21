@@ -1,33 +1,39 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
 import sequelize from '../../../../configs/sequelize';
 
-export interface MenuType extends Model {
+export interface Finance extends Model {
   readonly id: string;
-  typeName: string;
-  icon: string;
+  revenue: number;
+  expense: number;
+  tax: number;
+  profit: number;
   createDateTime: Date;
   editDateTime: Date;
 }
 
 type ModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuType;
+  new (values?: object, options?: BuildOptions): Finance;
 };
 
-const menuTypeModel = sequelize.define(
-  'm_menu_type',
+const financeModel = sequelize.define(
+  'm_finance',
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: UUIDV4,
     },
-    typeName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+    revenue: {
+      type: DataTypes.DOUBLE,
     },
-    icon: {
-      type: DataTypes.STRING,
+    expense: {
+      type: DataTypes.DOUBLE,
+    },
+    tax: {
+      type: DataTypes.DOUBLE,
+    },
+    profit: {
+      type: DataTypes.DOUBLE,
     },
   },
   {
@@ -36,4 +42,4 @@ const menuTypeModel = sequelize.define(
   },
 ) as ModelStatic;
 
-export default menuTypeModel;
+export default financeModel;

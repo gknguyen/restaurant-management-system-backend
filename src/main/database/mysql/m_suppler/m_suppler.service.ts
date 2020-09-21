@@ -1,12 +1,12 @@
 import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
-import userTypeModel, { UserType } from './m_user_type.model';
+import supplerModel from './m_suppler.model';
 
-class UserTypeService implements RestfulService {
+class SupplerService implements RestfulService {
   private restService: RestService;
 
   constructor() {
-    this.restService = new RestService(userTypeModel);
+    this.restService = new RestService(supplerModel);
   }
 
   /** get */
@@ -37,26 +37,8 @@ class UserTypeService implements RestfulService {
   delete(condition: any) {
     return this.restService.delete(condition);
   }
-
-  /** init */
-  async init(typeName: string) {
-    let userType = (await this.restService.getOne({
-      where: { typeName: typeName },
-    })) as UserType;
-
-    if (!userType) {
-      userType = (await this.restService.postOne(
-        {
-          typeName: typeName,
-        },
-        null,
-      )) as UserType;
-    }
-
-    return userType;
-  }
 }
 
-const userTypeService = new UserTypeService();
+const supplerService = new SupplerService();
 
-export default userTypeService;
+export default supplerService;

@@ -1,6 +1,10 @@
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
-import { JWT_EXPIRES_IN, JWT_SECRET } from '../../../../commons/constants/env';
+import {
+  CRYPTO_SECRET,
+  JWT_EXPIRES_IN,
+  JWT_SECRET,
+} from '../../../../commons/constants/env';
 import { Payload, Results } from '../../../../commons/constants/interfaces';
 import userTypeModel from '../../../database/mysql/m.user.type/m_user_type.model';
 import { User } from '../../../database/mysql/s.user/s_user.model';
@@ -17,8 +21,6 @@ class AuthenticationController {
     const payload = {
       id: user.id,
       username: user.username,
-      fullName: user.fullName,
-      email: user.email,
       activeStatus: user.activeStatus,
       loginDateTime: user.loginDateTime,
       userTypeName: user.userType?.typeName,
@@ -34,7 +36,7 @@ class AuthenticationController {
   verify login password
   */
   comparePassword(loginPass: string, userEncodedPass: string) {
-    const dencodedPass = Crypto.AES.decrypt(userEncodedPass, 'Secret Passphrase');
+    const dencodedPass = Crypto.AES.decrypt(userEncodedPass, CRYPTO_SECRET);
     if (dencodedPass === loginPass) {
       return true;
     } else {
@@ -57,6 +59,7 @@ class AuthenticationController {
     } as Results;
 
     try {
+      /** chec input */
       if (!loginUsername) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'loginUsername is missing';
@@ -68,16 +71,12 @@ class AuthenticationController {
         return results;
       }
 
+      /** get user infomation */
       const user = (await userService.getOne({
         attributes: [
           'id',
           'username',
           'password',
-          'fullName',
-          'age',
-          'phoneNumber',
-          'email',
-          'avatar',
           'activeStatus',
           'loginDateTime',
           'authToken',
@@ -87,34 +86,44 @@ class AuthenticationController {
           {
             model: userTypeModel,
             as: 'userType',
-            attributes: ['typeName'],
+            attributes: ['id', 'typeName'],
           },
         ],
       })) as User;
 
+      /** check if user existed or not */
       if (user) {
-        const status = this.comparePassword(loginPassword, user.password);
+        /** check if user is active or not */
+        if (user.activeStatus) {
+          /** check password */
+          const isCorrect = this.comparePassword(loginPassword, user.password);
 
-        if (status) {
-          const token = this.getToken(user);
-          user['authToken'] = token;
-          user['loginDateTime'] = new Date();
-          await user.save();
+          if (isCorrect) {
+            /** update some information */
+            const token = this.getToken(user);
+            user['authToken'] = token;
+            user['loginDateTime'] = new Date();
+            await user.save();
 
-          results.code = STATUS_CODE.OK;
-          results.message = 'login successfully';
-          results.values = {
-            token: token,
-            userInfo: {
-              role: user.userType?.typeName,
-              fullName: user.fullName,
-              avatar: user.avatar,
-            },
-          };
-          return results;
+            /** send responses to client-side */
+            results.code = STATUS_CODE.OK;
+            results.message = 'login successfully';
+            results.values = {
+              token: token,
+              userInfo: {
+                username: user.username,
+                role: user.userType?.typeName,
+              },
+            };
+            return results;
+          } else {
+            results.code = STATUS_CODE.PRECONDITION_FAILED;
+            results.message = 'password incorrect';
+            return results;
+          }
         } else {
           results.code = STATUS_CODE.PRECONDITION_FAILED;
-          results.message = 'password incorrect';
+          results.message = 'this user is diactived';
           return results;
         }
       } else {

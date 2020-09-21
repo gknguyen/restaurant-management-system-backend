@@ -11,6 +11,9 @@ export const PORT = convertStringToNumber(process.env.PORT || '3000');
 export const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '12h';
 
+/** Crypto */
+export const CRYPTO_SECRET = process.env.CRYPTO_SECRET || 'secret';
+
 /** Moment.js */
 export const MOMENT_TIMEZONE = process.env.MOMENT_TIMEZONE || 'Asia/Ho_Chi_Minh';
 export const MOMENT_LOCALE = process.env.MOMENT_LOCALE || 'vi';

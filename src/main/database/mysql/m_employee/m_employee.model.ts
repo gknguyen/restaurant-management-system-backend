@@ -1,36 +1,43 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
 import sequelize from '../../../../configs/sequelize';
-import { ProductTypeName } from '../../../../commons/constants/enum-list';
 
-export interface ProductType extends Model {
+export interface Employee extends Model {
   readonly id: string;
-  typeName: string;
+  fullName: string;
+  age: number;
+  phoneNumber: string;
+  email: string;
   createDateTime: Date;
   editDateTime: Date;
 }
 
 type ModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): ProductType;
+  new (values?: object, options?: BuildOptions): Employee;
 };
 
-const productTypeModel = sequelize.define(
-  'm_product_type',
+const employeeModel = sequelize.define(
+  'm_employee',
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: UUIDV4,
     },
-    typeName: {
+    fullName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    age: {
+      type: DataTypes.INTEGER,
+    },
+    phoneNumber: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    createUserId: {
+    email: {
       type: DataTypes.STRING,
-    },
-    editUserId: {
-      type: DataTypes.STRING,
+      unique: true,
     },
   },
   {
@@ -39,4 +46,4 @@ const productTypeModel = sequelize.define(
   },
 ) as ModelStatic;
 
-export default productTypeModel;
+export default employeeModel;

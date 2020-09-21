@@ -5,9 +5,7 @@ import sequelize from '../../../../configs/sequelize';
 export interface UserType extends Model {
   readonly id: string;
   typeName: UserTypeName;
-  createUserId: string;
   createDateTime: Date;
-  editUserid: string;
   editDateTime: Date;
 }
 
@@ -36,12 +34,6 @@ const userTypeModel = sequelize.define(
       values: userTypeNameValues,
       allowNull: false,
       unique: true,
-    },
-    createUserId: {
-      type: DataTypes.STRING,
-    },
-    editUserid: {
-      type: DataTypes.STRING,
     },
   },
   {

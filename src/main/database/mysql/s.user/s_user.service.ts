@@ -44,6 +44,26 @@ class UserService implements RestfulService {
   delete(condition: any) {
     return this.restService.delete(condition);
   }
+
+  /** init */
+  async init(username: string, password: string, userTypeId: string) {
+    let user = (await this.restService.getOne({
+      where: { username: username },
+    })) as User;
+
+    if (!user) {
+      user = (await this.restService.postOne(
+        {
+          userTypeId: userTypeId,
+          username: username,
+          password: password,
+        },
+        null,
+      )) as User;
+    }
+
+    return user;
+  }
 }
 
 const userService = new UserService();

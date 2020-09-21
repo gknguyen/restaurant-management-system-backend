@@ -90,10 +90,7 @@ class CommonAPIsController {
   /**
   get menu type by menu type name
   */
-  createMenuType = async (
-    typeName: string | null | undefined,
-    createUserId: string | null | undefined,
-  ) => {
+  createMenuType = async (typeName: string | null | undefined) => {
     const results = {
       code: 0,
       message: '',
@@ -101,7 +98,7 @@ class CommonAPIsController {
     } as Results;
 
     try {
-      if (!typeName || !createUserId) {
+      if (!typeName) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
@@ -110,7 +107,6 @@ class CommonAPIsController {
       const menuType = (await menuTypeService.postOne(
         {
           typeName: typeName,
-          createUserId: createUserId,
         },
         null,
       )) as MenuType;
@@ -209,10 +205,7 @@ class CommonAPIsController {
   /**
   create 1 product type
   */
-  createProductType = async (
-    typeName: string | null | undefined,
-    createUserId: string | null | undefined,
-  ) => {
+  createProductType = async (typeName: string | null | undefined) => {
     const results = {
       code: 0,
       message: '',
@@ -229,7 +222,6 @@ class CommonAPIsController {
       const productType = (await productTypeService.postOne(
         {
           typeName: typeName,
-          createUserId: createUserId,
         },
         null,
       )) as ProductType;
@@ -285,10 +277,7 @@ class CommonAPIsController {
   /**
   create 1 user type
   */
-  createUserType = async (
-    typeName: string | null | undefined,
-    createUserId: string | null | undefined,
-  ) => {
+  createUserType = async (typeName: string | null | undefined) => {
     const results = {
       code: 0,
       message: '',
@@ -305,7 +294,6 @@ class CommonAPIsController {
       const userType = (await userTypeService.postOne(
         {
           typeName: typeName,
-          createUserId: createUserId,
         },
         null,
       )) as UserType;

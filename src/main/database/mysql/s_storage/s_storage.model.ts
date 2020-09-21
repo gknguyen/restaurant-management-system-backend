@@ -1,53 +1,56 @@
 import { BuildOptions, DataTypes, Model, UUIDV4 } from 'sequelize';
 import sequelize from '../../../../configs/sequelize';
 import userTypeModel, { UserType } from '../m.user.type/m_user_type.model';
+import supplerModel from '../m_suppler/m_suppler.model';
 
-export interface User extends Model {
+export interface Storage extends Model {
   readonly id: string;
-  userTypeId: string;
-  username: string;
-  password: string;
-  loginDateTime: Date;
-  authToken: string;
+  supplerId: string;
+  ingredient: string;
+  initialQuantity: number;
+  currentQuantity: number;
+  unit: string;
+  price: number;
   activeStatus: boolean;
   createDateTime: Date;
   editDateTime: Date;
-  userType?: UserType;
 }
 
 type ModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): User;
+  new (values?: object, options?: BuildOptions): Storage;
 };
 
-const userModel = sequelize.define(
-  's_user',
+const storageModel = sequelize.define(
+  's_storage',
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: UUIDV4,
     },
-    userTypeId: {
+    supplerId: {
       type: DataTypes.UUID,
       references: {
-        model: userTypeModel,
+        model: supplerModel,
         key: 'id',
       },
     },
-    username: {
+    ingredient: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    password: {
+    initialQuantity: {
+      type: DataTypes.DOUBLE,
+    },
+    currentQuantity: {
+      type: DataTypes.DOUBLE,
+    },
+    unit: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
-    loginDateTime: {
-      type: DataTypes.DATE,
-    },
-    authToken: {
-      type: DataTypes.TEXT,
+    price: {
+      type: DataTypes.DOUBLE,
     },
     activeStatus: {
       type: DataTypes.BOOLEAN,
@@ -62,16 +65,16 @@ const userModel = sequelize.define(
 ) as ModelStatic;
 
 /** association with user type table */
-userTypeModel.hasMany(userModel, {
+supplerModel.hasMany(storageModel, {
   sourceKey: 'id',
-  foreignKey: 'userTypeId',
-  as: 'users',
+  foreignKey: 'supplerId',
+  as: 'storages',
 });
-userModel.belongsTo(userTypeModel, {
+storageModel.belongsTo(supplerModel, {
   targetKey: 'id',
-  foreignKey: 'userTypeId',
-  as: 'userType',
+  foreignKey: 'supplerId',
+  as: 'suppler',
   onDelete: 'CASCADE',
 });
 
-export default userModel;
+export default storageModel;

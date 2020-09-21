@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';
-import errorHandler from '../../../../commons/errorHandler';
+import errorHandler from '../../../../commons/errorLogs/errorHandler';
 import commonAPIsController from './commonAPIs.controllers';
 
 const commonAPIsRouter = Router();
@@ -70,16 +70,9 @@ function createMenuType() {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const token = req.headers.token as string;
-      const userInfo = jsonwebtoken.decode(token) as Payload;
-      const createUserId = userInfo.id;
-
       const typeName = req.body.typeName as string;
 
-      const results = await commonAPIsController.createMenuType(
-        typeName,
-        createUserId,
-      );
+      const results = await commonAPIsController.createMenuType(typeName);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -133,16 +126,9 @@ function createProductType() {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const token = req.headers.token as string;
-      const userInfo = jsonwebtoken.decode(token) as Payload;
-      const createUserId = userInfo.id;
-
       const typeName: string | null = req.body.typeName as string;
 
-      const results = await commonAPIsController.createProductType(
-        typeName,
-        createUserId,
-      );
+      const results = await commonAPIsController.createProductType(typeName);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {
@@ -177,16 +163,9 @@ function createUserType() {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const token = req.headers.token as string;
-      const userInfo = jsonwebtoken.decode(token) as Payload;
-      const createUserId = userInfo.id;
-
       const typeName = req.body.typeName as string;
 
-      const results = await commonAPIsController.createUserType(
-        typeName,
-        createUserId,
-      );
+      const results = await commonAPIsController.createUserType(typeName);
 
       res.status(results.code).send(results);
       if (results.code !== STATUS_CODE.OK) {

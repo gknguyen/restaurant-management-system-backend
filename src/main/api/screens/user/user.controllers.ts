@@ -8,6 +8,7 @@ import STATUS_CODE from 'http-status';
 import userTypeService from '../../../database/mysql/m.user.type/m_user_type.service';
 import moment, { utc } from 'moment-timezone';
 import { Op } from 'sequelize';
+import { CRYPTO_SECRET } from '../../../../commons/constants/env';
 
 const Crypto = require('cryptojs').Crypto;
 
@@ -25,15 +26,7 @@ class UserController {
 
     try {
       const userList = (await userService.getAll({
-        attributes: [
-          'id',
-          'username',
-          'fullName',
-          'phoneNumber',
-          'email',
-          'activeStatus',
-          'loginDateTime',
-        ],
+        attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
         include: [
           {
             model: userTypeModel,
@@ -81,17 +74,7 @@ class UserController {
       }
 
       const user = (await userService.getOne({
-        attributes: [
-          'id',
-          'username',
-          'fullName',
-          'age',
-          'phoneNumber',
-          'email',
-          'avatar',
-          'loginDateTime',
-          'activeStatus',
-        ],
+        attributes: ['id', 'username', 'loginDateTime', 'activeStatus'],
         where: { id: userId },
         include: [
           {
@@ -134,21 +117,10 @@ class UserController {
 
     try {
       const userList = (await userService.getAll({
-        attributes: [
-          'id',
-          'username',
-          'fullName',
-          'phoneNumber',
-          'email',
-          'activeStatus',
-          'loginDateTime',
-        ],
+        attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
         where: {
           [Op.or]: [
             { username: { [Op.startsWith]: searchValue } },
-            { fullName: { [Op.startsWith]: searchValue } },
-            { phoneNumber: { [Op.startsWith]: searchValue } },
-            { email: { [Op.startsWith]: searchValue } },
             { loginDatetime: { [Op.startsWith]: searchValue.split('/').join('-') } },
           ],
         },
@@ -168,15 +140,7 @@ class UserController {
         return results;
       } else {
         const userList = (await userService.getAll({
-          attributes: [
-            'id',
-            'username',
-            'fullName',
-            'phoneNumber',
-            'email',
-            'activeStatus',
-            'loginDateTime',
-          ],
+          attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
           include: [
             {
               model: userTypeModel,
@@ -215,12 +179,6 @@ class UserController {
     userTypeName: string | null | undefined,
     username: string | null | undefined,
     password: string | null | undefined,
-    fullName: string | null | undefined,
-    age: number | null | undefined,
-    phoneNumber: string | null | undefined,
-    email: string | null | undefined,
-    avatar: string | null | undefined,
-    createUserId: string | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -229,16 +187,7 @@ class UserController {
     } as Results;
 
     try {
-      if (
-        !username ||
-        !password ||
-        !userTypeName ||
-        !fullName ||
-        !age ||
-        !phoneNumber ||
-        !email ||
-        !createUserId
-      ) {
+      if (!username || !password || !userTypeName) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
@@ -254,19 +203,13 @@ class UserController {
         return results;
       }
 
-      const encodedPass = Crypto.AES.encrypt(password, 'Secret Passphrase');
+      const encodedPass = Crypto.AES.encrypt(password, CRYPTO_SECRET);
 
       const user = (await userService.postOne(
         {
           userTypeId: userType.id,
           username: username,
           password: encodedPass,
-          fullName: fullName,
-          age: age,
-          phoneNumber: phoneNumber,
-          email: email,
-          avatar: avatar || null,
-          createUserId: createUserId,
         },
         null,
       )) as User;
@@ -289,15 +232,10 @@ class UserController {
   */
   editUser = async (
     userId: string | null | undefined,
-    userTypeName: string | null | undefined,
     username: string | null | undefined,
-    // password: string | null | undefined,
-    fullName: string | null | undefined,
-    age: number | null | undefined,
-    phoneNumber: string | null | undefined,
-    email: string | null | undefined,
-    avatar: string | null | undefined,
-    editUserId: string | null | undefined,
+    activeStatus: string | null | undefined,
+    loginDateTime: Date | null | undefined,
+    userTypeName: string | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -306,42 +244,73 @@ class UserController {
     } as Results;
 
     try {
-      /** check if mandatory inputs exist or not */
-      if (!userId || !userTypeName || !editUserId) {
+      /** check input */
+      if (!userId) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
       }
 
       /** find userTypeId bt userTypeName */
-      const userType = (await userTypeService.getOne({
-        attributes: ['id', 'typeName'],
-        where: { typeName: userTypeName },
-      })) as UserType;
+      if (userTypeName) {
+        const userType = (await userTypeService.getOne({
+          attributes: ['id', 'typeName'],
+          where: { typeName: userTypeName },
+        })) as UserType;
 
-      if (!userType) {
-        results.code = STATUS_CODE.PRECONDITION_FAILED;
-        results.message = 'invalid userTypeName';
-        return results;
+        if (!userType) {
+          results.code = STATUS_CODE.PRECONDITION_FAILED;
+          results.message = 'invalid userTypeName';
+          return results;
+        }
+
+        userTypeName = userType.id;
       }
 
       await userService.putOne(
         {
           id: userId,
-          userTypeId: userType.id,
-          username: username || null,
-          // password: password
-          //   ? Crypto.AES.encrypt(password, 'Secret Passphrase')
-          //   : undefined,
-          fullName: fullName || null,
-          age: age || null,
-          phoneNumber: phoneNumber || null,
-          email: email || null,
-          avatar: avatar || undefined,
-          editUserId: editUserId,
+          userTypeId: userTypeName || undefined,
+          username: username || undefined,
+          activeStatus: activeStatus === 'active' ? true : false,
+          loginDateTime: loginDateTime || undefined,
         },
         null,
       );
+
+      results.code = STATUS_CODE.OK;
+      results.message = 'successfully';
+      results.values = moment(utc()).format('YYYY-MM-DD hh:mm:ss');
+      return results;
+    } catch (err) {
+      results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+      results.message = err.toString();
+      results.values = err;
+      return results;
+    }
+  };
+
+  /** ================================================================================== */
+  /**
+  delete 1 user
+  */
+  deleteUser = async (userId: string | null | undefined) => {
+    const results = {
+      code: 0,
+      message: '',
+      values: null,
+    } as Results;
+
+    try {
+      if (!userId) {
+        results.code = STATUS_CODE.NOT_FOUND;
+        results.message = 'input missing';
+        return results;
+      }
+
+      await userService.delete({
+        where: { id: userId },
+      });
 
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';

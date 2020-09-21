@@ -1,21 +1,15 @@
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import cookieSession from 'cookie-session';
 import express, { json } from 'express';
-import fs from 'fs';
 import helmet from 'helmet';
-import morgan from 'morgan';
-import os from 'os';
 import passport from 'passport';
 import path, { join } from 'path';
-import { getFilesizeInBytes } from '../commons/utils';
 import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
 import authRouter, {
   verifyToken,
 } from '../main/api/general/authentication/authentication.routes';
 import apiRouter from './routes';
-import { ACCESS_LOG_FILE_MAX_SIZE, NODE_ENV } from '../commons/constants/env';
 
 let num = 0;
 
@@ -46,51 +40,6 @@ function loadViews() {
 }
 
 function loadConfigs() {
-  /** check file size */
-  let fileSize = getFilesizeInBytes(join(__dirname, `/accessLogs/access${num}.log`));
-  while (fileSize > ACCESS_LOG_FILE_MAX_SIZE) {
-    num++;
-    fileSize = getFilesizeInBytes(join(__dirname, `/accessLogs/access${num}.log`));
-  }
-
-  const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, `/accessLogs/access${num}.log`),
-    { flags: 'a' },
-  );
-
-  app.use(
-    morgan(
-      '============================================================================================' +
-        os.EOL +
-        'remote-addr: :remote-addr' +
-        os.EOL +
-        'remote-user: :remote-user' +
-        os.EOL +
-        'date: [:date[clf]]' +
-        os.EOL +
-        'method: ":method :url HTTP/:http-version"' +
-        os.EOL +
-        'status: :status :res[content-length]' +
-        os.EOL +
-        'referrer: ":referrer"' +
-        os.EOL +
-        'user-agent: ":user-agent"' +
-        os.EOL +
-        'req[query]: :req[query]' +
-        os.EOL +
-        'req[body]: :req[body]' +
-        os.EOL,
-      {
-        stream: accessLogStream,
-      },
-    ),
-  );
-  app.use(
-    morgan(NODE_ENV === 'production' ? 'common' : 'dev', {
-      stream: accessLogStream,
-    }),
-  );
-
   app.use(compression());
   app.use(json());
   app.use(bodyParser.json());

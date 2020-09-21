@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
-import errorHandler from '../../../../commons/errorHandler';
+import errorHandler from '../../../../commons/errorLogs/errorHandler';
 import authenticationController from './authentication.controllers';
 
 const authRouter = Router();

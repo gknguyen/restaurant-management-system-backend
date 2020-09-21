@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import errorHandler from '../../../../commons/errorHandler';
+import errorHandler from '../../../../commons/errorLogs/errorHandler';
 import STATUS_CODE from 'http-status';
 import mainController from './main.controllers';
 

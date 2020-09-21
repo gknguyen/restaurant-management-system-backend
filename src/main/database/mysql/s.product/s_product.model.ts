@@ -16,9 +16,7 @@ export interface Product extends Model {
   description: string;
   activeStatus: boolean;
   image: string;
-  createUserId: string;
   createDateTime: Date;
-  editUserId: string;
   editDateTime: Date;
   productType?: ProductType;
   menuType?: MenuType;
@@ -57,9 +55,11 @@ const productModel = sequelize.define(
     },
     price: {
       type: DataTypes.DOUBLE,
+      allowNull: false,
     },
     unit: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     amount: {
       type: DataTypes.INTEGER,
@@ -75,12 +75,6 @@ const productModel = sequelize.define(
     image: {
       type: DataTypes.STRING,
     },
-    createUserId: {
-      type: DataTypes.STRING,
-    },
-    editUserId: {
-      type: DataTypes.STRING,
-    },
   },
   {
     createdAt: 'createDateTime',
@@ -92,7 +86,7 @@ const productModel = sequelize.define(
 productTypeModel.hasMany(productModel, {
   sourceKey: 'id',
   foreignKey: 'productTypeId',
-  as: 'product',
+  as: 'products',
 });
 productModel.belongsTo(productTypeModel, {
   targetKey: 'id',
@@ -105,7 +99,7 @@ productModel.belongsTo(productTypeModel, {
 menuTypeModel.hasMany(productModel, {
   sourceKey: 'id',
   foreignKey: 'menuTypeId',
-  as: 'product',
+  as: 'products',
 });
 productModel.belongsTo(menuTypeModel, {
   targetKey: 'id',

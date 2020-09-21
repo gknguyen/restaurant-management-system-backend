@@ -279,7 +279,6 @@ class ProductController {
     amount: number | null | undefined,
     description: string | null | undefined,
     image: string | null | undefined,
-    createUserId: string | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -336,7 +335,6 @@ class ProductController {
           amount: amount,
           description: description || null,
           image: image,
-          createUserId: createUserId,
         },
         null,
       )) as Product;
@@ -368,7 +366,6 @@ class ProductController {
     amount: number | null | undefined,
     description: string | null | undefined,
     image: string | null | undefined,
-    editUserId: string | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -378,7 +375,7 @@ class ProductController {
 
     try {
       /** check if mandatory inputs exist or not */
-      if (!productId || !productTypeName || !menuTypeName || !editUserId) {
+      if (!productId || !productTypeName || !menuTypeName) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'input missing';
         return results;
@@ -419,42 +416,13 @@ class ProductController {
           activeStatus: amount && amount > 0 ? true : false,
           description: description || null,
           image: image || undefined,
-          editUserId: editUserId,
         },
         null,
       );
 
-      // /** get edited product */
-      // const product = (await productService.getOne({
-      //   attributes: [
-      //     'id',
-      //     'name',
-      //     'price',
-      //     'unit',
-      //     'amount',
-      //     'activeStatus',
-      //     'image',
-      //     'description',
-      //   ],
-      //   where: { id: productId },
-      //   include: [
-      //     {
-      //       model: productTypeModel,
-      //       as: 'productType',
-      //       attributes: ['id', 'typeName'],
-      //     },
-      //     {
-      //       model: menuTypeModel,
-      //       as: 'menuType',
-      //       attributes: ['id', 'typeName'],
-      //     },
-      //   ],
-      // })) as Product;
-
       /** send responses to client-side */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      // results.values = product;
       results.values = moment(utc()).format('YYYY-MM-DD hh:mm:ss');
       return results;
     } catch (err) {

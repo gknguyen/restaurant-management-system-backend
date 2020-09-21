@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import STATUS_CODE from 'http-status';
-import errorHandler from '../../../../commons/errorHandler';
+import errorHandler from '../../../../commons/errorLogs/errorHandler';
 import productController from './product.controllers';
 import jsonwebtoken from 'jsonwebtoken';
 import { Payload } from '../../../../commons/constants/interfaces';
@@ -106,10 +106,6 @@ function createProduct(endHere = true) {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const token = req.headers.token as string;
-      const userInfo = jsonwebtoken.decode(token) as Payload;
-      const createUserId = userInfo.id;
-
       const productTypeName = req.body.productTypeName as string;
       const menuTypeName = req.body.menuTypeName as string;
       const name = req.body.name as string;
@@ -128,7 +124,6 @@ function createProduct(endHere = true) {
         amount,
         description,
         image,
-        createUserId,
       );
 
       if (endHere) {
@@ -155,10 +150,6 @@ function editProduct(endHere = true) {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      const token = req.headers.token as string;
-      const userInfo = jsonwebtoken.decode(token) as Payload;
-      const editUserId = userInfo.id;
-
       const productId = req.query.productId as string;
 
       const productTypeName = req.body.productTypeName as string;
@@ -180,7 +171,6 @@ function editProduct(endHere = true) {
         amount,
         description,
         image,
-        editUserId,
       );
 
       if (endHere) {
