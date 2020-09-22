@@ -1,6 +1,6 @@
 import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
-import menuTypeModel from './m_menu_type.model';
+import menuTypeModel, { MenuType } from './m_menu_type.model';
 
 class MenuTypeService implements RestfulService {
   private restService: RestService;
@@ -36,6 +36,25 @@ class MenuTypeService implements RestfulService {
   /** delete */
   delete(condition: any) {
     return this.restService.delete(condition);
+  }
+
+  /** init */
+  async init(typeName: string, icon: string) {
+    let menuType = (await this.restService.getOne({
+      where: { typeName: typeName },
+    })) as MenuType;
+
+    if (!menuType) {
+      menuType = (await this.restService.postOne(
+        {
+          typeName: typeName,
+          icon: icon,
+        },
+        null,
+      )) as MenuType;
+    }
+
+    return menuType;
   }
 }
 

@@ -1,6 +1,6 @@
 import debug from 'debug';
 import http from 'http';
-import { UserTypeName } from '../commons/constants/enum-list';
+import { ProductTypeName, UserTypeName } from '../commons/constants/enum-list';
 import {
   AWS_S3_BUCKET_NAME,
   CRYPTO_SECRET,
@@ -10,6 +10,8 @@ import {
 import s3 from '../configs/aws-S3';
 import app from '../configs/express';
 import sequelize from '../configs/sequelize';
+import menuTypeService from '../main/database/mysql/m.menu.type/m_menu_type.service';
+import productTypeService from '../main/database/mysql/m.product.type/m_product_type.service';
 import userTypeService from '../main/database/mysql/m.user.type/m_user_type.service';
 import userService from '../main/database/mysql/s.user/s_user.service';
 
@@ -48,6 +50,15 @@ sequelize.sync({ alter: false, force: false }).then(async () => {
     Crypto.AES.encrypt('employee', CRYPTO_SECRET),
     employeeRole.id,
   );
+
+  productTypeService.init(ProductTypeName.food);
+  productTypeService.init(ProductTypeName.beverage);
+  productTypeService.init(ProductTypeName.service);
+
+  menuTypeService.init('spring', 'filter_vintage');
+  menuTypeService.init('summer', 'waves');
+  menuTypeService.init('autumn', 'eco');
+  menuTypeService.init('winter', 'ac_unit');
 });
 
 /**

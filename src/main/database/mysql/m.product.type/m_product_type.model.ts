@@ -26,12 +26,6 @@ const productTypeModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    createUserId: {
-      type: DataTypes.STRING,
-    },
-    editUserId: {
-      type: DataTypes.STRING,
-    },
   },
   {
     createdAt: 'createDateTime',
