@@ -14,6 +14,14 @@ class RestService implements RestfulService {
 
   /** ================================================================================== */
   /**
+  init table
+  */
+  getTableName() {
+    return this.model.getTableName();
+  }
+
+  /** ================================================================================== */
+  /**
   get 1 record
   */
   async getOne(condition: any) {

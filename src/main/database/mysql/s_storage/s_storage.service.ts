@@ -9,6 +9,11 @@ class StorageService implements RestfulService {
     this.restService = new RestService(storageModel);
   }
 
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
+  }
+
   /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);

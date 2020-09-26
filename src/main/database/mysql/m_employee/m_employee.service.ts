@@ -9,6 +9,11 @@ class EmployeeService implements RestfulService {
     this.restService = new RestService(employeeModel);
   }
 
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
+  }
+
   /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);

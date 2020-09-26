@@ -14,6 +14,14 @@ import menuTypeService from '../main/database/mysql/m.menu.type/m_menu_type.serv
 import productTypeService from '../main/database/mysql/m.product.type/m_product_type.service';
 import userTypeService from '../main/database/mysql/m.user.type/m_user_type.service';
 import userService from '../main/database/mysql/s.user/s_user.service';
+import customService from '../main/database/mysql/m_customer/m_customer.service';
+import employeeService from '../main/database/mysql/m_employee/m_employee.service';
+import financeService from '../main/database/mysql/m_finance/m_finance.service';
+import supplerService from '../main/database/mysql/m_suppler/m_suppler.service';
+import orderService from '../main/database/mysql/s_order/s_order.service';
+import orderDetailService from '../main/database/mysql/s_order_detail/s_order_detail.service';
+import storageService from '../main/database/mysql/s_storage/s_storage.service';
+import productService from '../main/database/mysql/s.product/s_product.service';
 
 // tslint:disable-next-line: no-var-requires
 const server = http.createServer(app);
@@ -30,36 +38,52 @@ sequelize
     console.error('Unable to connect to the database:', err.toString()),
   );
 
-sequelize.sync({ alter: false, force: false }).then(async () => {
-  const adminRole = await userTypeService.init(UserTypeName.admin);
-  const managerRole = await userTypeService.init(UserTypeName.manager);
-  const employeeRole = await userTypeService.init(UserTypeName.employee);
+sequelize
+  .sync({ alter: false, force: false })
+  .then(() => {
+    console.log(`initialize table: ${customService.getTableName()}`);
+    console.log(`initialize table: ${employeeService.getTableName()}`);
+    console.log(`initialize table: ${financeService.getTableName()}`);
+    console.log(`initialize table: ${supplerService.getTableName()}`);
+    console.log(`initialize table: ${menuTypeService.getTableName()}`);
+    console.log(`initialize table: ${productTypeService.getTableName()}`);
+    console.log(`initialize table: ${userTypeService.getTableName()}`);
+    console.log(`initialize table: ${orderService.getTableName()}`);
+    console.log(`initialize table: ${orderDetailService.getTableName()}`);
+    console.log(`initialize table: ${storageService.getTableName()}`);
+    console.log(`initialize table: ${productService.getTableName()}`);
+    console.log(`initialize table: ${userService.getTableName()}`);
+  })
+  .then(async () => {
+    const adminRole = await userTypeService.init(UserTypeName.admin);
+    const managerRole = await userTypeService.init(UserTypeName.manager);
+    const employeeRole = await userTypeService.init(UserTypeName.employee);
 
-  userService.init(
-    'admin',
-    Crypto.AES.encrypt('admin', CRYPTO_SECRET),
-    adminRole.id,
-  );
-  userService.init(
-    'manager',
-    Crypto.AES.encrypt('manager', CRYPTO_SECRET),
-    managerRole.id,
-  );
-  userService.init(
-    'employee',
-    Crypto.AES.encrypt('employee', CRYPTO_SECRET),
-    employeeRole.id,
-  );
+    userService.init(
+      'admin',
+      Crypto.AES.encrypt('admin', CRYPTO_SECRET),
+      adminRole.id,
+    );
+    userService.init(
+      'manager',
+      Crypto.AES.encrypt('manager', CRYPTO_SECRET),
+      managerRole.id,
+    );
+    userService.init(
+      'employee',
+      Crypto.AES.encrypt('employee', CRYPTO_SECRET),
+      employeeRole.id,
+    );
 
-  productTypeService.init(ProductTypeName.food);
-  productTypeService.init(ProductTypeName.beverage);
-  productTypeService.init(ProductTypeName.service);
+    productTypeService.init(ProductTypeName.food);
+    productTypeService.init(ProductTypeName.beverage);
+    productTypeService.init(ProductTypeName.service);
 
-  menuTypeService.init('spring', 'filter_vintage');
-  menuTypeService.init('summer', 'waves');
-  menuTypeService.init('autumn', 'eco');
-  menuTypeService.init('winter', 'ac_unit');
-});
+    menuTypeService.init('spring', 'filter_vintage');
+    menuTypeService.init('summer', 'waves');
+    menuTypeService.init('autumn', 'eco');
+    menuTypeService.init('winter', 'ac_unit');
+  });
 
 /**
 connect to S3

@@ -9,6 +9,11 @@ class MenuTypeService implements RestfulService {
     this.restService = new RestService(menuTypeModel);
   }
 
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
+  }
+
   /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);

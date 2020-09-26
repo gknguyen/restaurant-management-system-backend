@@ -9,6 +9,11 @@ class ProductService implements RestfulService {
     this.restService = new RestService(productModel);
   }
 
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
+  }
+
   /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);

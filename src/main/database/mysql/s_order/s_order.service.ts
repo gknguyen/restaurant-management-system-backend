@@ -9,6 +9,11 @@ class OrderService implements RestfulService {
     this.restService = new RestService(orderModel);
   }
 
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
+  }
+
   /** get */
   getOne(condition: any) {
     return this.restService.getOne(condition);

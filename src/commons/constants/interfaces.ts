@@ -1,4 +1,6 @@
 export interface RestfulService {
+  getTableName(): any;
+
   postOne(data: any, condition: any): any;
   postAll(data: any, condition: any): any;
 

@@ -1,9 +1,6 @@
-import bcrypt from 'bcryptjs';
-import jsonwebtoken from 'jsonwebtoken';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import RestService from '../../../../commons/restful-service';
 import userModel, { User } from './s_user.model';
-import { Payload } from '../../../../commons/constants/interfaces';
 
 const Crypto = require('cryptojs').Crypto;
 
@@ -14,6 +11,11 @@ class UserService implements RestfulService {
 
   constructor() {
     this.restService = new RestService(userModel);
+  }
+
+  /** table name */
+  getTableName() {
+    return this.restService.getTableName();
   }
 
   /** get */

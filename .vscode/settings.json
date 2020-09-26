@@ -16,5 +16,6 @@
     "**.json"
   ],
   "files.autoSave": "onFocusChange",
-  "cSpell.words": ["oracledb"]
+  "cSpell.words": ["oracledb"],
+  "typescript.tsdk": "d:\\GK Technology\\All Projects\\GIT repositories\\restaurant-management-system\\node_modules\\typescript\\lib"
 }
