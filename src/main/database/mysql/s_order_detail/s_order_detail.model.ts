@@ -1,7 +1,7 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
 import sequelize from '../../../../configs/sequelize';
 import customerModel from '../m_customer/m_customer.model';
-import productModel from '../s.product/s_product.model';
+import productModel, { Product } from '../s.product/s_product.model';
 import orderModel from '../s_order/s_order.model';
 
 export interface OrderDetail extends Model {
@@ -12,6 +12,7 @@ export interface OrderDetail extends Model {
   totalPrice: number;
   createDateTime: Date;
   editDateTime: Date;
+  product: Product;
 }
 
 type ModelStatic = typeof Model & {

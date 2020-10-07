@@ -1,6 +1,6 @@
 import { DataTypes, Model, BuildOptions, UUIDV4 } from 'sequelize';
 import sequelize from '../../../../configs/sequelize';
-import customerModel from '../m_customer/m_customer.model';
+import customerModel, { Customer } from '../m_customer/m_customer.model';
 
 export interface Order extends Model {
   readonly id: string;
@@ -9,6 +9,7 @@ export interface Order extends Model {
   activeStatus: boolean;
   createDateTime: Date;
   editDateTime: Date;
+  customer: Customer;
 }
 
 type ModelStatic = typeof Model & {
