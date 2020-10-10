@@ -3,6 +3,8 @@ import { Results } from '../../../../commons/constants/interfaces';
 import customerModel from '../../../database/mysql/m_customer/m_customer.model';
 import { Order } from '../../../database/mysql/s_order/s_order.model';
 import orderService from '../../../database/mysql/s_order/s_order.service';
+import orderDetailModel from '../../../database/mysql/s_order_detail/s_order_detail.model';
+import productModel from '../../../database/mysql/s.product/s_product.model';
 
 class OrderController {
   /** ================================================================================== */
@@ -39,6 +41,70 @@ class OrderController {
         results.code = STATUS_CODE.OK;
         results.message = 'no result';
         results.values = [];
+        return results;
+      }
+    } catch (err) {
+      results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+      results.message = err.toString();
+      results.values = err;
+      return results;
+    }
+  };
+
+  /** ================================================================================== */
+  /**
+  get 1 order
+  */
+  getOrder = async (orderId: string | null | undefined) => {
+    const results = {
+      code: 0,
+      message: '',
+      values: null,
+    } as Results;
+
+    try {
+      /** check input */
+      if (!orderId) {
+        results.code = STATUS_CODE.NOT_FOUND;
+        results.message = 'input : orderId is missing';
+        return results;
+      }
+
+      /** get record */
+      const order = (await orderService.getOne({
+        attributes: ['id', 'finalPrice', 'activeStatus', 'createDateTime'],
+        where: { id: orderId },
+        include: [
+          {
+            model: customerModel,
+            as: 'customer',
+            attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
+          },
+          {
+            model: orderDetailModel,
+            as: 'orderDetails',
+            attributes: ['id', 'quantity', 'totalPrice'],
+            include: [
+              {
+                model: productModel,
+                as: 'product',
+                attributes: ['id', 'name', 'price', 'unit'],
+              },
+            ],
+          },
+        ],
+      })) as Order;
+
+      /** return responses */
+      if (order) {
+        results.code = STATUS_CODE.OK;
+        results.message = 'successfully';
+        results.values = order;
+        return results;
+      } else {
+        results.code = STATUS_CODE.OK;
+        results.message = 'no result';
+        results.values = {};
         return results;
       }
     } catch (err) {

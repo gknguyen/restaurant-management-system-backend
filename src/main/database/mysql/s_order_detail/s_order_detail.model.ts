@@ -45,7 +45,7 @@ const orderDetailModel = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    finalPrice: {
+    totalPrice: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },

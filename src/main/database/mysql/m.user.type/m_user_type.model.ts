@@ -9,13 +9,13 @@ export interface UserType extends Model {
   editDateTime: Date;
 }
 
-let enums: any = UserTypeName;
-let keys: string[] = Object.keys(UserTypeName);
-const userTypeNameValues: string[] = [];
-for (let i = 0; i < keys.length; i++) {
-  let value: string = keys[i];
-  userTypeNameValues.push(enums[value]);
-}
+// let enums: any = UserTypeName;
+// let keys: string[] = Object.keys(UserTypeName);
+// const userTypeNameValues: string[] = [];
+// for (let i = 0; i < keys.length; i++) {
+//   let value: string = keys[i];
+//   userTypeNameValues.push(enums[value]);
+// }
 
 type ModelStatic = typeof Model & {
   new (values?: object, options?: BuildOptions): UserType;
@@ -31,7 +31,8 @@ const userTypeModel = sequelize.define(
     },
     typeName: {
       type: DataTypes.ENUM,
-      values: userTypeNameValues,
+      // values: userTypeNameValues,
+      values: Object.values(UserTypeName),
       allowNull: false,
       unique: true,
     },

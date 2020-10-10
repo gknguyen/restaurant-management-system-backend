@@ -140,12 +140,14 @@ function reduceQuantityOfSelectedProducts(endHere = true) {
       next: express.NextFunction,
     ) => {
       const orderDetails = req.body.orderDetails as OrderDetail[];
+      const orderId = req.body.orderId as string;
 
       const results = await mainController.reduceQuantityOfSelectedProducts(
         orderDetails,
       );
 
       if (endHere) {
+        results.values = orderId;
         res.status(results.code).send(results);
         if (results.code !== STATUS_CODE.OK) throw results.message;
       } else {
