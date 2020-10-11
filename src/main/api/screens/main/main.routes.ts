@@ -8,12 +8,13 @@ import { OrderDetail } from '../../../database/mysql/s_order_detail/s_order_deta
 const mainScreenRouter = Router();
 
 /** get APIs */
-mainScreenRouter.get('/getList', getProductList());
+mainScreenRouter.get('/getProductList', getProductList());
+mainScreenRouter.get('/searchCustomer', searchCustomer());
 
 /** post APIs */
 mainScreenRouter.post(
-  '/createOne',
-  createCustomer(false),
+  '/createOrder',
+  getOrCreateCustomer(false),
   createOrder(false),
   createOrderDetailList(false),
   reduceQuantityOfSelectedProducts(),
@@ -39,7 +40,24 @@ function getProductList() {
   );
 }
 
-function createCustomer(endHere = true) {
+function searchCustomer() {
+  return errorHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      const searchValue = req.query.searchValue as string
+
+      const results = await mainController.searchCustomer(searchValue);
+
+      res.status(results.code).send(results);
+      if (results.code !== STATUS_CODE.OK) throw results.message;
+    },
+  );
+}
+
+function getOrCreateCustomer(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -51,7 +69,7 @@ function createCustomer(endHere = true) {
       const email = req.body.customer.email as string;
       const address = req.body.customer.address as string;
 
-      const results = await mainController.createCustomer(
+      const results = await mainController.getOrCreateCustomer(
         fullName,
         phoneNumber,
         email,

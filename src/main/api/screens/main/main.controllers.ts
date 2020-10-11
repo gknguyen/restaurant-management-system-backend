@@ -72,9 +72,53 @@ class MainController {
 
   /** ================================================================================== */
   /**
+  search 1 customer
+  */
+  searchCustomer = async (searchValue: string | null | undefined) => {
+    const results = {
+      code: 0,
+      message: '',
+      values: null,
+    } as Results;
+
+    try {
+      /** check input */
+      if (!searchValue) {
+        results.code = STATUS_CODE.NOT_FOUND;
+        results.message = 'input : searchValue is missing';
+        return results;
+      }
+
+      const customer = (await customService.getOne({
+        attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
+        where: { phoneNumber: searchValue },
+      })) as Customer;
+
+      /** return responses */
+      if (customer) {
+        results.code = STATUS_CODE.OK;
+        results.message = 'successfully';
+        results.values = customer;
+        return results;
+      } else {
+        results.code = STATUS_CODE.OK;
+        results.message = 'no result';
+        results.values = {};
+        return results;
+      }
+    } catch (err) {
+      results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+      results.message = err.toString();
+      results.values = err;
+      return results;
+    }
+  };
+
+  /** ================================================================================== */
+  /**
   create 1 customer
   */
-  createCustomer = async (
+  getOrCreateCustomer = async (
     fullName: string | null | undefined,
     phoneNumber: string | null | undefined,
     email: string | null | undefined,
@@ -109,16 +153,22 @@ class MainController {
         return results;
       }
 
-      /** create customer record */
-      const customer = (await customService.postOne(
-        {
-          fullName: fullName,
-          phoneNumber: phoneNumber,
-          email: email,
-          address: address,
-        },
-        null,
-      )) as Customer;
+      /** find the customer record, if no result, create new record */
+      let customer = (await customService.getOne({
+        attributes: ['id', 'phoneNumber'],
+        where: { phoneNumber: phoneNumber },
+      })) as Customer;
+
+      if (!customer)
+        customer = (await customService.postOne(
+          {
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            email: email,
+            address: address,
+          },
+          null,
+        )) as Customer;
 
       /** return responses */
       results.code = STATUS_CODE.OK;
