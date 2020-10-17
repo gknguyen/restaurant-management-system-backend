@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import orderDetailModel from './s_order_detail.model';
 
-class OrderDetailService implements RestfulService {
+export default class OrderDetailService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -53,7 +53,3 @@ class OrderDetailService implements RestfulService {
     return this.restService.postOrPut(data, condition);
   }
 }
-
-const orderDetailService = new OrderDetailService();
-
-export default orderDetailService;

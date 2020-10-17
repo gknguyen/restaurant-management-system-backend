@@ -1,14 +1,13 @@
-import userService from '../../../database/mysql/s.user/s_user.service';
+import STATUS_CODE from 'http-status';
+import moment, { utc } from 'moment-timezone';
+import { Op } from 'sequelize';
+import { CRYPTO_SECRET } from '../../../../commons/constants/env';
 import { Results } from '../../../../commons/constants/interfaces';
 import userTypeModel, {
   UserType,
 } from '../../../database/mysql/m.user.type/m_user_type.model';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import { User } from '../../../database/mysql/s.user/s_user.model';
-import STATUS_CODE from 'http-status';
-import userTypeService from '../../../database/mysql/m.user.type/m_user_type.service';
-import moment, { utc } from 'moment-timezone';
-import { Op } from 'sequelize';
-import { CRYPTO_SECRET } from '../../../../commons/constants/env';
 
 const Crypto = require('cryptojs').Crypto;
 
@@ -25,7 +24,7 @@ class UserController {
     } as Results;
 
     try {
-      const userList = (await userService.getAll({
+      const userList = (await mysqlService.userService.getAll({
         attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
         include: [
           {
@@ -73,7 +72,7 @@ class UserController {
         return results;
       }
 
-      const user = (await userService.getOne({
+      const user = (await mysqlService.userService.getOne({
         attributes: ['id', 'username', 'loginDateTime', 'activeStatus'],
         where: { id: userId },
         include: [
@@ -116,7 +115,7 @@ class UserController {
     } as Results;
 
     try {
-      const userList = (await userService.getAll({
+      const userList = (await mysqlService.userService.getAll({
         attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
         where: {
           [Op.or]: [
@@ -139,7 +138,7 @@ class UserController {
         results.values = userList;
         return results;
       } else {
-        const userList = (await userService.getAll({
+        const userList = (await mysqlService.userService.getAll({
           attributes: ['id', 'username', 'activeStatus', 'loginDateTime'],
           include: [
             {
@@ -193,7 +192,7 @@ class UserController {
         return results;
       }
 
-      const userType = (await userTypeService.getOne({
+      const userType = (await mysqlService.userTypeService.getOne({
         where: { typeName: userTypeName },
       })) as UserType;
 
@@ -205,7 +204,7 @@ class UserController {
 
       const encodedPass = Crypto.AES.encrypt(password, CRYPTO_SECRET);
 
-      const user = (await userService.postOne(
+      const user = (await mysqlService.userService.postOne(
         {
           userTypeId: userType.id,
           username: username,
@@ -253,7 +252,7 @@ class UserController {
 
       /** find userTypeId bt userTypeName */
       if (userTypeName) {
-        const userType = (await userTypeService.getOne({
+        const userType = (await mysqlService.userTypeService.getOne({
           attributes: ['id', 'typeName'],
           where: { typeName: userTypeName },
         })) as UserType;
@@ -267,7 +266,7 @@ class UserController {
         userTypeName = userType.id;
       }
 
-      await userService.putOne(
+      await mysqlService.userService.putOne(
         {
           id: userId,
           userTypeId: userTypeName || undefined,
@@ -308,7 +307,7 @@ class UserController {
         return results;
       }
 
-      await userService.delete({
+      await mysqlService.userService.delete({
         where: { id: userId },
       });
 
@@ -344,7 +343,7 @@ class UserController {
 
       for (let x in userIdList) {
         if (userIdList[x]) {
-          await userService.delete({
+          await mysqlService.userService.delete({
             where: { id: userIdList[x] },
           });
         }

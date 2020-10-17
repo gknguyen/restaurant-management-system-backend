@@ -1,11 +1,9 @@
 import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
 import { MenuType } from '../../../database/mysql/m.menu.type/m_menu_type.model';
-import menuTypeService from '../../../database/mysql/m.menu.type/m_menu_type.service';
 import { ProductType } from '../../../database/mysql/m.product.type/m_product_type.model';
-import productTypeService from '../../../database/mysql/m.product.type/m_product_type.service';
 import { UserType } from '../../../database/mysql/m.user.type/m_user_type.model';
-import userTypeService from '../../../database/mysql/m.user.type/m_user_type.service';
+import mysqlService from '../../../database/mysql/mysqlServices';
 
 class CommonAPIsController {
   /** ================================================================================== */
@@ -20,7 +18,7 @@ class CommonAPIsController {
     } as Results;
 
     try {
-      const menuTypeList = (await menuTypeService.getAll({
+      const menuTypeList = (await mysqlService.menuTypeService.getAll({
         attributes: ['id', 'typeName', 'icon'],
         order: [['createDateTime', 'ASC']],
       })) as MenuType[];
@@ -62,7 +60,7 @@ class CommonAPIsController {
         return results;
       }
 
-      const menuType = (await menuTypeService.getOne({
+      const menuType = (await mysqlService.menuTypeService.getOne({
         attributes: ['id', 'typeName', 'icon'],
         where: { typeName: typeName },
       })) as MenuType;
@@ -104,7 +102,7 @@ class CommonAPIsController {
         return results;
       }
 
-      const menuType = (await menuTypeService.postOne(
+      const menuType = (await mysqlService.menuTypeService.postOne(
         {
           typeName: typeName,
         },
@@ -135,7 +133,7 @@ class CommonAPIsController {
     } as Results;
 
     try {
-      const productTypeList = (await productTypeService.getAll({
+      const productTypeList = (await mysqlService.productTypeService.getAll({
         attributes: ['id', 'typeName'],
         order: [['createDateTime', 'ASC']],
       })) as ProductType[];
@@ -177,7 +175,7 @@ class CommonAPIsController {
         return results;
       }
 
-      const productType = (await productTypeService.getOne({
+      const productType = (await mysqlService.productTypeService.getOne({
         attributes: ['id', 'typeName'],
         where: { typeName: typeName },
       })) as ProductType;
@@ -219,7 +217,7 @@ class CommonAPIsController {
         return results;
       }
 
-      const productType = (await productTypeService.postOne(
+      const productType = (await mysqlService.productTypeService.postOne(
         {
           typeName: typeName,
         },
@@ -250,7 +248,7 @@ class CommonAPIsController {
     } as Results;
 
     try {
-      const userTypeList = (await userTypeService.getAll({
+      const userTypeList = (await mysqlService.userTypeService.getAll({
         attributes: ['id', 'typeName'],
       })) as UserType[];
 
@@ -291,7 +289,7 @@ class CommonAPIsController {
         return results;
       }
 
-      const userType = (await userTypeService.postOne(
+      const userType = (await mysqlService.userTypeService.postOne(
         {
           typeName: typeName,
         },

@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import supplerModel from './m_suppler.model';
 
-class SupplerService implements RestfulService {
+export default class SupplerService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -43,7 +43,3 @@ class SupplerService implements RestfulService {
     return this.restService.delete(condition);
   }
 }
-
-const supplerService = new SupplerService();
-
-export default supplerService;

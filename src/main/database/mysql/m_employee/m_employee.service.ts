@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import employeeModel from './m_employee.model';
 
-class EmployeeService implements RestfulService {
+export default class EmployeeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -43,7 +43,3 @@ class EmployeeService implements RestfulService {
     return this.restService.delete(condition);
   }
 }
-
-const employeeService = new EmployeeService();
-
-export default employeeService;

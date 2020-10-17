@@ -5,13 +5,11 @@ import { Results } from '../../../../commons/constants/interfaces';
 import menuTypeModel, {
   MenuType,
 } from '../../../database/mysql/m.menu.type/m_menu_type.model';
-import menuTypeService from '../../../database/mysql/m.menu.type/m_menu_type.service';
 import productTypeModel, {
   ProductType,
 } from '../../../database/mysql/m.product.type/m_product_type.model';
-import productTypeService from '../../../database/mysql/m.product.type/m_product_type.service';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import { Product } from '../../../database/mysql/s.product/s_product.model';
-import productService from '../../../database/mysql/s.product/s_product.service';
 
 class ProductController {
   /** ================================================================================== */
@@ -26,7 +24,7 @@ class ProductController {
     } as Results;
 
     try {
-      const productList = (await productService.getAll({
+      const productList = (await mysqlService.productService.getAll({
         attributes: [
           'id',
           'name',
@@ -82,14 +80,14 @@ class ProductController {
     } as Results;
 
     try {
-      // const productId: string | null = requestQuery.productId;
+      /** check input */
       if (!productId) {
         results.code = STATUS_CODE.NOT_FOUND;
         results.message = 'productId is missing';
         return results;
       }
 
-      const product = (await productService.getOne({
+      const product = (await mysqlService.productService.getOne({
         attributes: [
           'id',
           'name',
@@ -146,8 +144,7 @@ class ProductController {
     } as Results;
 
     try {
-      // const searchValue: any | null = requestQuery.searchValue;
-      const productList = (await productService.getAll({
+      const productList = (await mysqlService.productService.getAll({
         attributes: [
           'id',
           'name',
@@ -187,7 +184,7 @@ class ProductController {
         results.values = productList;
         return results;
       } else {
-        const productList = (await productService.getAll({
+        const productList = (await mysqlService.productService.getAll({
           attributes: [
             'id',
             'name',
@@ -219,7 +216,7 @@ class ProductController {
           results.values = productList;
           return results;
         } else {
-          const productList = (await productService.getAll({
+          const productList = (await mysqlService.productService.getAll({
             attributes: [
               'id',
               'name',
@@ -287,7 +284,7 @@ class ProductController {
     } as Results;
 
     try {
-      /** check if mandatory inputs exist or not */
+      /** check input */
       if (
         !productTypeName ||
         !menuTypeName ||
@@ -303,7 +300,7 @@ class ProductController {
       }
 
       /** get product type id */
-      const productType = (await productTypeService.getOne({
+      const productType = (await mysqlService.productTypeService.getOne({
         where: { typeName: productTypeName },
       })) as ProductType;
 
@@ -314,7 +311,7 @@ class ProductController {
       }
 
       /** get menu type id */
-      const menuType = (await menuTypeService.getOne({
+      const menuType = (await mysqlService.menuTypeService.getOne({
         where: { typeName: menuTypeName },
       })) as MenuType;
 
@@ -325,7 +322,7 @@ class ProductController {
       }
 
       /** create product */
-      const product = (await productService.postOne(
+      const product = (await mysqlService.productService.postOne(
         {
           productTypeId: productType.id,
           menuTypeId: menuType.id,
@@ -382,7 +379,7 @@ class ProductController {
       }
 
       /** get product type id */
-      const productType = (await productTypeService.getOne({
+      const productType = (await mysqlService.productTypeService.getOne({
         where: { typeName: productTypeName },
       })) as ProductType;
 
@@ -393,7 +390,7 @@ class ProductController {
       }
 
       /** get menu type id */
-      const menuType = (await menuTypeService.getOne({
+      const menuType = (await mysqlService.menuTypeService.getOne({
         where: { typeName: menuTypeName },
       })) as MenuType;
 
@@ -404,7 +401,7 @@ class ProductController {
       }
 
       /** edit product */
-      await productService.putOne(
+      await mysqlService.productService.putOne(
         {
           id: productId,
           productTypeId: productType.id,
@@ -454,7 +451,7 @@ class ProductController {
 
       for (let x in productIdList) {
         if (productIdList[x]) {
-          await productService.delete({
+          await mysqlService.productService.delete({
             where: { id: productIdList[x] },
           });
         }

@@ -1,6 +1,6 @@
 import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
-import customerService from '../../../database/mysql/m_customer/m_customer.service';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import { Customer } from '../../../database/mysql/m_customer/m_customer.model';
 
 class CustomerController {
@@ -17,7 +17,7 @@ class CustomerController {
 
     try {
       /** get customer list */
-      const customerList = (await customerService.getAll({
+      const customerList = (await mysqlService.customerService.getAll({
         attributes: [
           'id',
           'fullName',

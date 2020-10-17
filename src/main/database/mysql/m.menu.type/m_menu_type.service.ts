@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import menuTypeModel, { MenuType } from './m_menu_type.model';
 
-class MenuTypeService implements RestfulService {
+export default class MenuTypeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -62,7 +62,3 @@ class MenuTypeService implements RestfulService {
     return menuType;
   }
 }
-
-const menuTypeService = new MenuTypeService();
-
-export default menuTypeService;

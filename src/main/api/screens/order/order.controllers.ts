@@ -1,10 +1,10 @@
 import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import customerModel from '../../../database/mysql/m_customer/m_customer.model';
-import { Order } from '../../../database/mysql/s_order/s_order.model';
-import orderService from '../../../database/mysql/s_order/s_order.service';
-import orderDetailModel from '../../../database/mysql/s_order_detail/s_order_detail.model';
 import productModel from '../../../database/mysql/s.product/s_product.model';
+import { Order } from '../../../database/mysql/s_order/s_order.model';
+import orderDetailModel from '../../../database/mysql/s_order_detail/s_order_detail.model';
 
 class OrderController {
   /** ================================================================================== */
@@ -19,7 +19,7 @@ class OrderController {
     } as Results;
 
     try {
-      const orderList = (await orderService.getAll({
+      const orderList = (await mysqlService.orderService.getAll({
         attributes: [
           'id',
           'finalPrice',
@@ -77,7 +77,7 @@ class OrderController {
       }
 
       /** get record */
-      const order = (await orderService.getOne({
+      const order = (await mysqlService.orderService.getOne({
         attributes: [
           'id',
           'finalPrice',

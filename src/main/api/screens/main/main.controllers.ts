@@ -1,21 +1,18 @@
+import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
 import menuTypeModel from '../../../database/mysql/m.menu.type/m_menu_type.model';
 import productTypeModel from '../../../database/mysql/m.product.type/m_product_type.model';
-import productModel, {
-  Product,
-} from '../../../database/mysql/s.product/s_product.model';
-import productService from '../../../database/mysql/s.product/s_product.service';
-import STATUS_CODE from 'http-status';
-import { Order } from '../../../database/mysql/s_order/s_order.model';
-import orderService from '../../../database/mysql/s_order/s_order.service';
-import customService from '../../../database/mysql/m_customer/m_customer.service';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import customerModel, {
   Customer,
 } from '../../../database/mysql/m_customer/m_customer.model';
+import productModel, {
+  Product,
+} from '../../../database/mysql/s.product/s_product.model';
+import { Order } from '../../../database/mysql/s_order/s_order.model';
 import orderDetailModel, {
   OrderDetail,
 } from '../../../database/mysql/s_order_detail/s_order_detail.model';
-import orderDetailService from '../../../database/mysql/s_order_detail/s_order_detail.service';
 
 class MainController {
   /** ================================================================================== */
@@ -30,7 +27,7 @@ class MainController {
     } as Results;
 
     try {
-      const productList = (await productService.getAll({
+      const productList = (await mysqlService.productService.getAll({
         attributes: [
           'id',
           'name',
@@ -95,7 +92,7 @@ class MainController {
         return results;
       }
 
-      const customer = (await customService.getOne({
+      const customer = (await mysqlService.customerService.getOne({
         attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
         where: { phoneNumber: searchValue },
       })) as Customer;
@@ -132,7 +129,7 @@ class MainController {
     } as Results;
 
     try {
-      const orderList = (await orderService.getAll({
+      const orderList = (await mysqlService.orderService.getAll({
         attributes: ['id', 'no', 'finalPrice', 'activeStatus'],
         where: { activeStatus: true },
         include: [
@@ -217,7 +214,7 @@ class MainController {
       }
 
       /** create of edit customer record */
-      await customService.postOrPut(
+      await mysqlService.customerService.postOrPut(
         {
           id: customerId || undefined,
           fullName: fullName,
@@ -229,7 +226,7 @@ class MainController {
       );
 
       /** get the selected customer record */
-      const customer = (await customService.getOne({
+      const customer = (await mysqlService.customerService.getOne({
         attributes: ['id', 'phoneNumber'],
         where: { phoneNumber: phoneNumber },
       })) as Customer;
@@ -284,7 +281,7 @@ class MainController {
 
       /** create or edit order record */
       if (orderId) {
-        await orderService.putOne(
+        await mysqlService.orderService.putOne(
           {
             id: orderId,
             customerId: customerId,
@@ -294,7 +291,7 @@ class MainController {
           null,
         );
       } else {
-        const order = (await orderService.postOne(
+        const order = (await mysqlService.orderService.postOne(
           {
             customerId: customerId,
             finalPrice: finalPrice,
@@ -347,7 +344,7 @@ class MainController {
 
       /** create or update list of order detail record */
       for (const orderDetail of orderDetails) {
-        const product = (await productService.getOne({
+        const product = (await mysqlService.productService.getOne({
           attributes: ['id', 'name'],
           where: { name: orderDetail.product.name },
         })) as Product;
@@ -355,7 +352,7 @@ class MainController {
         if (product) orderDetail.productId = product.id;
         orderDetail.orderId = orderId;
 
-        orderDetailService.postOrPut(orderDetail, null);
+        mysqlService.orderDetailService.postOrPut(orderDetail, null);
       }
 
       /** return responses */
@@ -394,7 +391,7 @@ class MainController {
       /** updata quantity */
       for (const orderDetail of orderDetails) {
         if (orderDetail) {
-          const product = (await productService.getOne({
+          const product = (await mysqlService.productService.getOne({
             attributes: ['id', 'name', 'amount'],
             where: { name: orderDetail.product.name },
           })) as Product;

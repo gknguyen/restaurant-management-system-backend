@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import productTypeModel, { ProductType } from './m_product_type.model';
 
-class ProductTypeService implements RestfulService {
+export default class ProductTypeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -61,7 +61,3 @@ class ProductTypeService implements RestfulService {
     return productType;
   }
 }
-
-const productTypeService = new ProductTypeService();
-
-export default productTypeService;

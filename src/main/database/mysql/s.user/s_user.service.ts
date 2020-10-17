@@ -2,11 +2,7 @@ import { RestfulService } from '../../../../commons/constants/interfaces';
 import RestService from '../../../../commons/restful-service';
 import userModel, { User } from './s_user.model';
 
-const Crypto = require('cryptojs').Crypto;
-
-const saltRounds: number = 10;
-
-class UserService implements RestfulService {
+export default class UserService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -67,7 +63,3 @@ class UserService implements RestfulService {
     return user;
   }
 }
-
-const userService = new UserService();
-
-export default userService;

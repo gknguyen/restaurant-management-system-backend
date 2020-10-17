@@ -7,8 +7,8 @@ import {
 } from '../../../../commons/constants/env';
 import { Payload, Results } from '../../../../commons/constants/interfaces';
 import userTypeModel from '../../../database/mysql/m.user.type/m_user_type.model';
+import mysqlService from '../../../database/mysql/mysqlServices';
 import { User } from '../../../database/mysql/s.user/s_user.model';
-import userService from '../../../database/mysql/s.user/s_user.service';
 
 const Crypto = require('cryptojs').Crypto;
 
@@ -72,7 +72,7 @@ class AuthenticationController {
       }
 
       /** get user infomation */
-      const user = (await userService.getOne({
+      const user = (await mysqlService.userService.getOne({
         attributes: [
           'id',
           'username',
@@ -177,7 +177,7 @@ class AuthenticationController {
       }
 
       /* get user data */
-      const userData = (await userService.getOne({
+      const userData = (await mysqlService.userService.getOne({
         attributes: ['username', 'authToken'],
         where: { username: userInfo.username },
       })) as User;
