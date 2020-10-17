@@ -42,6 +42,16 @@ class OrderDetailService implements RestfulService {
   delete(condition: any) {
     return this.restService.delete(condition);
   }
+
+  /** find or create */
+  getOrPost(condition: any) {
+    return this.restService.getOrPost(condition);
+  }
+
+  /** create or edit */
+  postOrPut(data: any, condition: any) {
+    return this.restService.postOrPut(data, condition);
+  }
 }
 
 const orderDetailService = new OrderDetailService();

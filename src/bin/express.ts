@@ -9,7 +9,7 @@ import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
 import authRouter, {
   verifyToken,
 } from '../main/api/general/authentication/authentication.routes';
-import apiRouter from './routes';
+import apiRouter from '../configs/routes';
 
 let num = 0;
 

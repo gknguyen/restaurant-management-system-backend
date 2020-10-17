@@ -30,12 +30,8 @@ export const ERROR_LOG_FILE_MAX_SIZE = convertStringToNumber(
 );
 
 /** MySQL */
-export const MYSQL_DATABASES = process.env.MYSQL_DATABASES || '';
-export const MYSQL_USERNAME = process.env.MYSQL_USERNAME || '';
-export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || '';
-export const MYSQL_HOST = process.env.MYSQL_HOST || '';
-export const MYSQL_PORT = convertStringToNumber(process.env.MYSQL_PORT || '3306');
-export const MYSQL_DIALECT = 'mysql';
+export const APP_DB_URL =
+  process.env.APP_DB_URL || 'mysql://root:@127.0.0.1:3306/project_management_system';
 
 /** AWS S3 */
 export const AWS_S3_BUCKET_URL = process.env.AWS_S3_BUCKET_URL || '';

@@ -139,7 +139,7 @@ class MainController {
           {
             model: customerModel,
             as: 'customer',
-            attributes: ['id', 'fullName', 'phoneNumber'],
+            attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
           },
           {
             model: orderDetailModel,
@@ -154,6 +154,7 @@ class MainController {
             ],
           },
         ],
+        order: [['createDateTime', 'ASC']],
       })) as Order[];
 
       if (orderList && orderList.length > 0) {
@@ -179,7 +180,8 @@ class MainController {
   /**
   create 1 customer
   */
-  getOrCreateCustomer = async (
+  createOrEditCustomer = async (
+    customerId: string | null | undefined,
     fullName: string | null | undefined,
     phoneNumber: string | null | undefined,
     email: string | null | undefined,
@@ -214,22 +216,23 @@ class MainController {
         return results;
       }
 
-      /** find the customer record, if no result, create new record */
-      let customer = (await customService.getOne({
+      /** create of edit customer record */
+      await customService.postOrPut(
+        {
+          id: customerId || undefined,
+          fullName: fullName,
+          phoneNumber: phoneNumber,
+          email: email,
+          address: address,
+        },
+        null,
+      );
+
+      /** get the selected customer record */
+      const customer = (await customService.getOne({
         attributes: ['id', 'phoneNumber'],
         where: { phoneNumber: phoneNumber },
       })) as Customer;
-
-      if (!customer)
-        customer = (await customService.postOne(
-          {
-            fullName: fullName,
-            phoneNumber: phoneNumber,
-            email: email,
-            address: address,
-          },
-          null,
-        )) as Customer;
 
       /** return responses */
       results.code = STATUS_CODE.OK;
@@ -248,9 +251,12 @@ class MainController {
   /**
   create 1 order
   */
-  getOrCreateOrder = async (
+  createOrEditOrder = async (
+    orderId: string | null | undefined,
     customerId: string | null | undefined,
+    no: number | null | undefined,
     finalPrice: number | null | undefined,
+    activeStatus: boolean | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -270,21 +276,39 @@ class MainController {
         results.message = 'input : finalPrice is missing';
         return results;
       }
+      if (activeStatus === null || activeStatus === undefined) {
+        results.code = STATUS_CODE.NOT_FOUND;
+        results.message = 'input : activeStatus is missing';
+        return results;
+      }
 
-      /** create order record */
-      const order = (await orderService.postOne(
-        {
-          customerId: customerId,
-          finalPrice: finalPrice,
-          activeStatus: true,
-        },
-        null,
-      )) as Order;
+      /** create or edit order record */
+      if (orderId) {
+        await orderService.putOne(
+          {
+            id: orderId,
+            customerId: customerId,
+            finalPrice: finalPrice,
+            activeStatus: activeStatus,
+          },
+          null,
+        );
+      } else {
+        const order = (await orderService.postOne(
+          {
+            customerId: customerId,
+            finalPrice: finalPrice,
+            activeStatus: activeStatus,
+          },
+          null,
+        )) as Order;
+        orderId = order.id;
+      }
 
       /** return responses */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = order;
+      results.values = { id: orderId };
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
@@ -298,7 +322,7 @@ class MainController {
   /**
   create order detail list
   */
-  createOrderDetailList = async (
+  createOrEditOrderDetailList = async (
     orderId: string | null | undefined,
     orderDetails: OrderDetail[] | null | undefined,
   ) => {
@@ -321,7 +345,7 @@ class MainController {
         return results;
       }
 
-      /** create list of order detail record */
+      /** create or update list of order detail record */
       for (const orderDetail of orderDetails) {
         const product = (await productService.getOne({
           attributes: ['id', 'name'],
@@ -330,17 +354,13 @@ class MainController {
 
         if (product) orderDetail.productId = product.id;
         orderDetail.orderId = orderId;
-      }
 
-      const orderDetailList = (await orderDetailService.postAll(
-        orderDetails,
-        null,
-      )) as OrderDetail[];
+        orderDetailService.postOrPut(orderDetail, null);
+      }
 
       /** return responses */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = orderDetailList;
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;

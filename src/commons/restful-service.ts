@@ -72,6 +72,22 @@ class RestService implements RestfulService {
   async delete(condition: any) {
     return this.model.destroy({ ...condition });
   }
+
+  /* ================================================================================== */
+  /*
+  find or create
+  */
+  getOrPost(condition: any) {
+    return this.model.findOrCreate({ ...condition });
+  }
+
+  /* ================================================================================== */
+  /*
+  create or edit
+  */
+  postOrPut(data: any, condition: any) {
+    return this.model.upsert({ ...data }, { ...condition });
+  }
 }
 
 export default RestService;

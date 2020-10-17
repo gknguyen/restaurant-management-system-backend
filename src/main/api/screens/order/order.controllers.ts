@@ -20,7 +20,13 @@ class OrderController {
 
     try {
       const orderList = (await orderService.getAll({
-        attributes: ['id', 'finalPrice', 'activeStatus', 'createDateTime'],
+        attributes: [
+          'id',
+          'finalPrice',
+          'activeStatus',
+          'createDateTime',
+          'editDateTime',
+        ],
         include: [
           {
             model: customerModel,
@@ -72,7 +78,13 @@ class OrderController {
 
       /** get record */
       const order = (await orderService.getOne({
-        attributes: ['id', 'finalPrice', 'activeStatus', 'createDateTime'],
+        attributes: [
+          'id',
+          'finalPrice',
+          'activeStatus',
+          'createDateTime',
+          'editDateTime',
+        ],
         where: { id: orderId },
         include: [
           {

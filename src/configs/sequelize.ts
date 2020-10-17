@@ -1,25 +1,11 @@
 import { Sequelize } from 'sequelize';
-import {
-  MYSQL_DATABASES,
-  MYSQL_USERNAME,
-  MYSQL_PASSWORD,
-  MYSQL_HOST,
-  MYSQL_PORT,
-  MYSQL_DIALECT,
-} from '../commons/constants/env';
+import { APP_DB_URL } from '../commons/constants/env';
 
-const sequelize = new Sequelize({
-  database: MYSQL_DATABASES,
-  username: MYSQL_USERNAME,
-  password: MYSQL_PASSWORD,
-  host: MYSQL_HOST,
-  port: MYSQL_PORT,
-  dialect: MYSQL_DIALECT,
+const sequelize = new Sequelize(APP_DB_URL, {
   logging: false,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
-    ssl: 'Amazon RDS',
   },
 });
 

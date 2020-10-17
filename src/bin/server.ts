@@ -4,11 +4,11 @@ import { ProductTypeName, UserTypeName } from '../commons/constants/enum-list';
 import {
   AWS_S3_BUCKET_NAME,
   CRYPTO_SECRET,
-  MYSQL_HOST,
+  APP_DB_URL,
   PORT,
 } from '../commons/constants/env';
 import s3 from '../configs/aws-S3';
-import app from '../configs/express';
+import app from './express';
 import sequelize from '../configs/sequelize';
 import menuTypeService from '../main/database/mysql/m.menu.type/m_menu_type.service';
 import productTypeService from '../main/database/mysql/m.product.type/m_product_type.service';
@@ -33,7 +33,7 @@ connect to MySQL
 */
 sequelize
   .authenticate()
-  .then(() => logger('Connected to MySQL: ' + MYSQL_HOST))
+  .then(() => logger('Connected to MySQL: ' + APP_DB_URL))
   .catch((err: Error) =>
     console.error('Unable to connect to the database:', err.toString()),
   );
@@ -41,18 +41,18 @@ sequelize
 sequelize
   .sync({ alter: false, force: false })
   .then(() => {
-    console.log(`initialize table: ${customService.getTableName()}`);
-    console.log(`initialize table: ${employeeService.getTableName()}`);
-    console.log(`initialize table: ${financeService.getTableName()}`);
-    console.log(`initialize table: ${supplerService.getTableName()}`);
-    console.log(`initialize table: ${menuTypeService.getTableName()}`);
-    console.log(`initialize table: ${productTypeService.getTableName()}`);
-    console.log(`initialize table: ${userTypeService.getTableName()}`);
-    console.log(`initialize table: ${orderService.getTableName()}`);
-    console.log(`initialize table: ${orderDetailService.getTableName()}`);
-    console.log(`initialize table: ${storageService.getTableName()}`);
-    console.log(`initialize table: ${productService.getTableName()}`);
-    console.log(`initialize table: ${userService.getTableName()}`);
+    customService.getTableName();
+    employeeService.getTableName();
+    financeService.getTableName();
+    supplerService.getTableName();
+    menuTypeService.getTableName();
+    productTypeService.getTableName();
+    userTypeService.getTableName();
+    orderService.getTableName();
+    orderDetailService.getTableName();
+    storageService.getTableName();
+    productService.getTableName();
+    userService.getTableName();
   })
   .then(async () => {
     const adminRole = await userTypeService.init(UserTypeName.admin);

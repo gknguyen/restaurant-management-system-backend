@@ -14,9 +14,9 @@ mainScreenRouter.get('/getUnpaidOrderList', getUnpaidOrderList());
 /** post APIs */
 mainScreenRouter.post(
   '/createOrder',
-  getOrCreateCustomer(false),
-  getOrCreateOrder(false),
-  createOrderDetailList(false),
+  createOrEditCustomer(false),
+  createOrEditOrder(false),
+  createOrEditOrderDetailList(false),
   reduceQuantityOfSelectedProducts(),
 );
 
@@ -72,19 +72,21 @@ function getUnpaidOrderList() {
   );
 }
 
-function getOrCreateCustomer(endHere = true) {
+function createOrEditCustomer(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
       res: express.Response,
       next: express.NextFunction,
     ) => {
+      const customerId = req.body.customer.id as string;
       const fullName = req.body.customer.fullName as string;
       const phoneNumber = req.body.customer.phoneNumber as string;
       const email = req.body.customer.email as string;
       const address = req.body.customer.address as string;
 
-      const results = await mainController.getOrCreateCustomer(
+      const results = await mainController.createOrEditCustomer(
+        customerId,
         fullName,
         phoneNumber,
         email,
@@ -107,17 +109,26 @@ function getOrCreateCustomer(endHere = true) {
   );
 }
 
-function getOrCreateOrder(endHere = true) {
+function createOrEditOrder(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
       res: express.Response,
       next: express.NextFunction,
     ) => {
+      const orderId = req.body.id as string;
+      const no = req.body.no as number;
       const finalPrice = req.body.finalPrice as number;
+      const activeStatus = req.body.activeStatus as boolean;
       const customerId = req.body.customerId as string;
 
-      const results = await mainController.getOrCreateOrder(customerId, finalPrice);
+      const results = await mainController.createOrEditOrder(
+        orderId,
+        customerId,
+        no,
+        finalPrice,
+        activeStatus,
+      );
 
       if (endHere) {
         res.status(results.code).send(results);
@@ -135,7 +146,7 @@ function getOrCreateOrder(endHere = true) {
   );
 }
 
-function createOrderDetailList(endHere = true) {
+function createOrEditOrderDetailList(endHere = true) {
   return errorHandler(
     async (
       req: express.Request,
@@ -145,7 +156,7 @@ function createOrderDetailList(endHere = true) {
       const orderDetails = req.body.orderDetails as OrderDetail[];
       const orderId = req.body.orderId as string;
 
-      const results = await mainController.createOrderDetailList(
+      const results = await mainController.createOrEditOrderDetailList(
         orderId,
         orderDetails,
       );
