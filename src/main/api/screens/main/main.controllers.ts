@@ -1,15 +1,18 @@
+import STATUS_CODE from 'http-status';
 import { Results } from '../../../../commons/constants/interfaces';
 import menuTypeModel from '../../../database/mysql/m.menu.type/m_menu_type.model';
 import productTypeModel from '../../../database/mysql/m.product.type/m_product_type.model';
-import { Product } from '../../../database/mysql/s.product/s_product.model';
-import productService from '../../../database/mysql/s.product/s_product.service';
-import STATUS_CODE from 'http-status';
+import mysqlService from '../../../database/mysql/mysqlServices';
+import customerModel, {
+  Customer,
+} from '../../../database/mysql/m_customer/m_customer.model';
+import productModel, {
+  Product,
+} from '../../../database/mysql/s.product/s_product.model';
 import { Order } from '../../../database/mysql/s_order/s_order.model';
-import orderService from '../../../database/mysql/s_order/s_order.service';
-import customService from '../../../database/mysql/m_customer/m_customer.service';
-import { Customer } from '../../../database/mysql/m_customer/m_customer.model';
-import { OrderDetail } from '../../../database/mysql/s_order_detail/s_order_detail.model';
-import orderDetailService from '../../../database/mysql/s_order_detail/s_order_detail.service';
+import orderDetailModel, {
+  OrderDetail,
+} from '../../../database/mysql/s_order_detail/s_order_detail.model';
 
 class MainController {
   /** ================================================================================== */
@@ -24,7 +27,7 @@ class MainController {
     } as Results;
 
     try {
-      const productList = (await productService.getAll({
+      const productList = (await mysqlService.productService.getAll({
         attributes: [
           'id',
           'name',
@@ -89,7 +92,7 @@ class MainController {
         return results;
       }
 
-      const customer = (await customService.getOne({
+      const customer = (await mysqlService.customerService.getOne({
         attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
         where: { phoneNumber: searchValue },
       })) as Customer;
@@ -116,9 +119,66 @@ class MainController {
 
   /** ================================================================================== */
   /**
+  get unpaid order list
+  */
+  getUnpaidOrderList = async () => {
+    const results = {
+      code: 0,
+      message: '',
+      values: null,
+    } as Results;
+
+    try {
+      const orderList = (await mysqlService.orderService.getAll({
+        attributes: ['id', 'no', 'finalPrice', 'activeStatus'],
+        where: { activeStatus: true },
+        include: [
+          {
+            model: customerModel,
+            as: 'customer',
+            attributes: ['id', 'fullName', 'phoneNumber', 'email', 'address'],
+          },
+          {
+            model: orderDetailModel,
+            as: 'orderDetails',
+            attributes: ['id', 'quantity', 'totalPrice'],
+            include: [
+              {
+                model: productModel,
+                as: 'product',
+                attributes: ['id', 'name', 'price', 'unit'],
+              },
+            ],
+          },
+        ],
+        order: [['createDateTime', 'ASC']],
+      })) as Order[];
+
+      if (orderList && orderList.length > 0) {
+        results.code = STATUS_CODE.OK;
+        results.message = 'successfully';
+        results.values = orderList;
+        return results;
+      } else {
+        results.code = STATUS_CODE.OK;
+        results.message = 'no result';
+        results.values = [];
+        return results;
+      }
+    } catch (err) {
+      results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
+      results.message = err.toString();
+      results.values = err;
+      return results;
+    }
+  };
+
+  /** ================================================================================== */
+  /**
   create 1 customer
   */
-  getOrCreateCustomer = async (
+  createOrEditCustomer = async (
+    customerId: string | null | undefined,
     fullName: string | null | undefined,
     phoneNumber: string | null | undefined,
     email: string | null | undefined,
@@ -153,22 +213,23 @@ class MainController {
         return results;
       }
 
-      /** find the customer record, if no result, create new record */
-      let customer = (await customService.getOne({
+      /** create of edit customer record */
+      await mysqlService.customerService.postOrPut(
+        {
+          id: customerId || undefined,
+          fullName: fullName,
+          phoneNumber: phoneNumber,
+          email: email,
+          address: address,
+        },
+        null,
+      );
+
+      /** get the selected customer record */
+      const customer = (await mysqlService.customerService.getOne({
         attributes: ['id', 'phoneNumber'],
         where: { phoneNumber: phoneNumber },
       })) as Customer;
-
-      if (!customer)
-        customer = (await customService.postOne(
-          {
-            fullName: fullName,
-            phoneNumber: phoneNumber,
-            email: email,
-            address: address,
-          },
-          null,
-        )) as Customer;
 
       /** return responses */
       results.code = STATUS_CODE.OK;
@@ -187,9 +248,12 @@ class MainController {
   /**
   create 1 order
   */
-  createOrder = async (
+  createOrEditOrder = async (
+    orderId: string | null | undefined,
     customerId: string | null | undefined,
+    no: number | null | undefined,
     finalPrice: number | null | undefined,
+    activeStatus: boolean | null | undefined,
   ) => {
     const results = {
       code: 0,
@@ -209,21 +273,39 @@ class MainController {
         results.message = 'input : finalPrice is missing';
         return results;
       }
+      if (activeStatus === null || activeStatus === undefined) {
+        results.code = STATUS_CODE.NOT_FOUND;
+        results.message = 'input : activeStatus is missing';
+        return results;
+      }
 
-      /** create order record */
-      const order = (await orderService.postOne(
-        {
-          customerId: customerId,
-          finalPrice: finalPrice,
-          activeStatus: true,
-        },
-        null,
-      )) as Order;
+      /** create or edit order record */
+      if (orderId) {
+        await mysqlService.orderService.putOne(
+          {
+            id: orderId,
+            customerId: customerId,
+            finalPrice: finalPrice,
+            activeStatus: activeStatus,
+          },
+          null,
+        );
+      } else {
+        const order = (await mysqlService.orderService.postOne(
+          {
+            customerId: customerId,
+            finalPrice: finalPrice,
+            activeStatus: activeStatus,
+          },
+          null,
+        )) as Order;
+        orderId = order.id;
+      }
 
       /** return responses */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = order;
+      results.values = { id: orderId };
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
@@ -237,7 +319,7 @@ class MainController {
   /**
   create order detail list
   */
-  createOrderDetailList = async (
+  createOrEditOrderDetailList = async (
     orderId: string | null | undefined,
     orderDetails: OrderDetail[] | null | undefined,
   ) => {
@@ -260,26 +342,22 @@ class MainController {
         return results;
       }
 
-      /** create list of order detail record */
+      /** create or update list of order detail record */
       for (const orderDetail of orderDetails) {
-        const product = (await productService.getOne({
+        const product = (await mysqlService.productService.getOne({
           attributes: ['id', 'name'],
           where: { name: orderDetail.product.name },
         })) as Product;
 
         if (product) orderDetail.productId = product.id;
         orderDetail.orderId = orderId;
-      }
 
-      const orderDetailList = (await orderDetailService.postAll(
-        orderDetails,
-        null,
-      )) as OrderDetail[];
+        mysqlService.orderDetailService.postOrPut(orderDetail, null);
+      }
 
       /** return responses */
       results.code = STATUS_CODE.OK;
       results.message = 'successfully';
-      results.values = orderDetailList;
       return results;
     } catch (err) {
       results.code = STATUS_CODE.INTERNAL_SERVER_ERROR;
@@ -313,7 +391,7 @@ class MainController {
       /** updata quantity */
       for (const orderDetail of orderDetails) {
         if (orderDetail) {
-          const product = (await productService.getOne({
+          const product = (await mysqlService.productService.getOne({
             attributes: ['id', 'name', 'amount'],
             where: { name: orderDetail.product.name },
           })) as Product;

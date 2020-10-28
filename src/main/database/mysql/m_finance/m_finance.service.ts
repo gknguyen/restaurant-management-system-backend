@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import financeModel from './m_finance.model';
 
-class FinanceService implements RestfulService {
+export default class FinanceService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -43,7 +43,3 @@ class FinanceService implements RestfulService {
     return this.restService.delete(condition);
   }
 }
-
-const financeService = new FinanceService();
-
-export default financeService;

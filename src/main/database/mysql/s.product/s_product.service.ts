@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import productModel from './s_product.model';
 
-class ProductService implements RestfulService {
+export default class ProductService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -43,7 +43,3 @@ class ProductService implements RestfulService {
     return this.restService.delete(condition);
   }
 }
-
-const productService = new ProductService();
-
-export default productService;

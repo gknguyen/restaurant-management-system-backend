@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import userTypeModel, { UserType } from './m_user_type.model';
 
-class UserTypeService implements RestfulService {
+export default class UserTypeService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -61,7 +61,3 @@ class UserTypeService implements RestfulService {
     return userType;
   }
 }
-
-const userTypeService = new UserTypeService();
-
-export default userTypeService;

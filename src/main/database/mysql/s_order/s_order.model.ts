@@ -5,6 +5,7 @@ import customerModel, { Customer } from '../m_customer/m_customer.model';
 export interface Order extends Model {
   readonly id: string;
   customerId: string;
+  no: number;
   finalPrice: number;
   activeStatus: boolean;
   createDateTime: Date;
@@ -30,6 +31,12 @@ const orderModel = sequelize.define(
         model: customerModel,
         key: 'id',
       },
+    },
+    no: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      unique: true,
+      allowNull: false,
     },
     finalPrice: {
       type: DataTypes.DOUBLE,

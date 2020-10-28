@@ -2,7 +2,7 @@ import RestService from '../../../../commons/restful-service';
 import { RestfulService } from '../../../../commons/constants/interfaces';
 import orderDetailModel from './s_order_detail.model';
 
-class OrderDetailService implements RestfulService {
+export default class OrderDetailService implements RestfulService {
   private restService: RestService;
 
   constructor() {
@@ -42,8 +42,14 @@ class OrderDetailService implements RestfulService {
   delete(condition: any) {
     return this.restService.delete(condition);
   }
+
+  /** find or create */
+  getOrPost(condition: any) {
+    return this.restService.getOrPost(condition);
+  }
+
+  /** create or edit */
+  postOrPut(data: any, condition: any) {
+    return this.restService.postOrPut(data, condition);
+  }
 }
-
-const orderDetailService = new OrderDetailService();
-
-export default orderDetailService;
