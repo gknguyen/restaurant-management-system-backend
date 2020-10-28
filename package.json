@@ -13,10 +13,10 @@
     "ci": "yarn install --frozen-lockfile --ignore-scripts",
     "ci:prod": "yarn install --frozen-lockfile --ignore-scripts --prod"
   },
-  "author": "Giang Nguyen",
+  "author": "Giang Nguyen", 
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.653.0",
+    "aws-sdk": "^2.653.0", 
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
