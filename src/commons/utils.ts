@@ -21,16 +21,14 @@ export function getFilesizeInBytes(filename: string) {
   }
 }
 
-export function convertStringToNumber(string: string | undefined) {
-  if (string) {
-    const number: number = parseFloat(string);
-    return number;
-  } else return 0;
+export function convertStringToNumber(str?: string) {
+  if (str) return parseFloat(str);
+  else return 0;
 }
 
-export function convertStringToBoolean(string: string | undefined) {
-  if (string) {
-    if (string === 'true') return true;
+export function convertStringToBoolean(str?: string) {
+  if (str) {
+    if (str === 'true') return true;
     else return false;
   } else return false;
 }

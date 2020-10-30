@@ -1,17 +1,14 @@
-import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import express, { json } from 'express';
 import helmet from 'helmet';
 import passport from 'passport';
 import path, { join } from 'path';
+import apiRouter from '../configs/routes';
 import awsS3Router from '../main/api/general/amazon.S3/amazon.S3.routes';
 import authRouter, {
   verifyToken,
 } from '../main/api/general/authentication/authentication.routes';
-import apiRouter from '../configs/routes';
-
-let num = 0;
 
 const app = express();
 
@@ -42,8 +39,8 @@ function loadViews() {
 function loadConfigs() {
   app.use(compression());
   app.use(json());
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(helmet());
 

@@ -341,10 +341,10 @@ class UserController {
         return results;
       }
 
-      for (let x in userIdList) {
-        if (userIdList[x]) {
+      for (const userId of userIdList) {
+        if (userId) {
           await mysqlService.userService.delete({
-            where: { id: userIdList[x] },
+            where: { id: userId },
           });
         }
       }

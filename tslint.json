@@ -1,11 +1,36 @@
 {
   "defaultSeverity": "error",
-  "extends": ["tslint:recommended"],
+  // "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
-    "quotemark": [true, "single"],
+    /** variable declarations */
+    "ban-types": [true, ["Object", "Use {} instead."], ["String"]],
+    "prefer-const": true,
+    "no-var-keyword": true,
+    "variable-name": {
+      "options": [
+        "ban-keywords",
+        "check-format",
+        "require-const-for-all-caps",
+        "allow-pascal-case"
+      ]
+    },
+
+    /** classes & interfaces */
+    "class-name": true,
+    "interface-name": false,
+
+    /** conditions */
+    "switch-default": true,
+    "no-duplicate-switch-case": true,
+
+    /** others */
     "object-literal-sort-keys": false,
-    "interface-name": false
+    "prefer-for-of": true,
+    "no-eval": true,
+    "triple-equals": true,
+    "deprecation": true,
+    "binary-expression-operand-order": true
   },
   "rulesDirectory": []
 }

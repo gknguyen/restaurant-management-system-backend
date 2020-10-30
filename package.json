@@ -11,14 +11,19 @@
     "start:prod": "cross-env NODE_ENV=production tsc && node ./lib/bin/server.js",
     "fix:port": "killall -s KILL node",
     "ci": "yarn install --frozen-lockfile --ignore-scripts",
-    "ci:prod": "yarn install --frozen-lockfile --ignore-scripts --prod"
+    "ci:prod": "yarn install --frozen-lockfile --ignore-scripts --prod",
+    "prettier": "prettier --write ./src/**/*.ts",
+    "tslint": "tslint -p . -c tslint.json ./src/**/*.ts",
+    "lint-check-all": "npm run prettier && npm run tslint"
   },
-  "author": "Giang Nguyen", 
+  "pre-commit": [
+    "lint-check-all"
+  ],
+  "author": "Giang Nguyen",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.653.0", 
+    "aws-sdk": "^2.653.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
     "colors": "^1.4.0",
     "compression": "^1.7.4",
     "config": "^3.3.0",
@@ -79,6 +84,7 @@
     "@types/validator": "^13.1.0",
     "chai": "^4.2.0",
     "mocha": "^7.1.1",
+    "pre-commit": "^1.2.2",
     "prettier": "^2.0.5",
     "prettierrc": "^0.0.0-5",
     "ts-node": "^8.6.2",

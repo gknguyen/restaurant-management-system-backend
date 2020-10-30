@@ -449,10 +449,10 @@ class ProductController {
         return results;
       }
 
-      for (let x in productIdList) {
-        if (productIdList[x]) {
+      for (const productId of productIdList) {
+        if (productId) {
           await mysqlService.productService.delete({
-            where: { id: productIdList[x] },
+            where: { id: productId },
           });
         }
       }

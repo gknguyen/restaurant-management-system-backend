@@ -113,15 +113,15 @@ class AmazonS3nController {
       }
 
       const S3Files: any[] = [];
-      for (let x in files) {
+      for (const file of files) {
         const S3File = await s3
           .upload({
             Bucket: AWS_S3_BUCKET_NAME,
-            Body: files[x]['buffer'],
+            Body: file['buffer'],
             Key: folderName
-              ? `${folderName}/${files[x]['originalname']}`
-              : files[x]['originalname'],
-            ContentType: files[x]['mimetype'],
+              ? `${folderName}/${file['originalname']}`
+              : file['originalname'],
+            ContentType: file['mimetype'],
             ACL: 'public-read',
           })
           .promise();
