@@ -81,7 +81,10 @@ sequelize
     mysqlService.menuTypeService.init('summer', 'waves');
     mysqlService.menuTypeService.init('autumn', 'eco');
     mysqlService.menuTypeService.init('winter', 'ac_unit');
-  });
+  })
+  .catch((err: Error) =>
+    console.error('Unable to sync with the database:', err.toString()),
+  );
 
 /**
 connect to S3
