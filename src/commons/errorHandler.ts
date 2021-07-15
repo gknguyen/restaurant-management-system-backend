@@ -1,66 +1,57 @@
-import * as express from 'express';
+import express from 'express';
 import fs from 'fs';
+import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
-import moment from 'moment-timezone';
 import os from 'os';
-import { join } from 'path';
-import { Payload } from './constants/interfaces';
-import { getFilesizeInBytes } from './utils';
-import { MOMENT_TIMEZONE, MOMENT_LOCALE, ERROR_LOG_FILE_MAX_SIZE } from './constants/env';
+import path from 'path';
+import CONSTANTS from './constant';
+import { HTTPdata, Payload } from './interfaces';
+import util from './utils';
 
-let num = 0;
+const errorLogFilePath = path.join(
+  __dirname,
+  `../../${CONSTANTS.LOG.FOLDER_NAME}/${CONSTANTS.LOG.ERROR.FOLDER_NAME}/${CONSTANTS.LOG.ERROR.FILE_NAME}.${CONSTANTS.LOG.ERROR.FILE_FORMAT}`,
+);
 
-const errorHandler = (fn: any) => (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  Promise.resolve()
-    .then(() => fn(req, res, next))
-    .catch((error: Error) => {
-      const token: any = req.headers.token;
-      const decodedToken: any = jsonwebtoken.decode(token, { complete: true });
-      const userInfo: Payload | null = decodedToken ? decodedToken.payload : null;
+const errorHandler =
+  (
+    result: HTTPdata,
+    fn: (req: express.Request, res: express.Response, next: express.NextFunction) => void,
+  ) =>
+  (req: express.Request, res: express.Response, next: express.NextFunction) =>
+    Promise.resolve()
+      .then(() => fn(req, res, next))
+      .catch(async (error: Error) => {
+        /** get data from headers */
+        const token = req.headers.token as string;
+        const userInfo = jsonwebtoken.decode(token) as Payload;
 
-      console.error('errorHandler: ', error.toString());
+        let errorMessage = error.toString();
+        errorMessage = errorMessage.replace('SequelizeValidationError: notNull Violation: ', '');
+        errorMessage = errorMessage.replace('SequelizeUniqueConstraintError: Validation error', '');
+        console.error(`errorHandler: ${errorMessage}`);
+        console.error(`jaMoment: ${util.formatDate(new Date())} at function ${result.function}`);
 
-      /** get current using moment.js */
-      const jaMoment = moment().tz(MOMENT_TIMEZONE).locale(MOMENT_LOCALE);
-      console.log('jaMoment: ', jaMoment.format('YYYY-MM-DD, h:mm:ss a'));
+        /** add error to file errorLog.txt */
+        fs.appendFile(
+          errorLogFilePath,
+          `========================================================` +
+            `date: ${JSON.stringify(util.formatDate(new Date()))}` +
+            os.EOL +
+            `API: ${JSON.stringify(req.baseUrl + req.path)}` +
+            os.EOL +
+            `error: ${JSON.stringify(errorMessage)}` +
+            os.EOL +
+            `username: ${JSON.stringify(userInfo?.username)}` +
+            os.EOL,
+          (err) => err && console.error(err),
+        );
 
-      /** check file size */
-      let fileSize = getFilesizeInBytes(join(__dirname, `/errorLogs/errorLog${num}.txt`));
-      while (fileSize > ERROR_LOG_FILE_MAX_SIZE) {
-        num++;
-        fileSize = getFilesizeInBytes(join(__dirname, `/errorLogs/errorLog${num}.txt`));
-      }
+        /** if error, rollback the transaction */
+        if (result.transaction) await result.transaction.rollback();
 
-      /** add error to file errorLog.txt */
-      fs.appendFile(
-        join(__dirname, `/errorLogs/errorLog${num}.txt`),
-
-        '========================================================' +
-          os.EOL +
-          `date: ${JSON.stringify(jaMoment.format('YYYY-MM-DD, h:mm:ss a'))}` +
-          os.EOL +
-          `API: ${JSON.stringify(req.baseUrl + req.path)}` +
-          os.EOL +
-          `error: ${JSON.stringify(error)}` +
-          os.EOL +
-          `username: ${JSON.stringify(userInfo?.username)}` +
-          os.EOL +
-          `query: ${JSON.stringify(req.query)}` +
-          os.EOL +
-          `body: ${JSON.stringify(req.body)}` +
-          os.EOL,
-
-        (err) => {
-          if (err) {
-            throw err;
-          }
-        },
-      );
-    });
-};
+        /** send response to client-side (FE) */
+        res.status(result.code || STATUS_CODE.INTERNAL_SERVER_ERROR).send(errorMessage);
+      });
 
 export default errorHandler;

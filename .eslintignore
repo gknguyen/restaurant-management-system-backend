@@ -1,0 +1,11 @@
+# folders
+**/node_modules/*
+dist/
+coverage/
+build/
+lib/
+public/
+
+# files
+.eslintrc.js
+minify.js

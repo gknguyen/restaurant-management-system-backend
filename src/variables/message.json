@@ -1,0 +1,45 @@
+{
+  "AUTH": {
+    "LOGIN_SUCCESS": "login successful",
+    "PASS_INCORRECT": "wrong password",
+    "USER_DIACTIVED": "This account has been locked",
+    "USER_NOT_FOUND": "This account was not found",
+    "USER_INVALID": "This account was invalid",
+    "UNKNOWN_THIRD_PARTY_SERVICE": "unknown third party service",
+    "TOO_MANY_REQUESTS": "Too many accounts created from this IP, please try again after 10 minutes"
+  },
+  "TOKEN": {
+    "VALID": "valid authentication code",
+    "INVALID": "Authentication code is not valid",
+    "NOT_FOUND": "Authentication code not found",
+    "PAYLOAD_INVALID": "Authentication code contains invalid information",
+    "EXPIRED": "your authentication code has expired",
+    "DATA_INVALID": "Authentication code information does not match that of the system"
+  },
+  "HTTP": {
+    "FIND_SUCCESS": "searched successfully",
+    "FIND_FAIL": "No Result",
+    "CREATE_SUCCESS": "created successfully",
+    "CREATE_FAIL": "create new failed",
+    "EDIT_SUCCESS": "edited successfully",
+    "EDIT_FAIL": "edit failed",
+    "DELETE_SUCCESS": "deleted successfully",
+    "DELETE_FAIL": "delete failed",
+    "REQUIRED": {
+      "PARAMS": "missing required input parameters",
+      "PARAMS_IN_LIST": "missing required input parameters in the information string"
+    },
+    "INVALID": {
+      "PARAMS": "invalid input parameters",
+      "USER_ROLE": "Invalid role",
+      "PROJECT_STATUS": "Invalid Project status"
+    },
+    "UPLOAD_FILE": {
+      "EXCEED_LIMIT": "file exceed limit: ",
+      "UPLOAD_FAIL": "upload fail: "
+    },
+    "LOG": {
+      "TRACKING_SUCCESS": "tracking successfully"
+    }
+  }
+}

@@ -114,3 +114,4 @@ errorLog*.txt
 # folders
 # errorLogs/
 # accessLogs/
+.dccache
