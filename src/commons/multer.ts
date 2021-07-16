@@ -1,16 +1,16 @@
-import path from 'path';
-import multer from 'multer';
 import express from 'express';
+import STATUS_CODE from 'http-status';
+import multer from 'multer';
+import path from 'path';
 import CONSTANTS from './constant';
 import errorHandler from './errorHandler';
-import STATUS_CODE from 'http-status';
 
 export function checkFilesInMulter(multerRequestHandler: express.RequestHandler<any>) {
   const result = { ...CONSTANTS.RESULT, function: 'checkFilesInMulter()' };
   return errorHandler(
     result,
     (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      multerRequestHandler(req, res, (err: any) => {
+      multerRequestHandler(req, res, (err) => {
         if (err) {
           const error: multer.MulterError = err;
           res.status(STATUS_CODE.PRECONDITION_FAILED).send(`${error.code} : ${error.field}`);

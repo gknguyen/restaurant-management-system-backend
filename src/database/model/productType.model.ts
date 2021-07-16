@@ -1,6 +1,6 @@
 import sequelize from 'sequelize';
 import ORM from '../database.auth';
-import { ProductType } from '../database.type';
+import { ProductType } from '../database.entities';
 
 const ProductTypeModel = ORM.define<ProductType>(
   'product_type',

@@ -1,7 +1,7 @@
 import Crypto from 'crypto-js';
 import jsonwebtoken from 'jsonwebtoken';
 import ENV from '../../commons/env';
-import { User } from '../../database/database.type';
+import { User } from '../../database/database.entities';
 
 class AuthService {
   getToken(user: User) {

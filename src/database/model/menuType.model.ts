@@ -1,6 +1,6 @@
 import sequelize from 'sequelize';
 import ORM from '../database.auth';
-import { MenuType } from '../database.type';
+import { MenuType } from '../database.entities';
 
 const MenuTypeModel = ORM.define<MenuType>(
   'menu_type',

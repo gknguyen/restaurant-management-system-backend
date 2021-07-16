@@ -1,0 +1,18 @@
+# folders
+logs
+node_modules
+src
+test
+.vscode
+
+#files
+.dccache
+.dcignore
+.eslintignore
+.eslintrc
+.gitignore
+.mocharc.json
+.nycrc.json
+.prettierrc
+README.md
+tsconfig.json

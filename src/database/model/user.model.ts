@@ -1,6 +1,6 @@
 import sequelize from 'sequelize';
 import ORM from '../database.auth';
-import { User } from '../database.type';
+import { User } from '../database.entities';
 import UserTypeModel from './userType.model';
 
 const UserModel = ORM.define<User>(

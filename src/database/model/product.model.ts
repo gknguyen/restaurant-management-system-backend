@@ -1,6 +1,6 @@
 import sequelize from 'sequelize';
 import ORM from '../database.auth';
-import { Product } from '../database.type';
+import { Product } from '../database.entities';
 import MenuTypeModel from './menuType.model';
 import ProductTypeModel from './productType.model';
 import UserModel from './user.model';

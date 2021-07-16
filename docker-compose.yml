@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 12345678
+      MYSQL_DATABASE: restaurant_management_system
+    ports:
+      - 6603:3306
+    volumes:
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+      - ./db/backup/files/:/data_backup/data
+    container_name: db_server
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: restaurant-management-system
+    depends_on:
+      - mysql
+    environment:
+      - NODE_ENV=production
+      - MYSQL_CONNECTION=mysql://admin:12345678@db_server:3306/restaurant_management_system
+    ports:
+      - 3000:4000
+    container_name: app_server
+
+volumes:
+  db-config:
+  db-data:
