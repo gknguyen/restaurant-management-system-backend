@@ -4,7 +4,6 @@ import jsonwebtoken from 'jsonwebtoken';
 import sequelize from 'sequelize';
 import CONSTANTS from '../../../../commons/constant';
 import errorHandler from '../../../../commons/errorHandler';
-import { Payload } from '../../../../commons/interfaces';
 import Multer, { checkFilesInMulter } from '../../../../commons/multer';
 import DB from '../../../../database/database.service';
 

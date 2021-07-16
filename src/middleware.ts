@@ -1,6 +1,5 @@
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import csrf from 'csurf';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
@@ -11,6 +10,7 @@ import path, { join } from 'path';
 import apiRouter from './api/api.routes';
 import CONSTANTS from './commons/constant';
 import ENV from './commons/env';
+import { initFolders } from './init.data';
 
 const accessLogFilePath = path.join(
   __dirname,
@@ -19,6 +19,7 @@ const accessLogFilePath = path.join(
 
 const app = express();
 
+initFolders();
 loadConfigs();
 loadLogs();
 loadRoutes();
@@ -76,24 +77,6 @@ function loadConfigs() {
 
   /** for parsing cookies */
   app.use(cookieParser(ENV.COOKIE_SECRET));
-
-  /** secure CSRF attacks */
-  app.use(csrf({ cookie: true }));
-  app.use((req, res, next) => {
-    res.cookie('XSRF-TOKEN', req.csrfToken());
-    next();
-  });
-  app.use(
-    (
-      err: { code: string },
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
-      if (err.code !== 'EBADCSRFTOKEN') next();
-      else res.status(403).send('form tampered with');
-    },
-  );
 
   /** for parsing application/json */
   app.use(express.json());

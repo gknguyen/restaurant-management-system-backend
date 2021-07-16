@@ -6,7 +6,8 @@
     "USER_NOT_FOUND": "This account was not found",
     "USER_INVALID": "This account was invalid",
     "UNKNOWN_THIRD_PARTY_SERVICE": "unknown third party service",
-    "TOO_MANY_REQUESTS": "Too many accounts created from this IP, please try again after 10 minutes"
+    "TOO_MANY_REQUESTS": "Too many accounts created from this IP, please try again after 10 minutes",
+    "CRSF_VALIDATION": "crsf validation"
   },
   "TOKEN": {
     "VALID": "valid authentication code",
@@ -40,6 +41,7 @@
     },
     "LOG": {
       "TRACKING_SUCCESS": "tracking successfully"
-    }
+    },
+    "RESOURCE_EXISTED": "this resource is already existed"
   }
 }

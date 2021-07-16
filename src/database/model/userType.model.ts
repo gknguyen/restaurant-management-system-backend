@@ -6,9 +6,9 @@ const UserTypeModel = ORM.define<UserType>(
   'user_type',
   {
     id: {
-      type: sequelize.DataTypes.UUID,
+      type: sequelize.DataTypes.INTEGER,
       primaryKey: true,
-      defaultValue: sequelize.UUIDV4,
+      autoIncrement: true,
     },
     name: {
       type: sequelize.DataTypes.STRING(50),

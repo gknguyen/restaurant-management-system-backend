@@ -5,7 +5,8 @@ dotenv.config();
 const ENV = {
   /** main */
   NODE_ENV: process.env.NODE_ENV || '',
-  PORT: process.env.PORT || '',
+  PORT: (process.env.NODE_ENV === 'test' ? process.env.PORT_TEST : process.env.PORT) || '',
+  DEBUG: process.env.DEBUG || '',
 
   /** Cookie */
   COOKIE_SECRET: process.env.COOKIE_SECRET || '',

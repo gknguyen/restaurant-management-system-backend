@@ -2,7 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": [
-      "./tsconfig.json",
+      "./tsconfig.json"
     ]
   },
   "plugins": [
@@ -50,7 +50,7 @@
     // ],
     "consistent-return": "error",
     "default-case": "error",
-    "default-param-last": "warn",
+    "default-param-last": "off",
     "max-classes-per-file": [
       "error",
       1
@@ -192,7 +192,7 @@
           "camelCase",
           "PascalCase",
           "UPPER_CASE"
-        ],
+        ]
       },
       {
         "selector": "function",

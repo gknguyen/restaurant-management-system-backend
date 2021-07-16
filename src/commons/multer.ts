@@ -10,7 +10,7 @@ export function checkFilesInMulter(multerRequestHandler: express.RequestHandler<
   return errorHandler(
     result,
     (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      multerRequestHandler(req, res, (err) => {
+      multerRequestHandler(req, res, (err: any) => {
         if (err) {
           const error: multer.MulterError = err;
           res.status(STATUS_CODE.PRECONDITION_FAILED).send(`${error.code} : ${error.field}`);

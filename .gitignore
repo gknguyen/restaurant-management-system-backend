@@ -115,3 +115,5 @@ errorLog*.txt
 # errorLogs/
 # accessLogs/
 .dccache
+.reports
+db

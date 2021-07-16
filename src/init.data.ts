@@ -3,6 +3,8 @@ import path from 'path';
 import CONSTANTS from './commons/constant';
 import { ProductTypeName, UserTypeName } from './commons/enum';
 import DB from './database/database.service';
+import Crypto from 'crypto-js';
+import ENV from './commons/env';
 
 export const initFolders = () => {
   const logFolderPath = path.join(__dirname, `../${CONSTANTS.LOG.FOLDER_NAME}`);
@@ -22,16 +24,33 @@ export const initFolders = () => {
 
 export const initData = () => {
   Object.values(UserTypeName).forEach((name) =>
-    DB.userType.findOrCreate({
-      where: { name: name },
-      defaults: { name: name },
-    }),
+    DB.userType
+      .findOrCreate({
+        where: { name: name },
+        defaults: { name: name },
+      })
+      .then(([userType]) => {
+        if (userType.name === UserTypeName.admin)
+          DB.user
+            .findOrCreate({
+              where: { username: 'admin' },
+              defaults: {
+                username: 'admin',
+                password: Crypto.AES.encrypt('admin', ENV.CRYPTO_SECRET).toString(),
+                fullName: 'admin',
+              },
+            })
+            .catch((err) => console.error(err));
+      })
+      .catch((err) => console.error(err)),
   );
 
   Object.values(ProductTypeName).forEach((name) =>
-    DB.productType.findOrCreate({
-      where: { name: name },
-      defaults: { name: name },
-    }),
+    DB.productType
+      .findOrCreate({
+        where: { name: name },
+        defaults: { name: name },
+      })
+      .catch((err) => console.error(err)),
   );
 };

@@ -34,20 +34,32 @@ const UserModel = ORM.define<User>(
     },
     age: {
       type: sequelize.DataTypes.INTEGER,
+      validate: {
+        isNumeric: true,
+      },
     },
     phone: {
       type: sequelize.DataTypes.STRING,
       unique: true,
+      validate: {
+        isNumeric: true,
+      },
     },
     email: {
       type: sequelize.DataTypes.STRING,
       unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
     avatar: {
       type: sequelize.DataTypes.STRING,
     },
     loginDateTime: {
       type: sequelize.DataTypes.DATE,
+      validate: {
+        isDate: true,
+      },
     },
     authToken: {
       type: sequelize.DataTypes.TEXT,

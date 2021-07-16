@@ -26,7 +26,7 @@ services:
       - mysql
     environment:
       - NODE_ENV=production
-      - MYSQL_CONNECTION=mysql://admin:12345678@db_server:3306/restaurant_management_system
+      - DB_CONNECTION=mysql://admin:12345678@db_server:3306/restaurant_management_system
     ports:
       - 3000:4000
     container_name: app_server

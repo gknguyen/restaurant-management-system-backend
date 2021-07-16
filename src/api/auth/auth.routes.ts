@@ -19,8 +19,8 @@ export default authRouter;
 function login() {
   const result = { ...CONSTANTS.RESULT, function: 'login()' };
   return errorHandler(result, async (req: express.Request, res: express.Response) => {
-    const loginUsername = req.body.username as string;
-    const loginPassword = req.body.password as string;
+    const loginUsername = req.body.username;
+    const loginPassword = req.body.password;
 
     if (!loginUsername || !loginPassword) {
       result.code = STATUS_CODE.PRECONDITION_FAILED;
@@ -52,19 +52,19 @@ function login() {
     });
 
     if (!user) {
-      result.code = STATUS_CODE.PRECONDITION_FAILED;
+      result.code = STATUS_CODE.UNAUTHORIZED;
       throw CONSTANTS.MESSAGES.AUTH.USER_NOT_FOUND;
     }
 
     if (!user.isActive) {
-      result.code = STATUS_CODE.PRECONDITION_FAILED;
+      result.code = STATUS_CODE.UNAUTHORIZED;
       throw CONSTANTS.MESSAGES.AUTH.USER_DIACTIVED;
     }
 
-    const isPass = authService.comparePassword(loginPassword, user.password);
+    const isPass = authService.comparePassword(loginPassword, user.password || '');
 
     if (!isPass) {
-      result.code = STATUS_CODE.PRECONDITION_FAILED;
+      result.code = STATUS_CODE.UNAUTHORIZED;
       throw CONSTANTS.MESSAGES.AUTH.PASS_INCORRECT;
     }
 

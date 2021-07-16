@@ -38,12 +38,18 @@ const ProductModel = ORM.define<Product>(
     },
     price: {
       type: sequelize.DataTypes.DOUBLE(12, 2),
+      validate: {
+        isNumeric: true,
+      },
     },
     unit: {
       type: sequelize.DataTypes.STRING(10),
     },
     amount: {
       type: sequelize.DataTypes.INTEGER,
+      validate: {
+        isNumeric: true,
+      },
     },
     description: {
       type: sequelize.DataTypes.TEXT,

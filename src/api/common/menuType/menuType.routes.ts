@@ -61,10 +61,20 @@ function createMenuType() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
-    const menuType = await DB.menuType.create({
+    const menuType = await DB.menuType.findOne({
+      attributes: ['id'],
+      where: { name: typeName },
+    });
+
+    if (menuType) {
+      result.code = STATUS_CODE.CONFLICT;
+      throw CONSTANTS.MESSAGES.HTTP.RESOURCE_EXISTED;
+    }
+
+    const newMenuType = await DB.menuType.create({
       name: typeName,
     });
 
-    res.status(STATUS_CODE.OK).send(menuType);
+    res.status(STATUS_CODE.OK).send(newMenuType);
   });
 }
