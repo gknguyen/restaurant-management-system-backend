@@ -26,7 +26,10 @@ function getMenuTypeList() {
       order: [['createDateTime', 'ASC']],
     });
 
-    if (menuTypeList?.length > 0) res.status(STATUS_CODE.OK).send(menuTypeList);
+    if (menuTypeList?.length > 0)
+      res
+        .status(STATUS_CODE.OK)
+        .send(menuTypeList.map((menuType) => menuType.get({ plain: true })));
     else res.status(STATUS_CODE.NO_CONTENT).send([]);
   });
 }
@@ -46,7 +49,7 @@ function getMenuType() {
       where: { id: menuTypeId },
     });
 
-    if (menuType) res.status(STATUS_CODE.OK).send(menuType);
+    if (menuType) res.status(STATUS_CODE.OK).send(menuType.get({ plain: true }));
     else res.status(STATUS_CODE.NO_CONTENT).send(null);
   });
 }
@@ -61,6 +64,7 @@ function createMenuType() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
+    /** check if menu type is existed */
     const menuType = await DB.menuType.findOne({
       attributes: ['id'],
       where: { name: typeName },
@@ -75,6 +79,6 @@ function createMenuType() {
       name: typeName,
     });
 
-    res.status(STATUS_CODE.OK).send(newMenuType);
+    res.status(STATUS_CODE.OK).send(newMenuType.get({ plain: true }));
   });
 }

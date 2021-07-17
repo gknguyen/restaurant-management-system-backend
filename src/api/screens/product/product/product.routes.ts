@@ -212,6 +212,17 @@ function createProduct() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
+    /** check if product is existed */
+    const product = await DB.product.findOne({
+      attributes: ['id'],
+      where: { name: name },
+    });
+
+    if (product) {
+      result.code = STATUS_CODE.CONFLICT;
+      throw CONSTANTS.MESSAGES.HTTP.RESOURCE_EXISTED;
+    }
+
     /** get product type id */
     const productType = await DB.productType.findOne({
       attributes: ['id'],
@@ -234,7 +245,7 @@ function createProduct() {
       throw CONSTANTS.MESSAGES.HTTP.INVALID.PARAMS;
     }
 
-    const product = await DB.product.create({
+    const newProduct = await DB.product.create({
       productTypeId: productType.id,
       menuTypeId: menuType.id,
       name: name,
@@ -246,7 +257,7 @@ function createProduct() {
       createUserId: loginUserId,
     });
 
-    res.status(STATUS_CODE.OK).send(product.get({ plain: true }));
+    res.status(STATUS_CODE.OK).send(newProduct.get({ plain: true }));
   });
 }
 

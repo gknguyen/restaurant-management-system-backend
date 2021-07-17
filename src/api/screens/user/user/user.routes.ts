@@ -171,6 +171,17 @@ function createUser() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
+    /** check if user is existed */
+    const user = await DB.user.findOne({
+      attributes: ['id'],
+      where: { username: username },
+    });
+
+    if (user) {
+      result.code = STATUS_CODE.CONFLICT;
+      throw CONSTANTS.MESSAGES.HTTP.RESOURCE_EXISTED;
+    }
+
     /** get user type id */
     const userType = await DB.userType.findOne({
       attributes: ['id'],
@@ -182,7 +193,7 @@ function createUser() {
       throw CONSTANTS.MESSAGES.HTTP.INVALID.PARAMS;
     }
 
-    const user = await DB.user.create({
+    const newUser = await DB.user.create({
       userTypeId: userType.id,
       username: username,
       password: Crypto.AES.encrypt('password', ENV.CRYPTO_SECRET).toString(),
@@ -194,7 +205,7 @@ function createUser() {
       createUserId: loginUserId,
     });
 
-    res.status(STATUS_CODE.OK).send(user.get({ plain: true }));
+    res.status(STATUS_CODE.OK).send(newUser.get({ plain: true }));
   });
 }
 

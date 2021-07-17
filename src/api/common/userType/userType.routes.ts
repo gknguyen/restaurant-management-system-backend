@@ -25,7 +25,10 @@ function getUserTypeList() {
       order: [['createDateTime', 'ASC']],
     });
 
-    if (userTypeList?.length > 0) res.status(STATUS_CODE.OK).send(userTypeList);
+    if (userTypeList?.length > 0)
+      res
+        .status(STATUS_CODE.OK)
+        .send(userTypeList.map((userType) => userType.get({ plain: true })));
     else res.status(STATUS_CODE.NO_CONTENT).send([]);
   });
 }
@@ -40,10 +43,21 @@ function createUserType() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
-    const userType = await DB.userType.create({
+    /** check if user type is existed */
+    const userType = await DB.userType.findOne({
+      attributes: ['id'],
+      where: { name: typeName },
+    });
+
+    if (userType) {
+      result.code = STATUS_CODE.CONFLICT;
+      throw CONSTANTS.MESSAGES.HTTP.RESOURCE_EXISTED;
+    }
+
+    const newUserType = await DB.userType.create({
       name: typeName,
     });
 
-    res.status(STATUS_CODE.OK).send(userType);
+    res.status(STATUS_CODE.OK).send(newUserType.get({ plain: true }));
   });
 }

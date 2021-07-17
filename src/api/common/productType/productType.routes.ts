@@ -26,7 +26,10 @@ function getProductTypeList() {
       order: [['createDateTime', 'ASC']],
     });
 
-    if (productTypeList?.length > 0) res.status(STATUS_CODE.OK).send(productTypeList);
+    if (productTypeList?.length > 0)
+      res
+        .status(STATUS_CODE.OK)
+        .send(productTypeList.map((productType) => productType.get({ plain: true })));
     else res.status(STATUS_CODE.NO_CONTENT).send([]);
   });
 }
@@ -46,7 +49,7 @@ function getProductType() {
       where: { id: productTypeId },
     });
 
-    if (productType) res.status(STATUS_CODE.OK).send(productType);
+    if (productType) res.status(STATUS_CODE.OK).send(productType.get({ plain: true }));
     else res.status(STATUS_CODE.NO_CONTENT).send(null);
   });
 }
@@ -61,10 +64,21 @@ function createProductType() {
       throw CONSTANTS.MESSAGES.HTTP.REQUIRED.PARAMS;
     }
 
-    const productType = await DB.productType.create({
+    /** check if product type is existed */
+    const productType = await DB.productType.findOne({
+      attributes: ['id'],
+      where: { name: typeName },
+    });
+
+    if (productType) {
+      result.code = STATUS_CODE.CONFLICT;
+      throw CONSTANTS.MESSAGES.HTTP.RESOURCE_EXISTED;
+    }
+
+    const newProductType = await DB.productType.create({
       name: typeName,
     });
 
-    res.status(STATUS_CODE.OK).send(productType);
+    res.status(STATUS_CODE.OK).send(newProductType.get({ plain: true }));
   });
 }
