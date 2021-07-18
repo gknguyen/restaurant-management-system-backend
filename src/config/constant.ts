@@ -25,6 +25,11 @@ const CONSTANTS = {
     },
   },
 
+  IMAGE: {
+    AVATAR_FOLDER_NAME: 'users',
+    PRODUCT_IMAGE_NAME: 'products',
+  },
+
   MESSAGES: message,
 };
 

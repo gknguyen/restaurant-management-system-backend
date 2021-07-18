@@ -1,16 +1,17 @@
 import Crypto from 'crypto-js';
-import express, { Router } from 'express';
+import express from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import sequelize from 'sequelize';
-import CONSTANTS from '../../../../commons/constant';
-import ENV from '../../../../commons/env';
-import errorHandler from '../../../../commons/errorHandler';
-import Multer, { checkFilesInMulter } from '../../../../commons/multer';
+import CONSTANTS from '../../../../config/constant';
+import ENV from '../../../../config/env';
+import errorHandler from '../../../../config/errorHandler';
+import Multer from '../../../../config/multer';
 import DB from '../../../../database/database.service';
+import { checkFilesInMulter } from '../../../common/file/image.routes';
 
-const userMulter = new Multer('users');
-const userScreenRouter = Router();
+const userMulter = new Multer(CONSTANTS.IMAGE.AVATAR_FOLDER_NAME);
+const userScreenRouter = express.Router();
 
 /** get APIs */
 userScreenRouter.get('/', getUserList());

@@ -1,8 +1,8 @@
 import express from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
-import CONSTANTS from '../../commons/constant';
-import errorHandler from '../../commons/errorHandler';
+import CONSTANTS from '../../config/constant';
+import errorHandler from '../../config/errorHandler';
 import DB from '../../database/database.service';
 import authService from './auth.service';
 

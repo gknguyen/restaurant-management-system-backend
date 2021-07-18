@@ -8,8 +8,8 @@ import morgan from 'morgan';
 import os from 'os';
 import path, { join } from 'path';
 import apiRouter from './api/api.routes';
-import CONSTANTS from './commons/constant';
-import ENV from './commons/env';
+import CONSTANTS from './config/constant';
+import ENV from './config/env';
 import { initFolders } from './init.data';
 
 const accessLogFilePath = path.join(

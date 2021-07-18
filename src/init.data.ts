@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import CONSTANTS from './commons/constant';
-import { ProductTypeName, UserTypeName } from './commons/enum';
+import CONSTANTS from './config/constant';
+import { ProductTypeName, UserTypeName } from './config/enum';
 import DB from './database/database.service';
 import Crypto from 'crypto-js';
-import ENV from './commons/env';
+import ENV from './config/env';
 
 export const initFolders = () => {
   const logFolderPath = path.join(__dirname, `../${CONSTANTS.LOG.FOLDER_NAME}`);

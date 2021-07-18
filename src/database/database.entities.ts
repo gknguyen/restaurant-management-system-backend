@@ -1,5 +1,5 @@
 import sequelize from 'sequelize';
-import { ProductTypeName, UserTypeName } from '../commons/enum';
+import { ProductTypeName, UserTypeName } from '../config/enum';
 
 export interface UserType extends sequelize.Model {
   readonly id: number;

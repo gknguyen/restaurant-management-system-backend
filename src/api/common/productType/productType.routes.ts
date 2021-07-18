@@ -1,6 +1,6 @@
 import express from 'express';
-import CONSTANTS from '../../../commons/constant';
-import errorHandler from '../../../commons/errorHandler';
+import CONSTANTS from '../../../config/constant';
+import errorHandler from '../../../config/errorHandler';
 import DB from '../../../database/database.service';
 import STATUS_CODE from 'http-status';
 

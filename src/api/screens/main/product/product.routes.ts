@@ -1,7 +1,7 @@
 import express from 'express';
 import STATUS_CODE from 'http-status';
-import CONSTANTS from '../../../../commons/constant';
-import errorHandler from '../../../../commons/errorHandler';
+import CONSTANTS from '../../../../config/constant';
+import errorHandler from '../../../../config/errorHandler';
 import DB from '../../../../database/database.service';
 
 const productRouter = express.Router();

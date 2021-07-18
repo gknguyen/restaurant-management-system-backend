@@ -1,6 +1,6 @@
 import Crypto from 'crypto-js';
 import jsonwebtoken from 'jsonwebtoken';
-import ENV from '../../commons/env';
+import ENV from '../../config/env';
 import { User } from '../../database/database.entities';
 
 class AuthService {

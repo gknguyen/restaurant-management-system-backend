@@ -74,7 +74,12 @@ $ docker-compose up
 
 ## APIs
 
+### authentication
+
 - POST /api/auth/login
+
+### common resources
+
 - GET /api/common/user-types
 - POST /api/common/user-types
 - GET /api/common/product-types
@@ -83,6 +88,11 @@ $ docker-compose up
 - GET /api/common/menu-types
 - GET /api/common/menu-types/{id}
 - POST /api/common/menu-types
+- GET /api/common/image/user-avatar/{fileName}
+- GET /api/common/image/product-image/{fileName}
+
+### screens resources
+
 - GET /api/main-screen/products
 - GET /api/product-screen/products
 - GET /api/product-screen/products/{id}

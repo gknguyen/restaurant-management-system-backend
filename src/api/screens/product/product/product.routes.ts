@@ -2,12 +2,13 @@ import express from 'express';
 import STATUS_CODE from 'http-status';
 import jsonwebtoken from 'jsonwebtoken';
 import sequelize from 'sequelize';
-import CONSTANTS from '../../../../commons/constant';
-import errorHandler from '../../../../commons/errorHandler';
-import Multer, { checkFilesInMulter } from '../../../../commons/multer';
+import CONSTANTS from '../../../../config/constant';
+import errorHandler from '../../../../config/errorHandler';
+import Multer from '../../../../config/multer';
 import DB from '../../../../database/database.service';
+import { checkFilesInMulter } from '../../../common/file/image.routes';
 
-const productMulter = new Multer('products');
+const productMulter = new Multer(CONSTANTS.IMAGE.PRODUCT_IMAGE_NAME);
 const productScreenRouter = express.Router();
 
 /** get APIs */

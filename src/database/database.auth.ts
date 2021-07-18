@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import ENV from '../commons/env';
+import ENV from '../config/env';
 
 const ORM = new Sequelize(ENV.DB_CONNECTION, {
   logging: false,
