@@ -21,11 +21,12 @@ This is the source code for server-side (back-end) of restaurant management syst
 ## Preinstallation
 
 - Nodejs: https://nodejs.org/en/download/
+- Docker: https://www.docker.com/products/docker-desktop
 
 ## Installation
 
 ```bash
-$ npm ci
+npm ci
 ```
 
 ## Run the app
@@ -33,20 +34,20 @@ $ npm ci
 1. In Development
 
 ```bash
-$ npm run start:dev
+npm run start:dev
 ```
 
 2. In Production
 
 ```bash
-$ npm run build
-$ npm run start:prod
+npm run build
+npm run start:prod
 ```
 
 ## Test
 
 ```bash
-$ npm run test
+npm run test
 ```
 
 test reports are in folder .reports/
@@ -54,7 +55,7 @@ test reports are in folder .reports/
 ## Summary
 
 ```bash
-$ npm run complex
+npm run complex
 ```
 
 summary reports are in folder .reports/
@@ -62,8 +63,8 @@ summary reports are in folder .reports/
 ## Dockerization
 
 ```bash
-$ npm run build
-$ docker-compose up
+npm run build
+docker-compose up
 ```
 
 ## Data Model Definition
