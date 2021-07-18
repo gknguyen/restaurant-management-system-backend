@@ -22,9 +22,6 @@ const ENV = {
   MOMENT_TIMEZONE: process.env.MOMENT_TIMEZONE || '',
   MOMENT_LOCALE: process.env.MOMENT_LOCALE || '',
 
-  /* max file size in MB */
-  UPLOAD_FILE_MAX_SIZE: process.env.UPLOAD_FILE_MAX_SIZE || '',
-
   /** Databases */
   DB_CONNECTION: process.env.DB_CONNECTION || '',
   REDIS_PORT: process.env.REDIS_PORT || '',
