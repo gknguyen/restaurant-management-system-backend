@@ -9,11 +9,12 @@ const server = http.createServer(app);
 const logger = debug(ENV.DEBUG);
 
 /** connect to Database */
-ORM.sync({ alter: false, force: false });
 ORM.authenticate()
   .then(() => logger(`Connected to database: ${ENV.DB_CONNECTION}`))
-  .then(() => initData())
   .catch((err) => console.error(`Unable to connect to the database: ${err.toString()}`));
+ORM.sync({ alter: false, force: false })
+  .then(() => initData())
+  .catch((err) => console.error(`Unable to sync the database: ${err.toString()}`));
 
 /** start server */
 app.set('port', ENV.PORT);
