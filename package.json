@@ -9,18 +9,13 @@
     "start:dev": "cross-env NODE_ENV=development DEBUG=restaurant_management_system:server ts-node-dev --respawn --transpile-only ./src/server --watch ./src",
     "start:prod": "cross-env NODE_ENV=production DEBUG=restaurant_management_system:server node ./lib/server.js",
     "build": "cross-env NODE_ENV=production tsc",
-    "ci:prod": "npm ci --only=production && node-prune",
+    "ci:prod": "npm ci --only=production --ignore-scripts && node-prune",
+    "postinstall": "husky install && npx husky add .husky/pre-commit \"npm run review\" && npx husky add .husky/pre-push \"npm run test\"",
     "test": "nyc mocha ./src/test/**/*.test.ts --reporter-options reportDir=.reports/tests --reporter-options jsonReport=true",
     "complex": "ts-plato --recurse --quiet --eslint ./.eslintrc --noempty --dir ./.reports/complex ./src",
     "format": "prettier --write ./src/**/*.ts",
     "lint": "eslint --quiet ./src --ext .js,.ts",
     "review": "concurrently \"npm run format\" \"npm run lint\""
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run review",
-      "pre-push": "npm run test"
-    }
   },
   "dependencies": {
     "compression": "^1.7.4",
