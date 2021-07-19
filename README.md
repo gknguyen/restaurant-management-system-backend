@@ -48,6 +48,7 @@ npm run start:prod
 
 ```bash
 npm run test
+npm run test:cov
 ```
 
 test reports are in folder .reports/
