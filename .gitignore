@@ -117,4 +117,3 @@ errorLog*.txt
 .dccache
 .reports
 db
-.husky
