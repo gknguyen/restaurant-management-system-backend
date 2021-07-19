@@ -2,7 +2,7 @@ import debug from 'debug';
 import http from 'http';
 import ENV from './config/env';
 import ORM from './database/database.auth';
-import { initData, initFolders } from './init.data';
+import { initData } from './init.data';
 import app from './middleware';
 
 const server = http.createServer(app);
