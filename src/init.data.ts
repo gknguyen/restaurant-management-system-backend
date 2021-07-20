@@ -1,10 +1,10 @@
+import Crypto from 'crypto-js';
 import fs from 'fs';
 import path from 'path';
 import CONSTANTS from './config/constant';
 import { ProductTypeName, UserTypeName } from './config/enum';
-import DB from './database/database.service';
-import Crypto from 'crypto-js';
 import ENV from './config/env';
+import DB from './database/database.service';
 
 export const initFolders = () => {
   const logFolderPath = path.join(__dirname, `../${CONSTANTS.LOG.FOLDER_NAME}`);
@@ -16,10 +16,12 @@ export const initFolders = () => {
     __dirname,
     `../${CONSTANTS.LOG.FOLDER_NAME}/${CONSTANTS.LOG.ERROR.FOLDER_NAME}`,
   );
-
   if (!fs.existsSync(logFolderPath)) fs.mkdirSync(logFolderPath);
   if (!fs.existsSync(accessLogFolderPath)) fs.mkdirSync(accessLogFolderPath);
   if (!fs.existsSync(errorLogFolderPath)) fs.mkdirSync(errorLogFolderPath);
+
+  const imageFolderPath = path.join(__dirname, `../images`);
+  if (!fs.existsSync(imageFolderPath)) fs.mkdirSync(imageFolderPath);
 };
 
 export const initData = () => {

@@ -1,16 +1,18 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
 export default class Multer {
   constructor(folderName: string) {
-    this.folderPath = `../../images/${folderName}`;
+    this.folderPath = path.join(__dirname, `../../images/${folderName}`);
+    if (!fs.existsSync(this.folderPath)) fs.mkdirSync(this.folderPath);
   }
 
   private folderPath: string;
 
   public downloadFile = multer({
     storage: multer.diskStorage({
-      destination: (req, file, cb) => cb(null, path.join(__dirname, this.folderPath)),
+      destination: (req, file, cb) => cb(null, this.folderPath),
       filename: (req, file, cb) => cb(null, file.originalname.toLowerCase().split(' ').join('-')),
     }),
     limits: { fileSize: 1024 * 1024 * 5 },

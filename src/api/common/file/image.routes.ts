@@ -50,7 +50,7 @@ export function checkFilesInMulter(multerRequestHandler: express.RequestHandler<
       multerRequestHandler(req, res, (err: any) => {
         if (err) {
           const error: multer.MulterError = err;
-          res.status(STATUS_CODE.PRECONDITION_FAILED).send(`${error.code} : ${error.field}`);
+          res.status(STATUS_CODE.PRECONDITION_FAILED).send(`${error.code} : ${error}`);
         } else next();
       });
     },
