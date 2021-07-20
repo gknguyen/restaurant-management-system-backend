@@ -24,16 +24,16 @@ FIND / GET functions
 function getUserAvatar() {
   const result = { ...CONSTANTS.RESULT, function: 'getUserAvatar()' };
   return errorHandler(result, (req: express.Request, res: express.Response) => {
-    const fileName = req.query.fileName as string;
-    res.sendFile(path.join(__dirname, userMulter.getFolderPath(), fileName));
+    const fileName = req.params.fileName;
+    res.sendFile(`${userMulter.getFolderPath()}/${fileName}`);
   });
 }
 
 function getProductImage() {
   const result = { ...CONSTANTS.RESULT, function: 'getProductImage()' };
   return errorHandler(result, (req: express.Request, res: express.Response) => {
-    const fileName = req.query.fileName as string;
-    res.sendFile(path.join(__dirname, productMulter.getFolderPath(), fileName));
+    const fileName = req.params.fileName;
+    res.sendFile(`${productMulter.getFolderPath()}/${fileName}`);
   });
 }
 
