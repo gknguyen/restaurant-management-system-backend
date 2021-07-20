@@ -10,11 +10,13 @@ const logger = debug(ENV.DEBUG);
 
 /** connect to Database */
 ORM.authenticate()
-  .then(() => logger(`Connected to database: ${ENV.DB_CONNECTION}`))
+  .then(() => {
+    logger(`Connected to database: ${ENV.DB_CONNECTION}`);
+    ORM.sync({ alter: false, force: false })
+      .then(() => initData())
+      .catch((err) => console.error(`Unable to sync the database: ${err.toString()}`));
+  })
   .catch((err) => console.error(`Unable to connect to the database: ${err.toString()}`));
-ORM.sync({ alter: false, force: false })
-  .then(() => initData())
-  .catch((err) => console.error(`Unable to sync the database: ${err.toString()}`));
 
 /** start server */
 app.set('port', ENV.PORT);
