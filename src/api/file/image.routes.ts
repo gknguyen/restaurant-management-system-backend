@@ -1,10 +1,9 @@
 import express from 'express';
 import STATUS_CODE from 'http-status';
 import multer from 'multer';
-import path from 'path';
-import CONSTANTS from '../../../config/constant';
-import errorHandler from '../../../config/errorHandler';
-import Multer from '../../../config/multer';
+import CONSTANTS from '../../config/constant';
+import errorHandler from '../../config/errorHandler';
+import Multer from '../../config/multer';
 
 const userMulter = new Multer(CONSTANTS.IMAGE.AVATAR_FOLDER_NAME);
 const productMulter = new Multer(CONSTANTS.IMAGE.PRODUCT_IMAGE_NAME);

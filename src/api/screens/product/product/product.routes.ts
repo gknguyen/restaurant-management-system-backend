@@ -6,7 +6,7 @@ import CONSTANTS from '../../../../config/constant';
 import errorHandler from '../../../../config/errorHandler';
 import Multer from '../../../../config/multer';
 import DB from '../../../../database/database.service';
-import { checkFilesInMulter } from '../../../common/file/image.routes';
+import { checkFilesInMulter } from '../../../file/image.routes';
 
 const productMulter = new Multer(CONSTANTS.IMAGE.PRODUCT_IMAGE_NAME);
 const productScreenRouter = express.Router();

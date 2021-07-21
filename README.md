@@ -80,6 +80,11 @@ docker-compose up
 
 - POST /api/auth/login
 
+### images
+
+- GET /api/image/user-avatar/{fileName.format}
+- GET /api/image/product-image/{fileName.format}
+
 ### common resources
 
 - GET /api/common/user-types
@@ -90,8 +95,6 @@ docker-compose up
 - GET /api/common/menu-types
 - GET /api/common/menu-types/{id}
 - POST /api/common/menu-types
-- GET /api/common/image/user-avatar/{fileName.format}
-- GET /api/common/image/product-image/{fileName.format}
 
 ### screens resources
 

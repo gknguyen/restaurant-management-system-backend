@@ -8,7 +8,7 @@ import ENV from '../../../../config/env';
 import errorHandler from '../../../../config/errorHandler';
 import Multer from '../../../../config/multer';
 import DB from '../../../../database/database.service';
-import { checkFilesInMulter } from '../../../common/file/image.routes';
+import { checkFilesInMulter } from '../../../file/image.routes';
 
 const userMulter = new Multer(CONSTANTS.IMAGE.AVATAR_FOLDER_NAME);
 const userScreenRouter = express.Router();
@@ -197,7 +197,7 @@ function createUser() {
     const newUser = await DB.user.create({
       userTypeId: userType.id,
       username: username,
-      password: Crypto.AES.encrypt('password', ENV.CRYPTO_SECRET).toString(),
+      password: Crypto.AES.encrypt(password, ENV.CRYPTO_SECRET).toString(),
       fullName: fullName,
       age: age,
       phone: phone,
